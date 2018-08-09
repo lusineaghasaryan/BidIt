@@ -6,4 +6,15 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="add_photo">Add Photo</string>
+    <string name="edit_text_hint_title">Title</string>
+    <string name="edit_text_hint_description">Description</string>
+    <string name="edit_text_hint_start_price">Start Price</string>
+    <string name="edit_text_hint_buy_now_price">Buy Now Price</string>
+    <string name="text_view_hint_choose_date">Choose Date</string>
+    <string name="text_view_hint_choose_time">Choose Time</string>
+    <string name="btn_save">Save</string>
+
+    <string name="permission_rationale">"Storage permission is needed for fetching images from Gallery."</string>
+
 </resources>

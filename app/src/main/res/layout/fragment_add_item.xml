@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
+    android:orientation="vertical"
+    android:background="@android:color/white"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_photo"
+        android:id="@+id/text_view_fragment_add_item_add_photo"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="+"
+        android:id="@+id/btn_fragment_add_item_add_photo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@id/text_view_fragment_add_item_add_photo"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:id="@+id/recycler_view_fragment_add_item_poto"/>
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/image_view_fragment_add_item_image"
+        app:layout_constraintTop_toBottomOf="@id/text_view_fragment_add_item_add_photo"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_fragment_add_item_name"
+        android:hint="@string/edit_text_hint_title"
+        app:layout_constraintTop_toBottomOf="@id/image_view_fragment_add_item_image"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_fragment_add_item_description"
+        android:hint="@string/edit_text_hint_description"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_fragment_add_item_name"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_fragment_add_item_start_price"
+        android:hint="@string/edit_text_hint_start_price"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_fragment_add_item_description"/>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/edit_text_fragment_add_item_buy_now_price"
+        android:hint="@string/edit_text_hint_buy_now_price"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_fragment_add_item_start_price"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/spinner_fragment_add_item_category"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_fragment_add_item_buy_now_price"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_view_fragment_add_item_date"
+        android:hint="@string/text_view_hint_choose_date"
+        app:layout_constraintTop_toBottomOf="@id/spinner_fragment_add_item_category"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/text_view_fragment_add_item_time"
+        android:hint="@string/text_view_hint_choose_time"
+        app:layout_constraintTop_toBottomOf="@id/spinner_fragment_add_item_category"
+        app:layout_constraintLeft_toRightOf="@id/text_view_fragment_add_item_date"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_fragment_add_item_save"
+        android:text="@string/btn_save"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>
