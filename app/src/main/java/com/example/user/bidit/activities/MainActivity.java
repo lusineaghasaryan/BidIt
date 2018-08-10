@@ -16,6 +16,7 @@ import android.view.MenuItem;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.fragments.AddItemFragment;
+import com.example.user.bidit.fragments.ViewPagerFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,7 +35,8 @@ public class MainActivity extends AppCompatActivity
                 AddItemFragment addItemFragment = new AddItemFragment();
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                fragmentTransaction.add(R.id.fragment_container, addItemFragment);
+                //fragmentTransaction.add(R.id.fragment_container, addItemFragment);
+                fragmentTransaction.add(R.id.fragment_container, new ViewPagerFragment());
                 fragmentTransaction.commit();
 
             }

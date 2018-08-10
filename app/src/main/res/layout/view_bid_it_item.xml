@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/img_view_holder_auction_image"
+            android:layout_width="@dimen/recycler_view_item_image_size"
+            android:layout_height="@dimen/recycler_view_item_image_size"
+            android:layout_margin="@dimen/recycler_view_item_margin_small"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@id/txt_view_holder_auction_title"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/txt_view_holder_auction_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/recycler_view_item_text_size_large"
+            android:layout_margin="@dimen/recycler_view_item_margin_small"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/img_view_holder_auction_image"
+            app:layout_constraintBottom_toTopOf="@id/txt_view_holder_auction_date"/>
+
+        <TextView
+            android:id="@+id/txt_view_holder_auction_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/recycler_view_item_text_size_normal"
+            android:layout_margin="@dimen/recycler_view_item_margin_small"
+            app:layout_constraintTop_toBottomOf="@id/txt_view_holder_auction_title"
+            app:layout_constraintLeft_toRightOf="@id/img_view_holder_auction_image"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/img_btn_view_holder_favorite_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/recycler_view_item_margin_small"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/txt_view_holder_auction_current_price"/>
+
+        <TextView
+            android:id="@+id/txt_view_holder_auction_current_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/recycler_view_item_text_size_normal"
+            android:layout_margin="@dimen/recycler_view_item_margin_small"
+            app:layout_constraintTop_toBottomOf="@id/img_btn_view_holder_favorite_btn"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="@id/img_view_holder_auction_status"/>
+
+        <ImageView
+            android:id="@+id/img_view_holder_auction_status"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+</android.support.v7.widget.CardView>
