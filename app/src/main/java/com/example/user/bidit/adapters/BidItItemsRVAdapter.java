@@ -1,5 +1,8 @@
 package com.example.user.bidit.adapters;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -9,7 +12,9 @@ import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.viewholder.BidItItemsRVViewHolder;
 import com.example.user.bidit.models.Item;
 
+import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
 
 public class BidItItemsRVAdapter extends RecyclerView.Adapter<BidItItemsRVViewHolder>{
@@ -19,6 +24,7 @@ public class BidItItemsRVAdapter extends RecyclerView.Adapter<BidItItemsRVViewHo
 //    click listener
     private BidItItemsRVViewHolder.OnItemCLickListener mOnItemCLickListener =
         new BidItItemsRVViewHolder.OnItemCLickListener() {
+
         @Override
         public void onItemClick(int adapterPosition) {
             mOnItemSelectedListener.onItemSelected(mData.get(adapterPosition));
@@ -26,7 +32,7 @@ public class BidItItemsRVAdapter extends RecyclerView.Adapter<BidItItemsRVViewHo
 
         @Override
         public void onFavoriteClick(int adapterPosition) {
-            // TODO add favorite button click logic
+            mOnItemSelectedListener.onItemAddToFavorite();
         }
     };
     private OnItemSelectedListener mOnItemSelectedListener;
@@ -49,10 +55,13 @@ public class BidItItemsRVAdapter extends RecyclerView.Adapter<BidItItemsRVViewHo
 
 //      set item fields into holder
         holder.getTxtAuctionTitle().setText(item.getItemTitle());
-        holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd/yyyy HH:mm:ss")
+        holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm:ss")
                 .format(item.getStartTime()));
-        holder.getTxtAuctionCurrentPrice().setText(String.valueOf(item.getCurrentPrice()) + "AMD");
-
+        holder.getTxtAuctionCurrentPrice().setText(String.valueOf(item.getCurrentPrice()) + " AMD");
+        holder.getImgAuctionImage().setImageResource(R.drawable.favorite_star_24dp);
+        if (isAuctionStarted(item)){
+            holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_active_12dp);
+        }
 
         holder.setOnItemCLickListener(mOnItemCLickListener);
     }
@@ -66,9 +75,15 @@ public class BidItItemsRVAdapter extends RecyclerView.Adapter<BidItItemsRVViewHo
         mData = data;
     }
 
+    private boolean isAuctionStarted(Item item){
+        return item.getStartTime() <= Calendar.getInstance().getTimeInMillis();
+    }
+
 
     public interface OnItemSelectedListener{
         void onItemSelected(Item item);
+
+        void onItemAddToFavorite();
     }
 
     public void setOnItemSelectedListener(OnItemSelectedListener onItemSelectedListener) {

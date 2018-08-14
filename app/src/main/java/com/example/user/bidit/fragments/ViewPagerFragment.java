@@ -95,12 +95,12 @@ public class ViewPagerFragment extends Fragment {
         public Fragment getItem(int position) {
             Fragment fragment = null;
             switch (position){
-                case ListItemFragment.ALL_ITEMS_DISPLAY_MODE:{
-                    fragment = ListItemFragment.newInstance(ListItemFragment.ALL_ITEMS_DISPLAY_MODE);
+                case 0:{
+                    fragment = ChildAllItemFragment.newInstance();
                     break;
                 }
-                case ListItemFragment.HOT_ITEMS_DISPLAY_MODE:{
-                    fragment = ListItemFragment.newInstance(ListItemFragment.HOT_ITEMS_DISPLAY_MODE);
+                case 1:{
+                    fragment = ChildHotItemFragment.newInstance();
                     break;
                 }
                 default:{

@@ -1,7 +1,6 @@
 package com.example.user.bidit.fragments;
 
 
-import android.annotation.SuppressLint;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,20 +14,11 @@ import android.view.ViewGroup;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.BidItItemsRVAdapter;
-import com.example.user.bidit.adapters.viewholder.BidItItemsRVViewHolder;
 import com.example.user.bidit.models.Item;
 
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-public class ListItemFragment extends Fragment {
-
-    public static final int ALL_ITEMS_DISPLAY_MODE = 0;
-    public static final int HOT_ITEMS_DISPLAY_MODE = 1;
-
-//    what kind of list need to display
-    private int mMode;
+public abstract class BaseListItemFragment extends Fragment {
 
 //    recyclerView fields
     private List<Item> mData;
@@ -48,27 +38,20 @@ public class ListItemFragment extends Fragment {
         public void onItemSelected(Item item) {
             // TODO open show item fragment
         }
+
+        @Override
+        public void onItemAddToFavorite() {
+            // TODO add to favorite
+        }
     };
 
 
-    public ListItemFragment() {
+    public BaseListItemFragment() {
         // Required empty public constructor
     }
 
-    @SuppressLint("ValidFragment") // ??
-    private ListItemFragment(int mode) {
-        mMode = mode;
-    }
-
-
-    public static ListItemFragment newInstance(int mode){
-        ListItemFragment listItemFragment = new ListItemFragment(mode);
-        Bundle args = new Bundle();
-        return listItemFragment;
-    }
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_list_item, container, false);
@@ -81,9 +64,7 @@ public class ListItemFragment extends Fragment {
         init(view);
     }
 
-
     private void init(View view){
-        mData = new ArrayList<>(); // temp
         getDataFromFB();
 
         mAdapter = new BidItItemsRVAdapter();
@@ -92,32 +73,8 @@ public class ListItemFragment extends Fragment {
         mRecyclerView = view.findViewById(R.id.recycler_view_list_item_fragment);
 
         setRecyclerSittings();
+        mAdapter.setOnItemSelectedListener(mOnItemSelectedListener);
 
-    }
-
-//    loading data from server
-    private void getDataFromFB(){
-        switch (mMode){
-            case ALL_ITEMS_DISPLAY_MODE:{
-                //TODO get all list from firebase or local db
-            }
-            case HOT_ITEMS_DISPLAY_MODE:{
-                //TODO get hot list from firebase or local db
-            }
-            default:{
-                break;
-            }
-        }
-
-//        temp block
-        for (int i = 0; i < 10; i++){
-            Item item = new Item();
-            item.setItemTitle("title" + i);
-            item.setStartTime(Calendar.getInstance().getTimeInMillis() + (i * 10000));
-            item.setCurrentPrice(i * 1000f);
-
-            mData.add(item);
-        }
     }
 
     private void setRecyclerSittings(){
@@ -146,12 +103,23 @@ public class ListItemFragment extends Fragment {
         mRecyclerView.setAdapter(mAdapter);
     }
 
+//    child will load data from server
+    protected abstract void getDataFromFB();
 
-//    add padding to recycler items
-    public class ItemOffSetDecoration extends RecyclerView.ItemDecoration{
+    protected void setData(List<Item> data) {
+        mData = data;
+    }
+
+    protected List<Item> getData() {
+        return mData;
+    }
+
+
+    //    add padding to recycler items
+    private class ItemOffSetDecoration extends RecyclerView.ItemDecoration{
         private int offSet;
 
-        public ItemOffSetDecoration(int offSet) {
+        private ItemOffSetDecoration(int offSet) {
             this.offSet = offSet;
         }
 
@@ -164,7 +132,7 @@ public class ListItemFragment extends Fragment {
         }
     }
 
-    // ???
+//    delegation
     public interface OnFragmentInteractionListener{
         void onShowItem();
     }

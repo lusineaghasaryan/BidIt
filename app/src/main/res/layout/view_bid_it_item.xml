@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -13,59 +14,81 @@
 
         <ImageView
             android:id="@+id/img_view_holder_auction_image"
-            android:layout_width="@dimen/recycler_view_item_image_size"
-            android:layout_height="@dimen/recycler_view_item_image_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="@dimen/recycler_view_item_margin_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/guideline1"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/txt_view_holder_auction_title"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintDimensionRatio="H,1:1"
+            android:contentDescription="TODO" />
 
         <TextView
             android:id="@+id/txt_view_holder_auction_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/recycler_view_item_text_size_large"
             android:layout_margin="@dimen/recycler_view_item_margin_small"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintLeft_toRightOf="@id/img_view_holder_auction_image"
-            app:layout_constraintBottom_toTopOf="@id/txt_view_holder_auction_date"/>
+            android:textSize="@dimen/recycler_view_item_text_size_large"
+            app:layout_constraintBottom_toTopOf="@id/txt_view_holder_auction_date"
+            app:layout_constraintStart_toEndOf="@id/guideline1"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/txt_view_holder_auction_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/recycler_view_item_text_size_normal"
             android:layout_margin="@dimen/recycler_view_item_margin_small"
-            app:layout_constraintTop_toBottomOf="@id/txt_view_holder_auction_title"
-            app:layout_constraintLeft_toRightOf="@id/img_view_holder_auction_image"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:textSize="@dimen/recycler_view_item_text_size_normal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/guideline1"
+            app:layout_constraintTop_toBottomOf="@id/txt_view_holder_auction_title" />
 
         <ImageButton
             android:id="@+id/img_btn_view_holder_favorite_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/recycler_view_item_margin_small"
-            app:layout_constraintRight_toRightOf="parent"
+            android:background="@null"
+            android:contentDescription="TODO"
+            android:src="@drawable/favorite_star_star_border_24dp"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/txt_view_holder_auction_current_price"/>
+            app:layout_constraintStart_toEndOf="@id/guideline2"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <TextView
             android:id="@+id/txt_view_holder_auction_current_price"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="@dimen/recycler_view_item_text_size_normal"
             android:layout_margin="@dimen/recycler_view_item_margin_small"
-            app:layout_constraintTop_toBottomOf="@id/img_btn_view_holder_favorite_btn"
+            android:textSize="@dimen/recycler_view_item_text_size_normal"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="@id/img_view_holder_auction_status"/>
+            app:layout_constraintEnd_toStartOf="@id/guideline2"
+            app:layout_constraintTop_toBottomOf="@id/img_btn_view_holder_favorite_btn" />
 
         <ImageView
             android:id="@+id/img_view_holder_auction_status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            android:contentDescription="TODO"
+            android:src="@drawable/status_point_inactive_12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/guideline2"
+            app:layout_constraintTop_toBottomOf="@+id/img_btn_view_holder_favorite_btn" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.20" />
+
+        <android.support.constraint.Guideline
+            android:id="@+id/guideline2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.90" />
 
     </android.support.constraint.ConstraintLayout>
 
