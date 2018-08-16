@@ -9,8 +9,8 @@ import java.util.ArrayList;
 
 public class FirebaseHelper {
 
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference mUsersRef = database.getReference("users");
+    public static FirebaseDatabase database = FirebaseDatabase.getInstance();
+    public static DatabaseReference mUsersRef = database.getReference("users");
     DatabaseReference mItemsRef = database.getReference("items");
     DatabaseReference mCategoryRef = database.getReference("categories");
 
@@ -29,8 +29,6 @@ public class FirebaseHelper {
 
     public ArrayList<Category> getCategoryList(){
         ArrayList<Category> categoryArrayList = new ArrayList<>();
-
-
 
         return categoryArrayList;
     }
