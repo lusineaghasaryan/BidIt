@@ -6,6 +6,9 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
+    <dimen name="profile_image_size">100dp</dimen>
+    <dimen name="padding_20dp">20dp</dimen>
+
     <dimen name="recycler_view_item_text_size_small">10sp</dimen>
     <dimen name="recycler_view_item_text_size_normal">15sp</dimen>
     <dimen name="recycler_view_item_text_size_large">20sp</dimen>
@@ -15,7 +18,7 @@
     <dimen name="recycler_view_item_margin_large">12dp</dimen>
 
     <dimen name="margin_small">4dp</dimen>
-    <dimen name="margin_normal">7dp</dimen>
+    <dimen name="margin_normal">5dp</dimen>
     <dimen name="margin_large">15dp</dimen>
 
     <dimen name="text_size_small">15sp</dimen>
@@ -29,4 +32,7 @@
     <dimen name="tab_layout_elevation">6dp</dimen>
 
     <dimen name="recycler_view_item_image_size">50dp</dimen>
+
+
+    <dimen name="padding_normal">10dp</dimen>
 </resources>

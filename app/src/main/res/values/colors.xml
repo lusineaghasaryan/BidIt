@@ -10,4 +10,7 @@
 
     <color name="status_point_inactive">#878787</color>
     <color name="status_point_active">#42c12e</color>
+
+    <color name="background">#313335</color>
+
 </resources>
