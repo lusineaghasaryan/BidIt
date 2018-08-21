@@ -3,4 +3,16 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="fragment_background">#FFFFFF</color>
+
+    <color name="favorite_button">#f2a221</color>
+
+    <color name="status_point_inactive">#878787</color>
+    <color name="status_point_active">#42c12e</color>
+
+    <color name="background">#313335</color>
+
+    <color name="bid_message_color">#000000</color>
+
 </resources>
