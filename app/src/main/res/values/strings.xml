@@ -51,4 +51,6 @@
     <string name="wrong_email_or_password_meesage">Wrong Email or Password</string>
 
 
+    <string name="temp_string">temptemp</string>
+
 </resources>

@@ -13,4 +13,6 @@
 
     <color name="background">#313335</color>
 
+    <color name="bid_message_color">#000000</color>
+
 </resources>

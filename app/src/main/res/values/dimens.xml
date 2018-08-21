@@ -17,6 +17,14 @@
     <dimen name="recycler_view_item_margin_normal">7dp</dimen>
     <dimen name="recycler_view_item_margin_large">12dp</dimen>
 
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_normal">5dp</dimen>
+    <dimen name="margin_large">15dp</dimen>
+
+    <dimen name="text_size_small">15sp</dimen>
+    <dimen name="text_size_normal">20sp</dimen>
+    <dimen name="text_size_large">30sp</dimen>
+
     <dimen name="recycler_view_item_padding_small">3dp</dimen>
     <dimen name="recycler_view_item_padding_normal">7dp</dimen>
     <dimen name="recycler_view_item_padding_large">12dp</dimen>
@@ -24,7 +32,7 @@
     <dimen name="tab_layout_elevation">6dp</dimen>
 
     <dimen name="recycler_view_item_image_size">50dp</dimen>
-    <dimen name="margin_normal">5dp</dimen>
-    <dimen name="text_size_large">30sp</dimen>
+
+
     <dimen name="padding_normal">10dp</dimen>
 </resources>

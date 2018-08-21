@@ -47,6 +47,21 @@ public class MainActivity extends AppCompatActivity
         setNavigationDrawer();
         initListeners();
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ShowItemActivity.class);
+                startActivity(intent);
+//                replaceFragment(mLoginFragment);
+            }
+        });
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replaceFragment(mMyAccountFragment);
+            }
+        });
     }
 
     @Override
@@ -102,7 +117,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void replaceFragment(Fragment fragment) {
-        Log.d("MYTAG", "replaceFragment: ");
         mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.replace(R.id.fragment_container, fragment);
         mFragmentTransaction.addToBackStack("fragment");
@@ -110,7 +124,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void removeFragment(Fragment fragment) {
-        Log.d("MYTAG", "removeFragment: ");
         mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.remove(fragment);
         mFragmentManager.popBackStack();
@@ -118,7 +131,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addFragment(Fragment fragment) {
-        Log.d("MYTAG", "addFragment: ");
         mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.add(R.id.fragment_container, fragment);
         mFragmentTransaction.addToBackStack("fragment");

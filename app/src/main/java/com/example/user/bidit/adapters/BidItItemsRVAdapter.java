@@ -1,8 +1,5 @@
 package com.example.user.bidit.adapters;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -12,7 +9,6 @@ import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.viewholder.BidItItemsRVViewHolder;
 import com.example.user.bidit.models.Item;
 
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -42,7 +38,7 @@ public class BidItItemsRVAdapter extends RecyclerView.Adapter<BidItItemsRVViewHo
     @Override
     public BidItItemsRVViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         BidItItemsRVViewHolder viewHolder = new BidItItemsRVViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.view_bid_it_item, parent, false));
+                .inflate(R.layout.view_bid_it_recycler_item, parent, false));
         viewHolder.setOnItemCLickListener(mOnItemCLickListener); // ???
         return viewHolder;
     }
