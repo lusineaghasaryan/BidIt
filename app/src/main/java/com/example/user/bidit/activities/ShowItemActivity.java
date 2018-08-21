@@ -20,7 +20,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.user.bidit.R;
-import com.example.user.bidit.firebase.FireBaseAuthenticationHelper;
+import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 
 import java.text.SimpleDateFormat;
@@ -30,8 +30,7 @@ import java.util.List;
 
 public class ShowItemActivity extends AppCompatActivity {
 
-    //    firebase auth helper
-    private FireBaseAuthenticationHelper mAuthenticationHelper;
+
 
     //    show auction images, fields
     private ViewPager mViewPager;
@@ -86,8 +85,6 @@ public class ShowItemActivity extends AppCompatActivity {
     }
 
     private void init() {
-//        init fire base helper
-        mAuthenticationHelper = new FireBaseAuthenticationHelper();
 
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
@@ -166,7 +163,7 @@ public class ShowItemActivity extends AppCompatActivity {
     }
 
     private void checkForLoggedIn() {
-        if (FireBaseAuthenticationHelper.isLoggedIn()) {
+        if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
             mImgBtnFavorite.setEnabled(false);
             mInputMessage.setEnabled(false);
             mBtnEnterMessage.setEnabled(false);

@@ -2,6 +2,7 @@ package com.example.user.bidit.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -46,22 +47,6 @@ public class MainActivity extends AppCompatActivity
         init();
         setNavigationDrawer();
         initListeners();
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ShowItemActivity.class);
-                startActivity(intent);
-//                replaceFragment(mLoginFragment);
-            }
-        });
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replaceFragment(mMyAccountFragment);
-            }
-        });
     }
 
     @Override
@@ -108,6 +93,8 @@ public class MainActivity extends AppCompatActivity
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 break;
             case R.id.nav_item_help:
+                Intent intent = new Intent(MainActivity.this, ShowItemActivity.class);
+                startActivity(intent);
                 break;
             case R.id.nav_item_about_us:
                 break;
