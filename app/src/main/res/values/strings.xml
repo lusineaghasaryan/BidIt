@@ -49,4 +49,6 @@
     <string name="nav_login">Log In</string>
     <string name="registration_complated_message">Completed</string>
 
+    <string name="temp_string">temptemp</string>
+
 </resources>

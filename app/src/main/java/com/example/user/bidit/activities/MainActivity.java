@@ -1,5 +1,6 @@
 package com.example.user.bidit.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -52,7 +53,9 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                replaceFragment(mLoginFragment);
+                Intent intent = new Intent(MainActivity.this, ShowItemActivity.class);
+                startActivity(intent);
+//                replaceFragment(mLoginFragment);
             }
         });
         button.setOnClickListener(new View.OnClickListener() {
