@@ -5,23 +5,26 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.Button;
+import android.widget.EditText;
 
 import com.example.user.bidit.R;
-import com.example.user.bidit.firebase.FireBaseAuthenticationHelper;
+import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.User;
 
 public class MyAccountFragment extends Fragment {
-    private TextView mTextViewName, mTextViewSurname,
-            mTextViewPhone, mTextViewPassport, mTextViewEmail;
-    User mCurrentUser;
+    private EditText mEditTextName, mEditTextSurname,
+            mEditTextPhone, mEditTextPassport, mEditTextEmail;
+    private Button btnChange, btnEdit;
+    private User mUser;
+    private boolean mEditable = false;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_my_account, container, false);
     }
@@ -29,35 +32,75 @@ public class MyAccountFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         init();
-        setUserOptions();
+        showUserOptions();
+        changeFieldsVisibility(mEditable);
+        btnChange.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditable = false;
+                changeFieldsVisibility(false);
+                acceptChanges();
+            }
+        });
+        btnEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mEditable = true;
+                changeFieldsVisibility(true);
+            }
+        });
+
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().hide();
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        ((AppCompatActivity)getActivity()).getSupportActionBar().show();
-//    }
+    private void acceptChanges() {
+        setUserOptions();
+        FireBaseAuthenticationManager.getInstance().updateUserInServer(mUser);
+    }
+
+    private void showUserOptions() {
+        mEditTextName.setText(mUser.getName());
+        mEditTextSurname.setText(mUser.getSurname());
+        mEditTextEmail.setText(mUser.getEmail());
+        mEditTextPhone.setText(mUser.getPhoneNumber());
+        mEditTextPassport.setText(mUser.getPassportSeria());
+
+    }
 
     private void setUserOptions() {
-        mTextViewName.setText(mCurrentUser.getName());
-        mTextViewSurname.setText(mCurrentUser.getSurname());
-        mTextViewEmail.setText(mCurrentUser.getEmail());
-        mTextViewPhone.setText(mCurrentUser.getPhoneNumber());
-        mTextViewPassport.setText(mCurrentUser.getPassportSeria());
+        Log.d("MYTAG", "setUserOptions: ");
+        mUser = new User.Builder()
+                .setName(mEditTextName.getText().toString())
+                .setSurname(mEditTextSurname.getText().toString())
+                .setEmail(mEditTextEmail.getText().toString())
+                .setPhoneNumber(mEditTextPhone.getText().toString())
+                .setPassportSeries(mEditTextPassport.getText().toString())
+                .create();
+    }
+
+    private void changeFieldsVisibility(boolean bool) {
+        mEditTextName.setEnabled(bool);
+        mEditTextSurname.setEnabled(bool);
+        mEditTextEmail.setEnabled(bool);
+        mEditTextPhone.setEnabled(bool);
+        mEditTextPassport.setEnabled(bool);
+        if (bool) {
+            btnEdit.setVisibility(View.GONE);
+            btnChange.setVisibility(View.VISIBLE);
+        } else {
+            btnEdit.setVisibility(View.VISIBLE);
+            btnChange.setVisibility(View.GONE);
+        }
+
     }
 
     private void init() {
-        mTextViewName = getView().findViewById(R.id.text_view_name_my_account);
-        mTextViewSurname = getView().findViewById(R.id.text_view_surname_my_account);
-        mTextViewEmail = getView().findViewById(R.id.text_view_email_my_account);
-        mTextViewPhone = getView().findViewById(R.id.text_view_phone_my_account);
-        mTextViewPassport= getView().findViewById(R.id.text_view_passport_my_account);
-        mCurrentUser = FireBaseAuthenticationHelper.getmCurrentUser();
+        mEditTextName = getView().findViewById(R.id.text_view_name_my_account);
+        mEditTextSurname = getView().findViewById(R.id.text_view_surname_my_account);
+        mEditTextEmail = getView().findViewById(R.id.text_view_email_my_account);
+        mEditTextPhone = getView().findViewById(R.id.text_view_phone_my_account);
+        mEditTextPassport = getView().findViewById(R.id.text_view_passport_my_account);
+        btnChange = getView().findViewById(R.id.change);
+        btnEdit = getView().findViewById(R.id.edit);
+        mUser = FireBaseAuthenticationManager.getInstance().getCurrentUser();
     }
 }

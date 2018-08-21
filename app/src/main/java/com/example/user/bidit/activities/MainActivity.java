@@ -1,7 +1,7 @@
 package com.example.user.bidit.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -15,11 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.Toast;
 
 import com.example.user.bidit.R;
-import com.example.user.bidit.firebase.FireBaseAuthenticationHelper;
+import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.fragments.AddItemFragment;
 import com.example.user.bidit.fragments.LoginFragment;
 import com.example.user.bidit.fragments.MyAccountFragment;
@@ -30,37 +28,32 @@ public class MainActivity extends AppCompatActivity
     private NavigationView mNavigationView;
     private DrawerLayout mDrawer;
     private Toolbar mToolbar;
+    private ActionBarDrawerToggle mToggle;
     private AddItemFragment mAddItemFragment;
     private LoginFragment mLoginFragment;
-    private LoginFragment.OnFragmentChange mOnFragmentChange;
+    private LoginFragment.OnLoginFragmentChange mOnLoginFragmentChange;
     private RegistrationFragment mRegistrationFragment;
-    private RegistrationFragment.OnRegistrationCompleted mOnRegistrationComplated;
+    private RegistrationFragment.OnRegistrationCompleted mOnRegistrationCompleted;
     private FragmentManager mFragmentManager;
     private FragmentTransaction mFragmentTransaction;
-    private Button button;
     private MyAccountFragment mMyAccountFragment;
+    private LoginActivity mLoginActivity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initViews();
-//        setNavigationBar();
+        init();
+        setNavigationDrawer();
         initListeners();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                replaceFragment(mLoginFragment);
-            }
-        });
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replaceFragment(mMyAccountFragment);
-            }
-        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (FireBaseAuthenticationManager.getInstance().isLoggedIn())
+            FireBaseAuthenticationManager.getInstance().initCurrentUser();
     }
 
     @Override
@@ -78,12 +71,12 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.nav_item_my_account:
+                replaceFragment(new MyAccountFragment());
                 break;
             case R.id.nav_item_balance:
                 break;
@@ -94,26 +87,22 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_item_my_items:
                 break;
             case R.id.nav_item_log_out:
-                FireBaseAuthenticationHelper.signOut();
-                Log.d("TAG", "Sign Out");
+                FireBaseAuthenticationManager.getInstance().signOut();
                 break;
             case R.id.nav_item_log_in:
-                Log.d("TAG", "Create Account");
-                replaceFragment(mLoginFragment);
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
                 break;
             case R.id.nav_item_help:
-                Log.d("TAG", "help");
                 break;
             case R.id.nav_item_about_us:
-                Toast.makeText(this, "sddgs", Toast.LENGTH_SHORT).show();
                 break;
         }
-        updateNavBar();
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     public void replaceFragment(Fragment fragment) {
+        Log.d("MYTAG", "replaceFragment: ");
         mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.replace(R.id.fragment_container, fragment);
         mFragmentTransaction.addToBackStack("fragment");
@@ -121,6 +110,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void removeFragment(Fragment fragment) {
+        Log.d("MYTAG", "removeFragment: ");
         mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.remove(fragment);
         mFragmentManager.popBackStack();
@@ -128,57 +118,70 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void addFragment(Fragment fragment) {
+        Log.d("MYTAG", "addFragment: ");
         mFragmentTransaction = mFragmentManager.beginTransaction();
         mFragmentTransaction.add(R.id.fragment_container, fragment);
         mFragmentTransaction.addToBackStack("fragment");
         mFragmentTransaction.commit();
     }
 
-    private void initViews() {
+    private void init() {
         mToolbar = findViewById(R.id.toolbar);
         mDrawer = findViewById(R.id.drawer_layout);
-//        mNavigationView = findViewById(R.id.nav_view);
+        mNavigationView = findViewById(R.id.nav_view);
         mFragmentManager = getSupportFragmentManager();
         mAddItemFragment = new AddItemFragment();
         mLoginFragment = new LoginFragment();
         mRegistrationFragment = new RegistrationFragment();
-        button = findViewById(R.id.button);
         mMyAccountFragment = new MyAccountFragment();
+        mLoginActivity = new LoginActivity();
     }
 
     private void initListeners() {
-        mOnFragmentChange = new LoginFragment.OnFragmentChange() {
+        mToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawer.openDrawer(GravityCompat.START);
+                updateNavigationDrawer();
+            }
+        });
+
+        mOnLoginFragmentChange = new LoginFragment.OnLoginFragmentChange() {
             @Override
             public void onRemove() {
                 removeFragment(mLoginFragment);
             }
+
             @Override
             public void onAdd() {
-                addFragment(new RegistrationFragment());
+                addFragment(mRegistrationFragment);
             }
         };
-        mLoginFragment.setOnFragmentChange(mOnFragmentChange);
-        mOnRegistrationComplated = new RegistrationFragment.OnRegistrationCompleted() {
+
+        mLoginFragment.setOnLoginFragmentChange(mOnLoginFragmentChange);
+
+        mOnRegistrationCompleted = new RegistrationFragment.OnRegistrationCompleted() {
             @Override
             public void onFragmentRemove() {
                 removeFragment(mRegistrationFragment);
             }
         };
-        mRegistrationFragment.setOnRegistrationCompleted(mOnRegistrationComplated);
+        mRegistrationFragment.setOnRegistrationCompleted(mOnRegistrationCompleted);
     }
 
-    public void setNavigationBar() {
+    private void setNavigationDrawer() {
         setSupportActionBar(mToolbar);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        mToggle = new ActionBarDrawerToggle(
                 this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawer.addDrawerListener(toggle);
-        toggle.syncState();
+        mDrawer.addDrawerListener(mToggle);
+        mToggle.syncState();
         mNavigationView.setNavigationItemSelectedListener(this);
-        updateNavBar();
+        mToggle.setDrawerIndicatorEnabled(false);
+        mToggle.setHomeAsUpIndicator(R.drawable.ic_account_circle_black_24dp);
     }
 
-    public void updateNavBar() {
-        if (FireBaseAuthenticationHelper.isLoggedIn()) {
+    public void updateNavigationDrawer() {
+        if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
             mNavigationView.getMenu().setGroupVisible(R.id.menu_group_signed, true);
             mNavigationView.getMenu().findItem(R.id.nav_item_log_in).setVisible(false);
         } else {

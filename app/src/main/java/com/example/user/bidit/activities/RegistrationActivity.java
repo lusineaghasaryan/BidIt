@@ -1,14 +1,8 @@
-package com.example.user.bidit.fragments;
+package com.example.user.bidit.activities;
 
-
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
+import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -18,25 +12,20 @@ import com.example.user.bidit.models.User;
 import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
 
-public class RegistrationFragment extends Fragment {
+public class RegistrationActivity extends AppCompatActivity {
     private EditText mEditTextName, mEditTextSurname, mEditTextEmail,
             mEditTextPhone, mEditTextPassportSeries, mEditTextPassword, mEditTextPasswordRetry;
     private Button mBtnAccept;
     private String mName, mSurname, mEmail, mPhone, mPassportSeries, mPassword, mPasswordRetry;
     private User mUser;
     private View mParentLayout;
-    private OnRegistrationCompleted mOnRegistrationCompleted;
 
 
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_registration, container, false);
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        initViews();
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_registration);
+        init();
         mBtnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -44,20 +33,6 @@ public class RegistrationFragment extends Fragment {
             }
         });
     }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().hide();
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        ((AppCompatActivity) getActivity()).getSupportActionBar().show();
-    }
-
-
     private void getTextFromFilledField() {
         mName = mEditTextName.getText().toString();
         mSurname = mEditTextSurname.getText().toString();
@@ -78,16 +53,16 @@ public class RegistrationFragment extends Fragment {
                 .create();
     }
 
-    private void initViews() {
-        mEditTextName = getView().findViewById(R.id.edit_text_name_registration_fragment);
-        mEditTextSurname = getView().findViewById(R.id.edit_text_surname_registration_fragment);
-        mEditTextEmail = getView().findViewById(R.id.edit_text_email_registration_fragment);
-        mEditTextPhone = getView().findViewById(R.id.edit_text_phone_registration_fragment);
-        mEditTextPassportSeries = getView().findViewById(R.id.edit_text_passport_registration_fragment);
-        mEditTextPassword = getView().findViewById(R.id.edit_text_password_registration_fragment);
-        mEditTextPasswordRetry = getView().findViewById(R.id.edit_text_password_retry_registration_fragment);
-        mBtnAccept = getView().findViewById(R.id.btn_create_account_registration_fragment);
-        mParentLayout = getView().findViewById(R.id.reg_layout);
+    private void init() {
+        mEditTextName = findViewById(R.id.edit_text_name_registration_activity);
+        mEditTextSurname = findViewById(R.id.edit_text_surname_registration_activity);
+        mEditTextEmail = findViewById(R.id.edit_text_email_registration_activity);
+        mEditTextPhone = findViewById(R.id.edit_text_phone_registration_activity);
+        mEditTextPassportSeries = findViewById(R.id.edit_text_passport_registration_activity);
+        mEditTextPassword = findViewById(R.id.edit_text_password_registration_activity);
+        mEditTextPasswordRetry = findViewById(R.id.edit_text_password_retry_registration_activity);
+        mBtnAccept = findViewById(R.id.btn_create_account_registration_activity);
+        mParentLayout = findViewById(R.id.reg_layout);
     }
 
     private EditText[] createEditTextsArray() {
@@ -114,17 +89,6 @@ public class RegistrationFragment extends Fragment {
         initUser();
         FireBaseAuthenticationManager.getInstance().createAccount(mUser, mPassword);
         UserMessages.showSnackBarShort(mParentLayout, getString(R.string.registration_complated_message));
-        mOnRegistrationCompleted.onFragmentRemove();
+        finish();
     }
-
-    public void setOnRegistrationCompleted(OnRegistrationCompleted onRegistrationCompleted) {
-        mOnRegistrationCompleted = onRegistrationCompleted;
-    }
-
-    public interface OnRegistrationCompleted {
-        void onFragmentRemove();
-    }
-
-
 }
-

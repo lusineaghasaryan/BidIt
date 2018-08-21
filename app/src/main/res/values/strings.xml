@@ -34,7 +34,7 @@
     <string name="auth_failed">Failed</string>
     <string name="facebook_title_text">Title</string>
     <string name="nav_about_us">About Us</string>
-    <string name="hint_email">email</string>
+    <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
     <string name="text_login">Log in</string>
     <string name="text_registration">Registration</string>
@@ -48,5 +48,7 @@
     <string name="invalid_email_message">Invalid Email</string>
     <string name="nav_login">Log In</string>
     <string name="registration_complated_message">Completed</string>
+    <string name="wrong_email_or_password_meesage">Wrong Email or Password</string>
+
 
 </resources>

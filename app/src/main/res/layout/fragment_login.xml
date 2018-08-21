@@ -1,10 +1,13 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient_login"
     android:paddingTop="100dp"
     tools:context="com.example.user.bidit.fragments.LoginFragment">
+
 
     <EditText
         android:id="@+id/edit_text_email_login_fragment"
@@ -26,12 +29,12 @@
         android:textSize="@dimen/text_size_large"
         app:layout_constraintTop_toBottomOf="@+id/edit_text_email_login_fragment" />
 
+
     <Button
         android:id="@+id/btn_log_in_login_fragment"
         android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/recycler_view_item_margin_large"
-        android:background="@color/colorAccent"
         android:text="@string/text_login"
         android:textSize="@dimen/text_size_large"
         app:layout_constraintEnd_toEndOf="parent"
@@ -48,13 +51,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_log_in_login_fragment" />
 
-    <Button
-        android:id="@+id/btn_show"
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/btn_facebook_login_fragment"
         android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_margin="@dimen/recycler_view_item_margin_large"
-        android:background="@color/colorAccent"
-        android:text="@string/text_show"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="30dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />

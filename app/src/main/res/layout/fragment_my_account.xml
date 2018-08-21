@@ -25,7 +25,7 @@
             android:hint="@string/hint_name"
             android:textSize="@dimen/recycler_view_item_text_size_large" />
 
-        <TextView
+        <EditText
             android:id="@+id/text_view_name_my_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
             android:hint="@string/hint_surname"
             android:textSize="@dimen/recycler_view_item_text_size_large" />
 
-        <TextView
+        <EditText
             android:id="@+id/text_view_surname_my_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -69,7 +69,7 @@
             android:hint="@string/hint_email"
             android:textSize="@dimen/recycler_view_item_text_size_large" />
 
-        <TextView
+        <EditText
             android:id="@+id/text_view_email_my_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
             android:hint="@string/hint_phone"
             android:textSize="@dimen/recycler_view_item_text_size_large" />
 
-        <TextView
+        <EditText
             android:id="@+id/text_view_phone_my_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -113,7 +113,7 @@
             android:hint="@string/hint_passport_seria"
             android:textSize="@dimen/recycler_view_item_text_size_large" />
 
-        <TextView
+        <EditText
             android:id="@+id/text_view_passport_my_account"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -121,5 +121,17 @@
             android:hint="passport"
             android:textSize="@dimen/recycler_view_item_text_size_large" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="change"
+        android:visibility="gone"/>
+    <Button
+        android:id="@+id/edit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="edit"/>
 
 </LinearLayout>

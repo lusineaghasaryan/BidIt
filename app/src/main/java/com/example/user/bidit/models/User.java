@@ -1,6 +1,8 @@
 package com.example.user.bidit.models;
 
 
+import android.util.Log;
+
 import com.google.firebase.database.DataSnapshot;
 
 public class User {
@@ -103,7 +105,7 @@ public class User {
             return this;
         }
 
-        public Builder setPassportSeria(String passportSeria) {
+        public Builder setPassportSeries(String passportSeria) {
             this.passportSeria = passportSeria;
             return this;
         }
@@ -114,8 +116,10 @@ public class User {
     }
 
     public static User fromDataSnapshot(DataSnapshot dataSnapshot, String currentUId) {
+        Log.d("MYTAG", "fromDataSnapshot: ");
+        //TODO use builder
         User user = new User();
-        user = dataSnapshot.getValue(User.class);
+//        user = dataSnapshot.getValue(User.class);
         user.setName((String) dataSnapshot.child(currentUId).child("name").getValue());
         user.setSurname((String) dataSnapshot.child(currentUId).child("surname").getValue());
         user.setEmail((String) dataSnapshot.child(currentUId).child("email").getValue());
