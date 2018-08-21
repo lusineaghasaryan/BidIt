@@ -1,30 +1,45 @@
 package com.example.user.bidit.models;
 
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @IgnoreExtraProperties
 public class Category {
-    private long mCategoryId;
-    private String mCategoryTitle;
+    private String categoryId;
+    private String categoryTitle;
 
-    public Category(long mCategoryId, String mCategoryTitle) {
-        this.mCategoryId = mCategoryId;
-        this.mCategoryTitle = mCategoryTitle;
+    public Category(){
+
     }
 
-    public long getCategoryId() {
-        return mCategoryId;
+    public Category(String mCategoryId, String mCategoryName) {
+        this.categoryId = mCategoryId;
+        this.categoryTitle = mCategoryName;
     }
 
-    public void setCategoryId(long mCategoryId) {
-        this.mCategoryId = mCategoryId;
+    public String getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(String categoryId) {
+        this.categoryId = categoryId;
     }
 
     public String getCategoryTitle() {
-        return mCategoryTitle;
+        return categoryTitle;
     }
 
-    public void setCategoryTitle(String mCategoryTitle) {
-        this.mCategoryTitle = mCategoryTitle;
+    public void setCategoryTitle(String categoryTitle) {
+        this.categoryTitle = categoryTitle;
+    }
+
+    @Exclude
+    public Map<String, Object> toMap() {
+        HashMap<String, Object> result = new HashMap<>();
+        result.put("title", categoryTitle);
+        return result;
     }
 }

@@ -3,6 +3,9 @@ package com.example.user.bidit.fragments;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -39,10 +42,15 @@ import com.example.user.bidit.adapters.AddItemPhotosRVAdapter;
 import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.util.DateUtil;
+import com.example.user.bidit.viewModels.CategoryListViewModel;
+import com.example.user.bidit.viewModels.ItemsListViewModel;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import static android.app.Activity.RESULT_CANCELED;
 
@@ -51,37 +59,36 @@ public class AddItemFragment extends Fragment {
     private static final String IMAGE_DIRECTORY = "/demonuts";
     private int REQUEST_IMAGE_GALLERY  = 1, REQUEST_IMAGE_CAPTURE  = 2;
 
+    public static final String TAG = "AddItemFragment";
+
     public Button mAddPhotoBtn, mSaveItemBtn;
     public EditText mItemTitle, mItemDescription, mStartPrice, mBuyNowPrice;
     public Spinner mCategorySpinner;
     public ImageView mImageView;
-    public TextView mDateTextView, mTimeTextView;
-    private Calendar mSelectedDate = Calendar.getInstance();
-    public ArrayList<Category> mCategoryList;
-    public ArrayList<String> mItemSelectedImages;
+    public TextView mDateTextView, mEndDateTextView;
+    private Calendar mStartDate = Calendar.getInstance();
+    private Calendar mEndDate = Calendar.getInstance();
+    public List<Category> mCategoryList;
+    public String mCategorySelectedItemId;
+    public ArrayList<String> mItemSelectedImagesList;
 
     public AddItemPhotosRVAdapter mAdapter;
     public RecyclerView mPhotosRV;
     public RecyclerView.LayoutManager mLayoutManager;
-
-//    public final String filesDir = getContext().getFilesDir().getAbsolutePath();
 
     public Item mItem;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         mCategoryList = new ArrayList<>();
-        mItemSelectedImages = new ArrayList<>();
-        mItem = new Item();
+        mItemSelectedImagesList = new ArrayList<>();
 
-        mItemSelectedImages.add("/storage/emulated/0/Slack/IMG_20180804_234229.jpg");
-        mItemSelectedImages.add("/storage/emulated/0/Slack/IMG_20180804_234338.jpg");
-        mItemSelectedImages.add("/storage/emulated/0/Slack/IMG_20180805_184317.jpg");
-        mItemSelectedImages.add("/storage/emulated/0/Slack/IMG_20180805_184317.jpg");
-        mItemSelectedImages.add("/storage/emulated/0/Slack/IMG_20180805_184335.jpg");
+        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180804_234229.jpg");
+        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180804_234338.jpg");
+        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180805_184317.jpg");
+        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180805_184317.jpg");
+        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180805_184335.jpg");
 
-
-        //SelectedImagesViewModel model = ViewModelProviders.of(getActivity()).get(SelectedImagesViewModel.class);
 
         setHasOptionsMenu(true);
         if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -104,9 +111,11 @@ public class AddItemFragment extends Fragment {
     }
 
     public void init(View view){
+        final FirebaseHelper firebaseHelper = new FirebaseHelper(getActivity());
+
         mAddPhotoBtn = view.findViewById(R.id.btn_fragment_add_item_add_photo);
-        mDateTextView = view.findViewById(R.id.text_view_fragment_add_item_date);
-        mTimeTextView = view.findViewById(R.id.text_view_fragment_add_item_time);
+        mDateTextView = view.findViewById(R.id.text_view_fragment_add_item_start_date);
+        mEndDateTextView = view.findViewById(R.id.text_view_fragment_add_item_end_date);
         mSaveItemBtn = view.findViewById(R.id.btn_fragment_add_item_save);
         mItemTitle = view.findViewById(R.id.edit_text_fragment_add_item_name);
         mItemDescription = view.findViewById(R.id.edit_text_fragment_add_item_description);
@@ -119,20 +128,18 @@ public class AddItemFragment extends Fragment {
         mPhotosRV.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
         mPhotosRV.setLayoutManager(mLayoutManager);
-        mAdapter = new AddItemPhotosRVAdapter(getContext(), mItemSelectedImages);
+        mAdapter = new AddItemPhotosRVAdapter(getContext(), mItemSelectedImagesList);
         mPhotosRV.setAdapter(mAdapter);
 
-        //mCategoryList.add(new Category(1, "Ardzanner"));
-        //mCategoryList.add(new Category(123, "Cars"));
-        //mCategoryList.add(new Category(125, "Kopekner"));
-        //mCategoryList.add(new Category(127, "Furnichure"));
 
-        FirebaseHelper firebaseHelper = new FirebaseHelper();
+        updateDateLabel();
+        updateDateEndLabel();
 
-        firebaseHelper.setCategoryToDatabase("Ardzanner");
-        firebaseHelper.setCategoryToDatabase("Cars");
-        firebaseHelper.setCategoryToDatabase("Kopekner");
-        firebaseHelper.setCategoryToDatabase("Furnichure");
+
+//        firebaseHelper.getCategoryListFromDatabase();
+
+      ArrayList<Item> mItemsList = new ArrayList<>();
+
 
         mAddPhotoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,25 +155,46 @@ public class AddItemFragment extends Fragment {
             }
         });
 
-        mTimeTextView.setOnClickListener(new View.OnClickListener() {
+        mEndDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openTimePicker();
+                openDatePickerEnd();
             }
         });
+
+
+
+        ItemsListViewModel itemsListViewModel = ViewModelProviders.of(getActivity()).get(ItemsListViewModel.class);
+        itemsListViewModel.getItem().observe(this, new Observer<Item>() {
+            @Override
+            public void onChanged(@Nullable Item pItem) {
+                Log.v(TAG, "Adddddd = " + pItem.getItemTitle());
+            }
+        });
+        itemsListViewModel.updateData();
+
+
 
 
         ///      Spinner
         final ArrayAdapter<String> mSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
 
-       /* mSpinnerAdapter.add("Choose Category");
-        mSpinnerAdapter.add(mCategoryList.get(0).getCategoryTitle());
-        mSpinnerAdapter.add(mCategoryList.get(1).getCategoryTitle());
-        mSpinnerAdapter.add(mCategoryList.get(2).getCategoryTitle());
-        mSpinnerAdapter.add(mCategoryList.get(3).getCategoryTitle());
+        CategoryListViewModel categoryListViewModel = ViewModelProviders.of(getActivity()).get(CategoryListViewModel.class);
+        categoryListViewModel.getCategory().observe(this, new Observer<Category>() {
+            @Override
+            public void onChanged(@Nullable Category category) {
+                mCategoryList.add(category);
+                mSpinnerAdapter.add(category.getCategoryTitle());
+            }
+        });
+        categoryListViewModel.updateData();
+
+        mSpinnerAdapter.add("Choose Category");
+        for (int i = 0; i < mCategoryList.size(); i++){
+            mSpinnerAdapter.add(mCategoryList.get(i).getCategoryTitle());
+        }
 
         mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-*/
         mCategorySpinner.setAdapter(mSpinnerAdapter);
         mCategorySpinner.setPrompt("Catergory");
         mCategorySpinner.setSelection(0);
@@ -175,8 +203,7 @@ public class AddItemFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
             if (position != 0){
-                   // mItem.setCategoryId(id);
-                Log.v(AddItemFragment.class.getName(), "Category id = " + id);
+                mCategorySelectedItemId = findCategoryId(parent.getItemAtPosition(position).toString());
                 }
             }
             @Override
@@ -190,6 +217,16 @@ public class AddItemFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO save item
+               Item item = new Item.ItemBuilder().setItemTitle(mItemTitle.getText().toString())
+                       .setItemDescription(mItemDescription.getText().toString())
+                       .setStartPrice(Float.parseFloat(mStartPrice.getText().toString()))
+                       .setBuyNowPrice(Float.parseFloat(mBuyNowPrice.getText().toString()))
+                       .setCategoryId(mCategorySelectedItemId)
+                       .setStartDate(mStartDate.getTime().getTime())
+                       .setEndDate(mEndDate.getTime().getTime())
+                       .setPhotoUrls(mItemSelectedImagesList)
+                       .build();
+                firebaseHelper.setItemToDatabase(item);
             }
         });
     }
@@ -221,15 +258,10 @@ public class AddItemFragment extends Fragment {
 
 
     public void choosePhotoFromGallary() {
-        /*Intent galleryIntent = new Intent(Intent.ACTION_PICK,//EXTRA_ALLOW_MULTIPLE,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        startActivityForResult(galleryIntent, REQUEST_IMAGE_GALLERY);*/
 
         MultiSelectImageFragment multiSelectImageFragment = new MultiSelectImageFragment();
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        //fragmentTransaction.add(R.id.fragment_container, multiSelectImageFragment, "MultiSelectFragment");
         fragmentTransaction.replace(R.id.fragment_container, multiSelectImageFragment);
         fragmentTransaction.addToBackStack("ADDITEM");
         fragmentTransaction.commit();
@@ -273,8 +305,32 @@ public class AddItemFragment extends Fragment {
         }
     }
 
+    public String findCategoryId(String title){
+        Log.v("LLLL", "title = "+ title);
+        String id = "";
+        for (Category category : mCategoryList) {
+            if (category.getCategoryTitle().equals(title)) {
+                id =  category.getCategoryId();
+            }
+        }
+        return id;
+    }
 
-    /*
+/*
+    public String saveImage(Context context, Bitmap pBitmap, String imageName){
+        FileOutputStream foStream;
+        try {
+            foStream = context.openFileOutput(imageName, Context.MODE_PRIVATE);
+            pBitmap.compress(Bitmap.CompressFormat.PNG, 100, foStream);
+            foStream.close();
+        } catch (Exception e) {
+            Log.d("saveImage", "Exception 2, Something went wrong!");
+            e.printStackTrace();
+        }
+    }*/
+
+
+   /*
     public String saveImage(Bitmap myBitmap){
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
@@ -312,14 +368,14 @@ public class AddItemFragment extends Fragment {
 
 
     private void openDatePicker() {
-        new DatePickerDialog(getActivity(), mOnDateSetListener, mSelectedDate.get(Calendar.YEAR),
-                mSelectedDate.get(Calendar.MONTH),
-                mSelectedDate.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(getActivity(), mOnDateSetListener, mStartDate.get(Calendar.YEAR),
+                mStartDate.get(Calendar.MONTH),
+                mStartDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private void openTimePicker() {
-        new TimePickerDialog(getActivity(), mOnTimeSetListener, mSelectedDate.get(Calendar.HOUR_OF_DAY),
-                mSelectedDate.get(Calendar.MINUTE), true).show();
+        new TimePickerDialog(getActivity(), mOnTimeSetListener, mStartDate.get(Calendar.HOUR_OF_DAY),
+                mStartDate.get(Calendar.MINUTE), true).show();
     }
 
     DatePickerDialog.OnDateSetListener mOnDateSetListener = new DatePickerDialog.OnDateSetListener() {
@@ -327,9 +383,10 @@ public class AddItemFragment extends Fragment {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear,
                               int dayOfMonth) {
-            mSelectedDate.set(Calendar.YEAR, year);
-            mSelectedDate.set(Calendar.MONTH, monthOfYear);
-            mSelectedDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            mStartDate.set(Calendar.YEAR, year);
+            mStartDate.set(Calendar.MONTH, monthOfYear);
+            mStartDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            openTimePicker();
             //mDateTextView.setText();
         }
     };
@@ -338,11 +395,53 @@ public class AddItemFragment extends Fragment {
     TimePickerDialog.OnTimeSetListener mOnTimeSetListener = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            mSelectedDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
-            mSelectedDate.set(Calendar.MINUTE, minute);
+            mStartDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            mStartDate.set(Calendar.MINUTE, minute);
 
-            //updateDateLabel();
+            updateDateLabel();
         }
     };
 
+    private void updateDateLabel() {
+        mDateTextView.setText(DateUtil.formatDateToLongStyle(mStartDate.getTime()));
+    }
+
+    private void openDatePickerEnd() {
+        new DatePickerDialog(getActivity(), mOnDateEndSetListener, mStartDate.get(Calendar.YEAR),
+                mEndDate.get(Calendar.MONTH),
+                mEndDate.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void openTimePickerEnd() {
+        new TimePickerDialog(getActivity(), mOnTimeEndSetListener, mStartDate.get(Calendar.HOUR_OF_DAY),
+                mEndDate.get(Calendar.MINUTE), true).show();
+    }
+
+    DatePickerDialog.OnDateSetListener mOnDateEndSetListener = new DatePickerDialog.OnDateSetListener() {
+
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear,
+                              int dayOfMonth) {
+            mEndDate.set(Calendar.YEAR, year);
+            mEndDate.set(Calendar.MONTH, monthOfYear);
+            mEndDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            openTimePickerEnd();
+            //mDateTextView.setText();
+        }
+    };
+
+
+    TimePickerDialog.OnTimeSetListener mOnTimeEndSetListener = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            mEndDate.set(Calendar.HOUR_OF_DAY, hourOfDay);
+            mEndDate.set(Calendar.MINUTE, minute);
+
+            updateDateEndLabel();
+        }
+    };
+
+    private void updateDateEndLabel() {
+        mEndDateTextView.setText(DateUtil.formatDateToLongStyle(mEndDate.getTime()));
+    }
 }
