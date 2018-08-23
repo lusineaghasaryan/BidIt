@@ -39,12 +39,14 @@ import android.widget.TimePicker;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.AddItemPhotosRVAdapter;
+import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.util.DateUtil;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
+import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -111,7 +113,7 @@ public class AddItemFragment extends Fragment {
     }
 
     public void init(View view){
-        final FirebaseHelper firebaseHelper = new FirebaseHelper(getActivity());
+        final FirebaseHelper firebaseHelper = new FirebaseHelper();
 
         mAddPhotoBtn = view.findViewById(R.id.btn_fragment_add_item_add_photo);
         mDateTextView = view.findViewById(R.id.text_view_fragment_add_item_start_date);
@@ -154,7 +156,6 @@ public class AddItemFragment extends Fragment {
                 openDatePicker();
             }
         });
-
         mEndDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -163,12 +164,24 @@ public class AddItemFragment extends Fragment {
         });
 
 
+        //     GET SPECIFIC LIST
+        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(getActivity()).get(ItemsSpecificListVViewModel.class);
+        itemsSpecificListVViewModel.getItem().observe(this, new Observer<Item>() {
+            @Override
+            public void onChanged(@Nullable Item pItem) {
+                //TODO get one item & use it
+            }
+        });
+        itemsSpecificListVViewModel.updateData("userId", "NpYDWad2fDTrAah41O6JC2rgsMs1");
 
+
+
+        //   GET ALL ITEMS LIST
         ItemsListViewModel itemsListViewModel = ViewModelProviders.of(getActivity()).get(ItemsListViewModel.class);
         itemsListViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
-                Log.v(TAG, "Adddddd = " + pItem.getItemTitle());
+                
             }
         });
         itemsListViewModel.updateData();
@@ -224,6 +237,8 @@ public class AddItemFragment extends Fragment {
                        .setCategoryId(mCategorySelectedItemId)
                        .setStartDate(mStartDate.getTime().getTime())
                        .setEndDate(mEndDate.getTime().getTime())
+                       //todo test
+                       .setUserId(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid())
                        .setPhotoUrls(mItemSelectedImagesList)
                        .build();
                 firebaseHelper.setItemToDatabase(item);

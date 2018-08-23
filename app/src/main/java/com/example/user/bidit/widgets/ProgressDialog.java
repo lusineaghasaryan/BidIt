@@ -14,7 +14,7 @@ public class ProgressDialog {
     public ProgressDialog(Context pContext) {
         View view = LayoutInflater.from(pContext).inflate(R.layout.progress_layout, null);
         mAlertDialog =
-                new AlertDialog.Builder(pContext)
+                new AlertDialog.Builder(pContext/*, R.style.ProgressDialog*/)
                         .setView(view)
                         .create();
     }

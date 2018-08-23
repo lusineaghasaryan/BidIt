@@ -7,8 +7,7 @@ import android.arch.lifecycle.ViewModel;
 import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Item;
 
-public class ItemsListViewModel extends ViewModel {
-
+public class ItemsSpecificListVViewModel extends ViewModel {
     private final MutableLiveData<Item> mItem =
             new MutableLiveData<>();
 
@@ -20,9 +19,8 @@ public class ItemsListViewModel extends ViewModel {
         mItem.setValue(pItem);
     }
 
-
-    public void updateData() {
-        FirebaseHelper.getItemsListFromDatabase(new FirebaseHelper.Callback<Item>() {
+    public void updateData(String pType, String pTypeValue){
+        FirebaseHelper.getItemsSpecificList(pType, pTypeValue, new FirebaseHelper.Callback<Item>() {
             @Override
             public void callback(boolean pIsSuccess, Item pValue) {
                 if (pIsSuccess) {
