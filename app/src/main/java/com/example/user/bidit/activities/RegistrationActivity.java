@@ -1,11 +1,16 @@
 package com.example.user.bidit.activities;
 
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.ekalips.fancybuttonproj.FancyButton;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.User;
@@ -25,14 +30,18 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
+        Window w = getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
-        mBtnAccept.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        mBtnAccept.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick (View v){
                 createAccount();
             }
-        });
-    }
+            });
+        }
+
     private void getTextFromFilledField() {
         mName = mEditTextName.getText().toString();
         mSurname = mEditTextSurname.getText().toString();
@@ -79,11 +88,11 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
         if (!ValidateForm.isValidEmailAddress(mEmail)) {
-            UserMessages.showSnackBarShort(mParentLayout,getString(R.string.invalid_email_message));
+            UserMessages.showSnackBarShort(mParentLayout, getString(R.string.invalid_email_message));
             return;
         }
         if (!ValidateForm.isPasswordsCoincide(mPassword, mPasswordRetry)) {
-            UserMessages.showSnackBarShort(mParentLayout,getString(R.string.wrong_passwords_message));
+            UserMessages.showSnackBarShort(mParentLayout, getString(R.string.wrong_passwords_message));
             return;
         }
         initUser();

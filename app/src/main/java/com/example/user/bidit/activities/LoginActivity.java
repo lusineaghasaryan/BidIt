@@ -1,16 +1,16 @@
 package com.example.user.bidit.activities;
 
 import android.content.Intent;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.LinearLayout;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
-import com.example.user.bidit.fragments.LoginFragment;
 import com.example.user.bidit.models.User;
 import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
@@ -19,12 +19,14 @@ import com.example.user.bidit.widgets.ProgressDialog;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText mEditTextEmail, mEditTextPassword;
     private ProgressDialog mProgressDialog;
-    private ConstraintLayout mParentLayout;
+    private LinearLayout mParentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Window w = getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
     }
 
@@ -35,7 +37,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mProgressDialog = new ProgressDialog(this);
         findViewById(R.id.btn_log_in_login_activity).setOnClickListener(this);
         findViewById(R.id.btn_registration_login_activity).setOnClickListener(this);
-        findViewById(R.id.btn_facebook_login_activity).setOnClickListener(this);
+//        findViewById(R.id.btn_facebook_login_activity).setOnClickListener(this);
     }
 
     private void signIn() {
@@ -73,10 +75,10 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
                 break;
             }
-            case R.id.btn_facebook_login_activity: {
-                startActivity(new Intent(this, Main2Activity.class));
-                break;
-            }
+//            case R.id.btn_facebook_login_activity: {
+//                startActivity(new Intent(this, Main2Activity.class));
+//                break;
+//            }
         }
     }
 }

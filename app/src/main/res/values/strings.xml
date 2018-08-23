@@ -42,7 +42,7 @@
     <string name="hint_name">name</string>
     <string name="hint_surname">surname</string>
     <string name="hint_phone">phone</string>
-    <string name="hint_passport_seria">passport seria</string>
+    <string name="hint_passport_series">passport seria</string>
     <string name="wrong_passwords_message">Passwords are different</string>
     <string name="empty_fields_message">Empty Fields</string>
     <string name="invalid_email_message">Invalid Email</string>

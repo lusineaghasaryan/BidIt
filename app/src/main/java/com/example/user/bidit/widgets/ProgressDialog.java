@@ -1,6 +1,7 @@
 package com.example.user.bidit.widgets;
 
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ public class ProgressDialog {
                 new AlertDialog.Builder(pContext)
                         .setView(view)
                         .create();
+        mAlertDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
     }
 
     public void show() {

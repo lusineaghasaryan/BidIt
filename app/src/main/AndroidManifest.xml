@@ -34,7 +34,7 @@
         <activity
             android:name=".activities.ShowItemActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
-        <activity android:name=".activities.HomeActivity"></activity>
+        <activity android:name=".activities.HomeActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -58,7 +58,8 @@
         </activity>
         <activity android:name=".activities.Main2Activity" />
         <activity android:name=".activities.LoginActivity" />
-        <activity android:name=".activities.RegistrationActivity"></activity>
+        <activity android:name=".activities.RegistrationActivity" />
+        <activity android:name=".activities.MyAccountActivity"></activity>
     </application>
 
 </manifest>

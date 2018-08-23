@@ -167,7 +167,7 @@
                 android:id="@+id/list_view_show_item_activity_messages"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="@dimen/padding_normal" />
+                android:padding="@dimen/padding_small" />
 
         </android.support.v4.widget.NestedScrollView>
 

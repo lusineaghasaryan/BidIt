@@ -2,7 +2,7 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#834a89</color>
 
     <color name="fragment_background">#FFFFFF</color>
 
@@ -12,7 +12,10 @@
     <color name="status_point_active">#42c12e</color>
 
     <color name="background">#313335</color>
+    <color name="transparent">#00000000</color>
 
     <color name="bid_message_color">#000000</color>
+    <color name="color_text_login_light_grey">#bfbfbf</color>
+    <color name="color_hint_login_dark_grey">#616161</color>
 
 </resources>
