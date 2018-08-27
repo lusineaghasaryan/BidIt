@@ -13,7 +13,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -72,32 +71,39 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_item_my_account:
+            case R.id.nav_item_my_account:{
                 startActivity(new Intent(MainActivity.this, MyAccountActivity.class));
                 break;
-            case R.id.nav_item_balance:
-                break;
-            case R.id.nav_item_history:
-                break;
-            case R.id.nav_item_favorite:
-
-                break;
-            case R.id.nav_item_my_items:
-                startActivity(new Intent(MainActivity.this, MyItemsActivity.class));
-                break;
-            case R.id.nav_item_log_out:
-                FireBaseAuthenticationManager.getInstance().signOut();
-                break;
-            case R.id.nav_item_log_in:
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                break;
-            case R.id.nav_item_help:
-                Intent intent = new Intent(MainActivity.this, ShowItemActivity.class);
+            }
+            case R.id.nav_item_balance:{
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                 startActivity(intent);
                 break;
-            case R.id.nav_item_about_us:
+            }
+            case R.id.nav_item_history: {
+                break;
+            }
+            case R.id.nav_item_favorite: {
+                break;
+            }
+            case R.id.nav_item_my_items:{
+                startActivity(new Intent(MainActivity.this, MyItemsActivity.class));
+                break;
+            }
+            case R.id.nav_item_log_out:{
+                FireBaseAuthenticationManager.getInstance().signOut();
+                break;
+            }
+            case R.id.nav_item_log_in:{
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                break;
+            }
+            case R.id.nav_item_help:{
+            }
+            case R.id.nav_item_about_us:{
 //                replaceFragment(new AddItemFragment());
                 break;
+            }
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;

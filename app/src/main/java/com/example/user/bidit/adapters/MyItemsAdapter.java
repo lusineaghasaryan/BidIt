@@ -49,7 +49,6 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
         holder.getDuration().setText(mDateFormat.format(currentItem.getEndDate()));
         holder.getFollowersCount().setText(String.valueOf(currentItem.getFollowersCount()));
         holder.getStartPrice().setText(String.valueOf(currentItem.getStartPrice()));
-
     }
 
     @Override

@@ -48,10 +48,14 @@
     <string name="invalid_email_message">Invalid Email</string>
     <string name="nav_login">Log In</string>
     <string name="registration_complated_message">Completed</string>
-    <string name="wrong_email_or_password_meesage">Wrong Email or Password</string>
-
+    <string name="wrong_email_or_password_message">Wrong Email or Password</string>
 
     <string name="temp_string">temptemp</string>
     <string name="text_complete">Complete</string>
+
+    <string name="txt_auction_start_date">Start in</string>
+    <string name="txt_auction_duration">Duration</string>
+    <string name="txt_auction_start_price">Start price</string>
+    <string name="txt_auction_current_price">current price</string>
 
 </resources>

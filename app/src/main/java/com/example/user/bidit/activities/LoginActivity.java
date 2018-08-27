@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onResponse(boolean pSuccess, User user) {
                         if (user == null) {
-                            UserMessages.showToastShort(LoginActivity.this, getString(R.string.wrong_email_or_password_meesage));
+                            UserMessages.showToastShort(LoginActivity.this, getString(R.string.wrong_email_or_password_message));
                         } else {
                             finish();
                         }
