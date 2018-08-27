@@ -114,13 +114,10 @@ public class FirebaseHelper {
                     Item item = single.getValue(Item.class);
                     pCallback.callback(true, item);
                     Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
-
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {
-
             }
         });
     }

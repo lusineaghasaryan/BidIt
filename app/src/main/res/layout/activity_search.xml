@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.user.bidit.activities.SearchActivity">
+
+    <com.wanderingcan.persistentsearch.PersistentSearchView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/search_bar"
+        app:navSrc="@drawable/ic_stars_black_24dp"
+        app:endSrc="@drawable/ic_person_outline_black_24dp"
+        app:hint="Enter some text to search"
+        app:hintAlwaysActive="true"
+        app:showMenu="true"/>
+
+</android.support.constraint.ConstraintLayout>

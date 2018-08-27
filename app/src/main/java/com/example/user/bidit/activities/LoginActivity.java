@@ -1,11 +1,13 @@
 package com.example.user.bidit.activities;
 
 import android.content.Intent;
-import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
@@ -17,12 +19,14 @@ import com.example.user.bidit.widgets.ProgressDialog;
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private EditText mEditTextEmail, mEditTextPassword;
     private ProgressDialog mProgressDialog;
-    private ConstraintLayout mParentLayout;
+    private LinearLayout mParentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        Window w = getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
     }
 

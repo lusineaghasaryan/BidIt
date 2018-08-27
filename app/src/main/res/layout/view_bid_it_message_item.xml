@@ -8,7 +8,7 @@
         android:id="@+id/txt_bid_it_message"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
+        android:layout_margin="@dimen/margin_small"
         android:text="@string/temp_string"
         android:textColor="@color/bid_message_color"
         android:textSize="@dimen/text_size_normal" />

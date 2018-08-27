@@ -27,8 +27,8 @@ public class FireBaseAuthenticationManager {
         return fireBaseAuthenticationManagerInstance;
     }
 
-    public void signIn(String email, String password, final LoginListener loginListener) {
-        mAuth.signInWithEmailAndPassword(email, password)
+    public void signIn(String pEmail, String pPassword, final LoginListener pLoginListener) {
+        mAuth.signInWithEmailAndPassword(pEmail, pPassword)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -38,36 +38,36 @@ public class FireBaseAuthenticationManager {
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     Log.d("MYTAG", "onDataChange: signIn" + mAuth.getCurrentUser().getUid());
                                     mCurrentUser = User.fromDataSnapshot(dataSnapshot, mAuth.getCurrentUser().getUid());
-                                    loginListener.onResponse(true, mCurrentUser);
+                                    pLoginListener.onResponse(true, mCurrentUser);
                                 }
 
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
-                                    loginListener.onResponse(false, null);
+                                    pLoginListener.onResponse(false, null);
                                 }
                             });
                         } else {
-                            loginListener.onResponse(false, null);
+                            pLoginListener.onResponse(false, null);
                         }
                     }
                 });
     }
 
-    public void createAccount(final User user, String password) {
-        mAuth.createUserWithEmailAndPassword(user.getEmail(), password)
+    public void createAccount(final User pUser, String pPassword) {
+        mAuth.createUserWithEmailAndPassword(pUser.getEmail(), pPassword)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            updateUserInServer(user);
+                            updateUserInServer(pUser);
                         }
                     }
                 });
     }
 
-    public void updateUserInServer(final User user) {
+    public void updateUserInServer(final User pUser) {
         String currentAuthUserID = mAuth.getCurrentUser().getUid();
-        FirebaseHelper.mUsersRef.child(currentAuthUserID).setValue(user);
+        FirebaseHelper.mUsersRef.child(currentAuthUserID).setValue(pUser);
     }
 
     public void signOut() {
@@ -87,12 +87,12 @@ public class FireBaseAuthenticationManager {
     public void initCurrentUser() {
         FirebaseHelper.mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot pDataSnapshot) {
                 Log.d("MYTAG", "onDataChange: initCurrentUser");
-                mCurrentUser = User.fromDataSnapshot(dataSnapshot, mAuth.getCurrentUser().getUid());
+                mCurrentUser = User.fromDataSnapshot(pDataSnapshot, mAuth.getCurrentUser().getUid());
             }
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(DatabaseError pDatabaseError) {
             }
         });
     }
@@ -100,5 +100,4 @@ public class FireBaseAuthenticationManager {
     public interface LoginListener {
         void onResponse(boolean pSuccess, User pUser);
     }
-
 }
