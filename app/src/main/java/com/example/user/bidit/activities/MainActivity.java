@@ -1,19 +1,33 @@
 package com.example.user.bidit.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
+import com.example.user.bidit.fragments.AddItemFragment;
+import com.example.user.bidit.models.Item;
+import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -29,6 +43,7 @@ public class MainActivity extends AppCompatActivity
         init();
         setNavigationDrawer();
         initListeners();
+
     }
 
     @Override
@@ -68,6 +83,7 @@ public class MainActivity extends AppCompatActivity
 
                 break;
             case R.id.nav_item_my_items:
+                startActivity(new Intent(MainActivity.this, MyItemsActivity.class));
                 break;
             case R.id.nav_item_log_out:
                 FireBaseAuthenticationManager.getInstance().signOut();
@@ -80,6 +96,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_item_about_us:
+//                replaceFragment(new AddItemFragment());
                 break;
         }
         mDrawer.closeDrawer(GravityCompat.START);

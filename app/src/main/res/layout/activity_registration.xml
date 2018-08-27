@@ -1,119 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
-
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background">
+    android:background="@drawable/register">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <LinearLayout
         android:id="@+id/reg_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="10dp"
+        android:padding="@dimen/padding_normal"
         tools:context="com.example.user.bidit.fragments.RegistrationFragment">
 
         <android.support.design.widget.TextInputLayout
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_margin="@dimen/margin_normal"
+            android:textColorHint="@color/color_hint_login_dark_grey">
 
             <EditText
                 android:id="@+id/edit_text_email_registration_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="@dimen/margin_normal"
+                android:background="@null"
                 android:hint="@string/hint_email"
-                android:inputType="textEmailAddress" />
+                android:inputType="textEmailAddress"
+                android:textColor="@color/color_text_login_light_grey"
+                android:textSize="@dimen/text_size_normal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true">
+            android:layout_margin="@dimen/margin_normal"
+            android:textColorHint="@color/color_hint_login_dark_grey">
 
             <EditText
                 android:id="@+id/edit_text_password_registration_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
+                android:background="@null"
                 android:hint="@string/hint_password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textColor="@color/color_text_login_light_grey"
+                android:textSize="@dimen/text_size_normal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true">
+            android:layout_margin="@dimen/margin_normal"
+            android:textColorHint="@color/color_hint_login_dark_grey">
 
             <EditText
                 android:id="@+id/edit_text_password_retry_registration_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
+                android:background="@null"
                 android:hint="@string/hint_password"
-                android:inputType="textPassword" />
+                android:inputType="textPassword"
+                android:textColor="@color/color_text_login_light_grey"
+                android:textSize="@dimen/text_size_normal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:textColorHint="@color/color_hint_login_dark_grey">
 
             <EditText
                 android:id="@+id/edit_text_name_registration_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
+                android:background="@null"
                 android:hint="@string/hint_name"
-                android:inputType="text" />
+                android:inputType="text"
+                android:textColor="@color/color_text_login_light_grey"
+                android:textSize="@dimen/text_size_normal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:textColorHint="@color/color_hint_login_dark_grey">
 
             <EditText
                 android:id="@+id/edit_text_surname_registration_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
+                android:background="@null"
                 android:hint="@string/hint_surname"
-                android:inputType="text" />
+                android:inputType="text"
+                android:textColor="@color/color_text_login_light_grey"
+                android:textSize="@dimen/text_size_normal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:textColorHint="@color/color_hint_login_dark_grey">
 
             <EditText
                 android:id="@+id/edit_text_phone_registration_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
+                android:background="@null"
                 android:hint="@string/hint_phone"
-                android:inputType="phone" />
+                android:inputType="phone"
+                android:textColor="@color/color_text_login_light_grey"
+                android:textSize="@dimen/text_size_normal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:textColorHint="@color/color_hint_login_dark_grey">
 
             <EditText
                 android:id="@+id/edit_text_passport_registration_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_normal"
-                android:hint="@string/hint_passport_series" />
+                android:background="@null"
+                android:hint="@string/hint_passport_series"
+                android:textColor="@color/color_text_login_light_grey"
+                android:textSize="@dimen/text_size_normal" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
         <Button
+            android:layout_marginStart="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginTop="@dimen/padding_extra_large"
             android:id="@+id/btn_create_account_registration_activity"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="create_account" />
+            android:background="@drawable/login_button"
+            android:text="@string/text_complete"
+            android:textAllCaps="false"
+            android:textColor="@color/color_text_login_light_grey"
+            android:textSize="@dimen/text_size_normal" />
     </LinearLayout>
 
 </ScrollView>

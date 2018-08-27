@@ -51,13 +51,13 @@ public class BidItItemsRVAdapter extends RecyclerView.Adapter<BidItItemsRVViewHo
 
 //      set item fields into holder
         holder.getTxtAuctionTitle().setText(item.getItemTitle());
-        holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm:ss")
-                .format(item.getStartTime()));
+        /*holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm:ss")
+                .format(item.getStartTime()));*/
         holder.getTxtAuctionCurrentPrice().setText(String.valueOf(item.getCurrentPrice()) + " AMD");
         holder.getImgAuctionImage().setImageResource(R.drawable.favorite_star_24dp);
-        if (isAuctionStarted(item)){
+        //if (isAuctionStarted(item)){
             holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_active_12dp);
-        }
+        //}
 
         holder.setOnItemCLickListener(mOnItemCLickListener);
     }
@@ -70,11 +70,11 @@ public class BidItItemsRVAdapter extends RecyclerView.Adapter<BidItItemsRVViewHo
     public void setDataToAdapter(List<Item> data){
         mData = data;
     }
-
+/*
     private boolean isAuctionStarted(Item item){
         return item.getStartTime() <= Calendar.getInstance().getTimeInMillis();
     }
-
+*/
 
     public interface OnItemSelectedListener{
         void onItemSelected(Item item);

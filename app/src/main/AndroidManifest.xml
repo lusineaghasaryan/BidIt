@@ -59,7 +59,10 @@
         <activity android:name=".activities.Main2Activity" />
         <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.RegistrationActivity" />
-        <activity android:name=".activities.MyAccountActivity"></activity>
+        <activity android:name=".activities.MyAccountActivity" />
+        <activity android:name=".activities.MyItemsActivity" />
+        <activity android:name=".activities.FavoriteActivity" />
+        <activity android:name=".activities.SearchActivity"></activity>
     </application>
 
 </manifest>

@@ -35,11 +35,11 @@
     <string name="facebook_title_text">Title</string>
     <string name="nav_about_us">About Us</string>
     <string name="hint_email">Email</string>
-    <string name="hint_password">Password</string>
-    <string name="text_login">Log in</string>
-    <string name="text_registration">Registration</string>
+    <string name="text_sign_in">Sign in</string>
+    <string name="text_sign_up">Sign up</string>
     <string name="text_show">show</string>
     <string name="hint_name">name</string>
+    <string name="hint_password">Password</string>
     <string name="hint_surname">surname</string>
     <string name="hint_phone">phone</string>
     <string name="hint_passport_series">passport seria</string>
@@ -52,5 +52,6 @@
 
 
     <string name="temp_string">temptemp</string>
+    <string name="text_complete">Complete</string>
 
 </resources>

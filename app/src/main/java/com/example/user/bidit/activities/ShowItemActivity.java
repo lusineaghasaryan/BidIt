@@ -79,7 +79,7 @@ public class ShowItemActivity extends AppCompatActivity {
         mItem.setItemDescription("Description\nDescription");
         mItem.setCurrentPrice(500);
         mItem.setStartDate(Calendar.getInstance().getTimeInMillis());
-        mItem.setDuration(600000);
+        //mItem.setDuration(600000);
         mItem.setStartPrice(500f);
         mItem.setPhotoUrls(mImages);
     }
@@ -116,10 +116,10 @@ public class ShowItemActivity extends AppCompatActivity {
     private void setFields() {
         mTxtAuctionTitle.setText(mItem.getItemTitle());
         mTxtAuctionDescription.setText(mItem.getItemDescription());
-        mTxtAuctionStartDate.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
+        /*mTxtAuctionStartDate.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
                 .format(mItem.getStartTime()));
         mTxtAuctionDuration.setText(new SimpleDateFormat("dd 'day' HH:mm")
-                .format(mItem.getStartTime()));
+                .format(mItem.getStartTime()));*/
         mTxtAuctionStartPrice.setText(String.valueOf(mItem.getStartPrice()));
         mTxtAuctionCurrentPrice.setText(String.valueOf(mItem.getCurrentPrice()));
 

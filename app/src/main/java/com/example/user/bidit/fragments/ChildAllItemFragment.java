@@ -26,7 +26,7 @@ public class ChildAllItemFragment extends BaseListItemFragment {
         for (int i = 0; i < 10; i++) {
             Item item = new Item();
             item.setItemTitle("title" + i);
-            item.setStartTime(Calendar.getInstance().getTimeInMillis() + (i * 10000));
+//            item.setStartTime(Calendar.getInstance().getTimeInMillis() + (i * 10000));
             item.setCurrentPrice(i * 1000f);
             item.setPhotoUrls(list);
 

@@ -6,18 +6,18 @@ import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 
 public class User {
-    private String name, surname, phoneNumber, id, email, passportSeria;
+    private String name, surname, phoneNumber, id, email, passportSeries;
 
     public User() {
     }
 
-    public User(String name, String surname, String phoneNumber, String id, String email, String passportSeria) {
-        this.name = name;
-        this.surname = surname;
-        this.phoneNumber = phoneNumber;
-        this.id = id;
-        this.email = email;
-        this.passportSeria = passportSeria;
+    public User(String pName, String pSurname, String pPhoneNumber, String pId, String pEmail, String pPassportSeries) {
+        this.name = pName;
+        this.surname = pSurname;
+        this.phoneNumber = pPhoneNumber;
+        this.id = pId;
+        this.email = pEmail;
+        this.passportSeries = pPassportSeries;
     }
 
     public String getName() {
@@ -60,12 +60,12 @@ public class User {
         this.email = email;
     }
 
-    public String getPassportSeria() {
-        return passportSeria;
+    public String getPassportSeries() {
+        return passportSeries;
     }
 
-    public void setPassportSeria(String passportSeria) {
-        this.passportSeria = passportSeria;
+    public void setPassportSeries(String passportSeries) {
+        this.passportSeries = passportSeries;
     }
 
         private User(final Builder builder) {
@@ -74,7 +74,7 @@ public class User {
         phoneNumber = builder.phoneNumber;
         id = builder.id;
         email = builder.email;
-        passportSeria = builder.passportSeria;
+        passportSeries = builder.passportSeria;
     }
 
     public static class Builder {
@@ -105,8 +105,8 @@ public class User {
             return this;
         }
 
-        public Builder setPassportSeries(String passportSeria) {
-            this.passportSeria = passportSeria;
+        public Builder setPassportSeries(String pPassportSeria) {
+            this.passportSeria = pPassportSeria;
             return this;
         }
 
@@ -115,16 +115,16 @@ public class User {
         }
     }
 
-    public static User fromDataSnapshot(DataSnapshot dataSnapshot, String currentUId) {
+    public static User fromDataSnapshot(DataSnapshot pDataSnapshot, String pCurrentUId) {
         Log.d("MYTAG", "fromDataSnapshot: ");
         //TODO use builder
         User user = new User();
-//        user = dataSnapshot.getValue(User.class);
-        user.setName((String) dataSnapshot.child(currentUId).child("name").getValue());
-        user.setSurname((String) dataSnapshot.child(currentUId).child("surname").getValue());
-        user.setEmail((String) dataSnapshot.child(currentUId).child("email").getValue());
-        user.setPassportSeria((String) dataSnapshot.child(currentUId).child("passportSeria").getValue());
-        user.setPhoneNumber((String) dataSnapshot.child(currentUId).child("phoneNumber").getValue());
+//        user = pDataSnapshot.getValue(User.class);
+        user.setName((String) pDataSnapshot.child(pCurrentUId).child("name").getValue());
+        user.setSurname((String) pDataSnapshot.child(pCurrentUId).child("surname").getValue());
+        user.setEmail((String) pDataSnapshot.child(pCurrentUId).child("email").getValue());
+        user.setPassportSeries((String) pDataSnapshot.child(pCurrentUId).child("passportSeries").getValue());
+        user.setPhoneNumber((String) pDataSnapshot.child(pCurrentUId).child("phoneNumber").getValue());
         return user;
     }
 }
