@@ -6,11 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
-import com.example.user.bidit.fragments.LoginFragment;
 import com.example.user.bidit.models.User;
 import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
@@ -53,7 +51,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onResponse(boolean pSuccess, User user) {
                         if (user == null) {
-                            UserMessages.showToastShort(LoginActivity.this, getString(R.string.wrong_email_or_password_meesage));
+                            UserMessages.showToastShort(LoginActivity.this, getString(R.string.wrong_email_or_password_message));
                         } else {
                             finish();
                         }

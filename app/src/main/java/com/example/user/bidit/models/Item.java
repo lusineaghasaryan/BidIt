@@ -20,7 +20,7 @@ public class Item implements Serializable{
     private long startDate;
     private long endDate;
     private float currentPrice;
-    private boolean isAproved;
+    private boolean isApproved;
     private int followersCount;
     private ArrayList<String> followersIds;
     private String buyerId;
@@ -43,7 +43,7 @@ public class Item implements Serializable{
         startDate = pStartDate;
         endDate = pEndDate;
         currentPrice = pCurrentPrice;
-        isAproved = pIsAproved;
+        isApproved = pIsAproved;
         followersCount = pFollowersCount;
         followersIds = pFollowersIds;
         buyerId = pBuyerId;
@@ -61,7 +61,7 @@ public class Item implements Serializable{
         startDate = builder.startDate;
         endDate = builder.endDate;
         currentPrice = builder.currentPrice;
-        isAproved = builder.isAproved;
+        isApproved = builder.isApproved;
         followersCount = builder.followersCount;
         followersIds = builder.followersIds;
         buyerId = builder.buyerId;
@@ -155,12 +155,12 @@ public class Item implements Serializable{
         currentPrice = pCurrentPrice;
     }
 
-    public boolean isAproved() {
-        return isAproved;
+    public boolean isApproved() {
+        return isApproved;
     }
 
-    public void setAproved(boolean pAproved) {
-        isAproved = pAproved;
+    public void setApproved(boolean pApproved) {
+        isApproved = pApproved;
     }
 
     public int getFollowersCount() {
@@ -199,7 +199,7 @@ public class Item implements Serializable{
         private long startDate;
         private long endDate;
         private float currentPrice;
-        private boolean isAproved;
+        private boolean isApproved;
         private int followersCount;
         private ArrayList<String> followersIds;
         private String buyerId;
@@ -260,8 +260,8 @@ public class Item implements Serializable{
             return this;
         }
 
-        public ItemBuilder setAproved(boolean pAproved) {
-            isAproved = pAproved;
+        public ItemBuilder setApproved(boolean pApproved) {
+            isApproved = pApproved;
             return this;
         }
 

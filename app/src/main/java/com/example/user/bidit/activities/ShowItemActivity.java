@@ -4,14 +4,18 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,8 +34,6 @@ import java.util.List;
 
 public class ShowItemActivity extends AppCompatActivity {
 
-
-
     //    show auction images, fields
     private ViewPager mViewPager;
     private ImageVPAdapter mImageVPAdapter;
@@ -44,47 +46,28 @@ public class ShowItemActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerViewMessageAdapter mMessageAdapter;
     private ArrayList<String> mMessages;
-    private EditText mInputMessage;
+    private TextInputEditText mInputMessage;
     private Button mBtnEnterMessage;
 
     //    data (temp)
-    private Item mItem = new Item();
+    private Item mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_item);
 
-        tempMethod();
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+
         init();
         setFields();
         setListeners();
     }
 
-    //    temp
-    private void tempMethod() {
-        ArrayList<String> mImages = new ArrayList<>();
-        mImages.add("https://images.duckduckgo.com/iu/?u=http%3A%2F%2Fwww.noao.edu%2Fimage_gallery%2Fim" +
-                "ages%2Fd4%2FJ1337-29_crop1-1000.jpg&f=1");
-        mImages.add("https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fi2.wp.com%2Fbeebom.com%2Fwp-cont" +
-                "ent%2Fuploads%2F2016%2F01%2FReverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg%3Fr" +
-                "esize%3D640%252C426&f=1");
-        mImages.add("https://images.duckduckgo.com/iu/?u=https%3A%2F%2Fcdn.pixabay.com%2Fphoto%2F2016%2" +
-                "F06%2F18%2F17%2F42%2Fimage-1465348_960_720.jpg&f=1");
-        mImages.add("https://images.duckduckgo.com/iu/?u=http%3A%2F%2Fmedia.springernature.com%2Ffull%2F" +
-                "springer-static%2Fimage%2Fart%253A10.1186%252Fs12898-017-0138-8%2FMediaObjects%2F12898_2" +
-                "017_138_Fig1_HTML.jpg&f=1");
-
-        mItem.setItemTitle("Title");
-        mItem.setItemDescription("Description\nDescription");
-        mItem.setCurrentPrice(500);
-        mItem.setStartDate(Calendar.getInstance().getTimeInMillis());
-        //mItem.setDuration(600000);
-        mItem.setStartPrice(500f);
-        mItem.setPhotoUrls(mImages);
-    }
-
     private void init() {
+//        load item from intent
+        loadExtra();
 
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
@@ -92,7 +75,7 @@ public class ShowItemActivity extends AppCompatActivity {
         mViewPager.setAdapter(mImageVPAdapter);
 
 //        find and set recyclerView and components
-        mRecyclerView = findViewById(R.id.list_view_show_item_activity_messages);
+        mRecyclerView = findViewById(R.id.recycler_view_show_item_activity_messages);
         mMessages = new ArrayList<>();
         mMessages.add(String.valueOf(mItem.getCurrentPrice()));
         mMessageAdapter = new RecyclerViewMessageAdapter(mMessages);
@@ -113,13 +96,20 @@ public class ShowItemActivity extends AppCompatActivity {
         checkForLoggedIn();
     }
 
+    private void loadExtra() {
+        Bundle extra = getIntent().getExtras();
+        if (extra != null){
+            mItem = (Item) extra.getSerializable(HomeActivity.PUT_EXTRA_KEY);
+        }
+    }
+
     private void setFields() {
         mTxtAuctionTitle.setText(mItem.getItemTitle());
         mTxtAuctionDescription.setText(mItem.getItemDescription());
-        /*mTxtAuctionStartDate.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
-                .format(mItem.getStartTime()));
+        mTxtAuctionStartDate.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
+                .format(mItem.getStartDate()));
         mTxtAuctionDuration.setText(new SimpleDateFormat("dd 'day' HH:mm")
-                .format(mItem.getStartTime()));*/
+                .format(mItem.getEndDate() - mItem.getStartDate()));
         mTxtAuctionStartPrice.setText(String.valueOf(mItem.getStartPrice()));
         mTxtAuctionCurrentPrice.setText(String.valueOf(mItem.getCurrentPrice()));
 
@@ -149,31 +139,46 @@ public class ShowItemActivity extends AppCompatActivity {
         mBtnEnterMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pView) {
-                // TODO add change mCurrentPrice on firebase, and add check for correct number logic
-                String currentMessage = mInputMessage.getText().toString();
-                if (!currentMessage.isEmpty()) {
-                    mMessages.add(currentMessage);
-                    mInputMessage.setText("");
-                    mMessageAdapter.notifyDataSetChanged();
-                    mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
-                    mRecyclerView.scrollToPosition(mMessages.size() - 1);
+                enterMessageIntoChat();
+            }
+        });
+
+        mInputMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView pTextView, int pI, KeyEvent pKeyEvent) {
+                if (pI == EditorInfo.IME_ACTION_DONE){
+                    enterMessageIntoChat();
+                    pKeyEvent.startTracking();
                 }
+
+                return false;
             }
         });
     }
 
-    private void checkForLoggedIn() {
-        if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
-            mImgBtnFavorite.setEnabled(false);
-            mInputMessage.setEnabled(false);
-            mBtnEnterMessage.setEnabled(false);
-        } else {
-            mImgBtnFavorite.setClickable(true);
-            mInputMessage.setEnabled(true);
-            mBtnEnterMessage.setEnabled(true);
+    private void enterMessageIntoChat(){
+        // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
+        String currentMessage = mInputMessage.getText().toString();
+        if (!currentMessage.isEmpty()) {
+            mMessages.add(currentMessage);
+            mInputMessage.setText("");
+            mMessageAdapter.notifyDataSetChanged();
+            mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
+            mRecyclerView.scrollToPosition(mMessages.size() - 1);
         }
     }
 
+    private void checkForLoggedIn() {
+        if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+            mImgBtnFavorite.setEnabled(true);
+            mInputMessage.setEnabled(true);
+            mBtnEnterMessage.setEnabled(true);
+        } else {
+            mImgBtnFavorite.setClickable(false);
+            mInputMessage.setEnabled(false);
+            mBtnEnterMessage.setEnabled(false);
+        }
+    }
 
     private boolean isFavorite = true;// temp
 
@@ -267,7 +272,7 @@ public class ShowItemActivity extends AppCompatActivity {
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
             View itemView = mLayoutInflater.inflate(R.layout.view_bid_it_image_item, container, false);
 
-            ImageView imageView = itemView.findViewById(R.id.image_show_item_fragment_pager);
+            ImageView imageView = itemView.findViewById(R.id.image_show_item_activity_pager);
             imageView.setImageURI(Uri.parse(mImages.get(position)));
 
             container.addView(itemView);

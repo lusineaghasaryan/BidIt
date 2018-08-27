@@ -105,7 +105,7 @@ public class AddItemActivity extends AppCompatActivity {
         @Override
         public void addPhoto(String pImageUrl) {
 
-/*
+
             mStorageRef = FirebaseStorage.getInstance().getReference();
             Uri file = Uri.fromFile(new File(pImageUrl));
             Random generator = new Random();
@@ -130,7 +130,7 @@ public class AddItemActivity extends AppCompatActivity {
                             // ...
                             Log.v(TAG, "Storage chkaaaaa");
                         }
-                    });*/
+                    });
         }
 
         @Override

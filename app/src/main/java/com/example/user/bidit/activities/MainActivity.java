@@ -2,7 +2,6 @@ package com.example.user.bidit.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,7 +11,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -75,33 +73,41 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.nav_item_my_account:
+            case R.id.nav_item_my_account:{
                 replaceFragment(new MyAccountFragment());
                 break;
-            case R.id.nav_item_balance:
-                break;
-            case R.id.nav_item_history:
-                break;
-            case R.id.nav_item_favorite:
-                break;
-            case R.id.nav_item_my_items:
-                break;
-            case R.id.nav_item_log_out:
-                FireBaseAuthenticationManager.getInstance().signOut();
-                break;
-            case R.id.nav_item_log_in:
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                break;
-            case R.id.nav_item_help:
-                Intent intent = new Intent(MainActivity.this, ShowItemActivity.class);
+            }
+            case R.id.nav_item_balance:{
+                Intent intent = new Intent(MainActivity.this, HomeActivity.class);
                 startActivity(intent);
                 break;
+            }
+            case R.id.nav_item_history:{
+                break;
+            }
+            case R.id.nav_item_favorite:{
+                break;
+            }
+            case R.id.nav_item_my_items:{
+                break;
+            }
+            case R.id.nav_item_log_out:{
+                FireBaseAuthenticationManager.getInstance().signOut();
+                break;
+            }
+            case R.id.nav_item_log_in:{
+                startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                break;
+            }
+            case R.id.nav_item_help: {
+                break;
+            }
             case R.id.nav_item_about_us:
                 Intent addItemIntent = new Intent(MainActivity.this, AddItemActivity.class);
                 startActivity(addItemIntent);
                 //replaceFragment(new AddItemFragment());
-                break;
-        }
+            }
+
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }
