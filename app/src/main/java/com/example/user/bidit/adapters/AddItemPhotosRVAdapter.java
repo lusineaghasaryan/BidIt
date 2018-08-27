@@ -3,10 +3,12 @@ package com.example.user.bidit.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.viewHolders.AddItemPhotosViewHolder;
 
@@ -17,10 +19,13 @@ public class AddItemPhotosRVAdapter extends RecyclerView.Adapter<AddItemPhotosVi
     public Context mContext;
     public ArrayList<String> mPhotosList;
 
+    public IOnAddPhotoListener mIOnAddPhotoListener;
+
     public AddItemPhotosRVAdapter(Context mContext, ArrayList<String> photosList) {
         this.mContext = mContext;
         mPhotosList = new ArrayList<>();
-        mPhotosList.addAll(photosList);
+        mPhotosList = photosList;
+        mPhotosList.add("drawable://" + R.drawable.favorite_star_24dp);
     }
 
 
@@ -32,13 +37,55 @@ public class AddItemPhotosRVAdapter extends RecyclerView.Adapter<AddItemPhotosVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull AddItemPhotosViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AddItemPhotosViewHolder holder, final int position) {
 
-        //downloadImageAsync.execute(IMAGE_URL, filesDir);
+        final String imageUrl = mPhotosList.get(position);
+        Glide.with(mContext)
+                .load("file://" + imageUrl)
+                .centerCrop()
+                .placeholder(R.drawable.ic_launcher_background)
+                .error(R.drawable.ic_launcher_foreground)
+                .into(holder.mPotoImageView);
+
+        mIOnAddPhotoListener.addPhoto(imageUrl);
+
+
+
+        holder.mRemovePhotoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mIOnAddPhotoListener.removePhoto(position);
+            }
+        });
+
+        if(position == getItemCount()-1){
+            holder.mRemovePhotoBtn.setVisibility(View.GONE);
+            holder.mPotoImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mIOnAddPhotoListener.openGallery();
+                }
+            });
+        }
+        else
+        {
+            holder.mRemovePhotoBtn.setVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override
     public int getItemCount() {
         return mPhotosList.size();
+    }
+
+    public void setIOnAddPhotoListener(IOnAddPhotoListener pIOnAddPhotoListener) {
+        mIOnAddPhotoListener = pIOnAddPhotoListener;
+    }
+
+    public interface IOnAddPhotoListener{
+        public void addPhoto(String pImageUrl);
+        public void removePhoto(int pPosition);
+        public void openGallery();
     }
 }

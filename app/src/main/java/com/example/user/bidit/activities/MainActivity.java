@@ -97,7 +97,9 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case R.id.nav_item_about_us:
-                replaceFragment(new AddItemFragment());
+                Intent addItemIntent = new Intent(MainActivity.this, AddItemActivity.class);
+                startActivity(addItemIntent);
+                //replaceFragment(new AddItemFragment());
                 break;
         }
         mDrawer.closeDrawer(GravityCompat.START);
