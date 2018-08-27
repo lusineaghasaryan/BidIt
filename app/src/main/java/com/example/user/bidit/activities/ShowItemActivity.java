@@ -4,15 +4,18 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -43,11 +46,11 @@ public class ShowItemActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerViewMessageAdapter mMessageAdapter;
     private ArrayList<String> mMessages;
-    private EditText mInputMessage;
+    private TextInputEditText mInputMessage;
     private Button mBtnEnterMessage;
 
     //    data (temp)
-    private Item mItem = new Item();
+    private Item mItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,26 +60,14 @@ public class ShowItemActivity extends AppCompatActivity {
         getWindow().setSoftInputMode(
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
-        tempMethod();
         init();
         setFields();
         setListeners();
     }
 
-    //    temp
-    private void tempMethod() {
-        ArrayList<String> mImages = new ArrayList<>();
-
-        mItem.setItemTitle("Title");
-        mItem.setItemDescription("Description\nDescription");
-        mItem.setCurrentPrice(500);
-        mItem.setStartDate(Calendar.getInstance().getTimeInMillis());
-        mItem.setEndDate(mItem.getStartDate() + 600000);
-        mItem.setStartPrice(500f);
-        mItem.setPhotoUrls(mImages);
-    }
-
     private void init() {
+//        load item from intent
+        loadExtra();
 
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
@@ -103,6 +94,13 @@ public class ShowItemActivity extends AppCompatActivity {
 
 //        check for logged in to disable buttons
         checkForLoggedIn();
+    }
+
+    private void loadExtra() {
+        Bundle extra = getIntent().getExtras();
+        if (extra != null){
+            mItem = (Item) extra.getSerializable(HomeActivity.PUT_EXTRA_KEY);
+        }
     }
 
     private void setFields() {
@@ -141,17 +139,33 @@ public class ShowItemActivity extends AppCompatActivity {
         mBtnEnterMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pView) {
-                // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
-                String currentMessage = mInputMessage.getText().toString();
-                if (!currentMessage.isEmpty()) {
-                    mMessages.add(currentMessage);
-                    mInputMessage.setText("");
-                    mMessageAdapter.notifyDataSetChanged();
-                    mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
-                    mRecyclerView.scrollToPosition(mMessages.size() - 1);
-                }
+                enterMessageIntoChat();
             }
         });
+
+        mInputMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView pTextView, int pI, KeyEvent pKeyEvent) {
+                if (pI == EditorInfo.IME_ACTION_DONE){
+                    enterMessageIntoChat();
+                    pKeyEvent.startTracking();
+                }
+
+                return false;
+            }
+        });
+    }
+
+    private void enterMessageIntoChat(){
+        // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
+        String currentMessage = mInputMessage.getText().toString();
+        if (!currentMessage.isEmpty()) {
+            mMessages.add(currentMessage);
+            mInputMessage.setText("");
+            mMessageAdapter.notifyDataSetChanged();
+            mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
+            mRecyclerView.scrollToPosition(mMessages.size() - 1);
+        }
     }
 
     private void checkForLoggedIn() {
@@ -165,7 +179,6 @@ public class ShowItemActivity extends AppCompatActivity {
             mBtnEnterMessage.setEnabled(false);
         }
     }
-
 
     private boolean isFavorite = true;// temp
 

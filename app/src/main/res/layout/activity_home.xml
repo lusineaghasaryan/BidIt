@@ -7,30 +7,20 @@
     android:fitsSystemWindows="false"
     tools:context=".activities.HomeActivity">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar_home_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:elevation="4dp"
-        app:layout_constraintBottom_toTopOf="@id/coordinator_home_activity"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <android.support.design.widget.CoordinatorLayout
         android:id="@+id/coordinator_home_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_home_activity">
+        app:layout_constraintStart_toStartOf="parent">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
-            android:fitsSystemWindows="true">
+            android:fitsSystemWindows="true"
+            android:padding="@dimen/margin_small">
 
             <android.support.design.widget.CollapsingToolbarLayout
                 android:layout_width="match_parent"
@@ -50,19 +40,50 @@
                         android:id="@+id/recycler_view_home_activity_categories"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        app:layout_constraintBottom_toTopOf="@id/recycler_view_home_activity_hot_list"
+                        app:layout_constraintBottom_toTopOf="@id/linear_home_activity_hotRecycler_andButtons"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <android.support.v7.widget.RecyclerView
-                        android:id="@+id/recycler_view_home_activity_hot_list"
+                    <android.support.constraint.ConstraintLayout
+                        android:id="@+id/linear_home_activity_hotRecycler_andButtons"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/recycler_view_home_activity_categories" />
+                        app:layout_constraintTop_toBottomOf="@id/recycler_view_home_activity_categories">
+
+                        <ImageButton
+                            android:id="@+id/img_btn_home_activity_prev_hot_item"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:background="@drawable/button_prev"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/recycler_view_home_activity_hot_list"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <android.support.v7.widget.RecyclerView
+                            android:id="@+id/recycler_view_home_activity_hot_list"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/img_btn_home_activity_next_hot_item"
+                            app:layout_constraintStart_toEndOf="@id/img_btn_home_activity_prev_hot_item"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageButton
+                            android:id="@+id/img_btn_home_activity_next_hot_item"
+                            android:layout_width="wrap_content"
+                            android:layout_height="0dp"
+                            android:background="@drawable/button_next"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toEndOf="@id/recycler_view_home_activity_hot_list"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                    </android.support.constraint.ConstraintLayout>
 
                 </android.support.constraint.ConstraintLayout>
 
@@ -73,6 +94,7 @@
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:padding="@dimen/margin_small"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <android.support.v7.widget.RecyclerView

@@ -100,8 +100,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             }
             case R.id.nav_item_help:{
-                Intent intent = new Intent(MainActivity.this, ShowItemActivity.class);
-                startActivity(intent);
                 break;
             }
             case R.id.nav_item_about_us:{
