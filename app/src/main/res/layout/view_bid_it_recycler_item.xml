@@ -61,9 +61,9 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/recycler_view_item_margin_small"
             android:textSize="@dimen/recycler_view_item_text_size_normal"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/txt_view_holder_auction_date"
             app:layout_constraintEnd_toStartOf="@id/guideline_recycler_item_view"
-            app:layout_constraintTop_toBottomOf="@id/img_btn_view_holder_favorite_btn" />
+            app:layout_constraintTop_toTopOf="@id/txt_view_holder_auction_date" />
 
         <ImageView
             android:id="@+id/img_view_holder_auction_status"
@@ -71,10 +71,10 @@
             android:layout_height="wrap_content"
             android:contentDescription="TODO"
             android:src="@drawable/status_point_inactive_12dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/txt_view_holder_auction_current_price"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline_recycler_item_view"
-            app:layout_constraintTop_toBottomOf="@+id/img_btn_view_holder_favorite_btn" />
+            app:layout_constraintTop_toTopOf="@+id/txt_view_holder_auction_current_price" />
 
         <android.support.constraint.Guideline
             android:id="@+id/guideline1"

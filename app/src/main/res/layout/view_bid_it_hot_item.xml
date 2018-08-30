@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
@@ -15,52 +16,51 @@
         app:layout_constraintGuide_percent="0.7" />
 
     <ImageView
-        android:id="@+id/img_home_activity_holder_item_image"
+        android:id="@+id/img_home_activity_holder_hot_item_image"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_margin="@dimen/margin_large" />
+        android:layout_margin="@dimen/margin_extra_large"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
-        android:id="@+id/txt_home_activity_holder_item_title"
+        android:id="@+id/txt_home_activity_holder_hot_item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_large"
         android:textSize="@dimen/text_size_normal"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_home_activity_holder_item_image" />
+        app:layout_constraintTop_toBottomOf="@id/img_home_activity_holder_hot_item_image" />
 
     <TextView
-        android:id="@+id/txt_home_activity_holder_item_current_price"
+        android:id="@+id/txt_home_activity_holder_hot_item_current_price"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_normal"
-        android:textSize="@dimen/text_size_normal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/img_btn_home_activity_holder_is_item_favorite"
-        app:layout_constraintStart_toEndOf="@id/txt_home_activity_holder_item_title"
-        app:layout_constraintTop_toBottomOf="@id/img_home_activity_holder_item_image" />
+        android:textSize="@dimen/text_size_large"
+        app:layout_constraintStart_toEndOf="@id/guideline_home_activity_vertical"
+        app:layout_constraintTop_toBottomOf="@id/img_home_activity_holder_hot_item_image" />
 
     <ImageButton
-        android:id="@+id/img_btn_home_activity_holder_is_item_favorite"
+        android:id="@+id/img_btn_home_activity_holder_is_hot_item_favorite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_normal"
         android:background="@null"
         android:src="@drawable/favorite_star_border_48dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/img_home_activity_holder_item_status"
-        app:layout_constraintStart_toEndOf="@id/guideline_home_activity_vertical"
-        app:layout_constraintTop_toBottomOf="@id/img_home_activity_holder_item_image" />
+        app:layout_constraintTop_toTopOf="@id/img_home_activity_holder_hot_item_image"
+        app:layout_constraintEnd_toEndOf="@id/img_home_activity_holder_hot_item_image"
+        app:layout_constraintBottom_toTopOf="@id/img_home_activity_holder_hot_item_image"
+        app:layout_constraintStart_toEndOf="@id/img_home_activity_holder_hot_item_image"/>
 
-    <ImageView
-        android:id="@+id/img_home_activity_holder_item_status"
+    <TextView
+        android:id="@+id/img_home_activity_holder_hot_item_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@color/status_point_active"
+        android:textSize="@dimen/text_size_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/img_btn_home_activity_holder_is_item_favorite"
-        app:layout_constraintTop_toBottomOf="@id/img_home_activity_holder_item_image" />
+        app:layout_constraintTop_toBottomOf="@id/txt_home_activity_holder_hot_item_current_price" />
 
 </android.support.constraint.ConstraintLayout>

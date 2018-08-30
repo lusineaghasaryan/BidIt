@@ -1,38 +1,44 @@
 package com.example.user.bidit.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class ShowItemActivity extends AppCompatActivity {
+
+    private CoordinatorLayout mCoordinatorLayout;
 
     //    show auction images, fields
     private ViewPager mViewPager;
@@ -69,6 +75,9 @@ public class ShowItemActivity extends AppCompatActivity {
 //        load item from intent
         loadExtra();
 
+//        find parent layout
+        mCoordinatorLayout = findViewById(R.id.coordinator_show_item_activity);
+
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
         mImageVPAdapter = new ImageVPAdapter(mItem);
@@ -98,7 +107,7 @@ public class ShowItemActivity extends AppCompatActivity {
 
     private void loadExtra() {
         Bundle extra = getIntent().getExtras();
-        if (extra != null){
+        if (extra != null) {
             mItem = (Item) extra.getSerializable(HomeActivity.PUT_EXTRA_KEY);
         }
     }
@@ -117,9 +126,7 @@ public class ShowItemActivity extends AppCompatActivity {
             mImgBtnFavorite.setImageResource(R.drawable.favorite_star_48dp);
         } else {
             mImgBtnFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
-        }// ???
-
-
+        }
     }
 
     private void setRecyclerSittings() {
@@ -128,6 +135,7 @@ public class ShowItemActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mMessageAdapter);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
         mImgBtnFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +154,7 @@ public class ShowItemActivity extends AppCompatActivity {
         mInputMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView pTextView, int pI, KeyEvent pKeyEvent) {
-                if (pI == EditorInfo.IME_ACTION_DONE){
+                if (pI == EditorInfo.IME_ACTION_DONE) {
                     enterMessageIntoChat();
                     pKeyEvent.startTracking();
                 }
@@ -154,9 +162,10 @@ public class ShowItemActivity extends AppCompatActivity {
                 return false;
             }
         });
+
     }
 
-    private void enterMessageIntoChat(){
+    private void enterMessageIntoChat() {
         // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
         String currentMessage = mInputMessage.getText().toString();
         if (!currentMessage.isEmpty()) {
@@ -273,7 +282,10 @@ public class ShowItemActivity extends AppCompatActivity {
             View itemView = mLayoutInflater.inflate(R.layout.view_bid_it_image_item, container, false);
 
             ImageView imageView = itemView.findViewById(R.id.image_show_item_activity_pager);
-            imageView.setImageURI(Uri.parse(mImages.get(position)));
+
+            Glide.with(ShowItemActivity.this)
+                    .load(mImages.get(position))
+                    .into(imageView);
 
             container.addView(itemView);
 
