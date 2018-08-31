@@ -8,18 +8,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
-import com.example.user.bidit.activities.HomeActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewHolders.MyItemsViewHolder;
-
 import java.text.SimpleDateFormat;
 import java.util.List;
 
-import static com.example.user.bidit.activities.HomeActivity.PUT_EXTRA_KEY;
 
 public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
     private List<Item> mMyItemList;
@@ -56,7 +52,7 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(mContext,ShowItemActivity.class);
-                intent.putExtra(PUT_EXTRA_KEY, mMyItemList.get(position));
+                intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_MY_ITEM, mMyItemList.get(position));
                 mContext.startActivity(intent);
             }
         });

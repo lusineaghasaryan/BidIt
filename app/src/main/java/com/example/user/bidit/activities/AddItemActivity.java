@@ -43,7 +43,7 @@ import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.fragments.MultiSelectImageFragment;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
-import com.example.user.bidit.util.DateUtil;
+import com.example.user.bidit.utils.DateUtil;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;

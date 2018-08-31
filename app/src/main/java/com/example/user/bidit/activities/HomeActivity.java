@@ -24,6 +24,9 @@ import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.RequestListener;
+import com.bumptech.glide.request.target.Target;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Category;
@@ -98,10 +101,12 @@ public class HomeActivity extends AppCompatActivity {
         mRecyclerViewAllList.setLayoutManager(mLayoutManager);
         mRecyclerViewAllList.setAdapter(mAllListAdapter);
 
+        ViewPager.PageTransformer transformer = new ZoomViewPager();
+
         mViewPagerHotList.setAdapter(mHotListAdapter);
-        mViewPagerHotList.setPageTransformer(true, new ZoomViewPager());
+        mViewPagerHotList.setPageTransformer(true, transformer);
         mViewPagerHotList.setClipToPadding(false);
-        mViewPagerHotList.setPadding(220, 0, 220, 0);
+//        mViewPagerHotList.setPadding(220, 0, 220, 0);
     }
 
     private void setSearchViewSittings() {
@@ -316,8 +321,20 @@ public class HomeActivity extends AppCompatActivity {
             TextView title = item_view.findViewById(R.id.pager_text_title);
             TextView price = item_view.findViewById(R.id.pager_text_price);
 
-            Glide.with(ctx).
-                    load(currentItem.getPhotoUrls().get(0))
+            Glide.with(ctx)
+                    .load(currentItem.getPhotoUrls().get(0))
+                    .listener(new RequestListener<String, GlideDrawable>() {
+                        @Override
+                        public boolean onException(Exception e, String model, Target<GlideDrawable> target, boolean isFirstResource) {
+                            return false;
+                        }
+
+                        @Override
+                        public boolean onResourceReady(GlideDrawable resource, String model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+                            mViewPagerHotList.invalidate();
+                            return false;
+                        }
+                    })
                     .into(imageView);
 
             title.setText(currentItem.getItemTitle());
