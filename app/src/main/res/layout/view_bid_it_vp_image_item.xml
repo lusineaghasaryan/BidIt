@@ -9,6 +9,6 @@
         android:layout_height="match_parent"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:scaleType="centerInside" />
+        android:scaleType="fitCenter" />
 
 </LinearLayout>

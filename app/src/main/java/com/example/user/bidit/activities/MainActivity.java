@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             }
-            case R.id.nav_item_history: {
+            case R.id.nav_item_history:{
                 break;
             }
             case R.id.nav_item_favorite: {
@@ -89,11 +89,11 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_item_help:{
                 break;
             }
-            case R.id.nav_item_about_us:{
-//                replaceFragment(new AddItemFragment());
-                break;
+            case R.id.nav_item_about_us:
+                Intent addItemIntent = new Intent(MainActivity.this, AddItemActivity.class);
+                startActivity(addItemIntent);
             }
-        }
+
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }

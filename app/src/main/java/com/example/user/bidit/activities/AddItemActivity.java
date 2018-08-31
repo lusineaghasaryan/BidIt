@@ -1,4 +1,4 @@
-package com.example.user.bidit.fragments;
+package com.example.user.bidit.activities;
 
 import android.Manifest;
 import android.app.DatePickerDialog;
@@ -9,23 +9,23 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,113 +40,154 @@ import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.AddItemPhotosRVAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.firebase.FirebaseHelper;
+import com.example.user.bidit.fragments.MultiSelectImageFragment;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
-import com.example.user.bidit.utils.DateUtil;
+import com.example.user.bidit.util.DateUtil;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Random;
 
-import static android.app.Activity.RESULT_CANCELED;
+public class AddItemActivity extends AppCompatActivity {
 
-public class AddItemFragment extends Fragment {
-
-    private static final String IMAGE_DIRECTORY = "/demonuts";
+    private static final String IMAGE_DIRECTORY = "/bidit";
     private int REQUEST_IMAGE_GALLERY  = 1, REQUEST_IMAGE_CAPTURE  = 2;
 
     public static final String TAG = "AddItemFragment";
 
-    public Button mAddPhotoBtn, mSaveItemBtn;
+    public Button mSaveItemBtn;
     public EditText mItemTitle, mItemDescription, mStartPrice, mBuyNowPrice;
     public Spinner mCategorySpinner;
-    public ImageView mImageView;
     public TextView mDateTextView, mEndDateTextView;
     private Calendar mStartDate = Calendar.getInstance();
     private Calendar mEndDate = Calendar.getInstance();
     public List<Category> mCategoryList;
     public String mCategorySelectedItemId;
     public ArrayList<String> mItemSelectedImagesList;
+    public ArrayList<String> mItemImagesListStorage;
 
     public AddItemPhotosRVAdapter mAdapter;
     public RecyclerView mPhotosRV;
     public RecyclerView.LayoutManager mLayoutManager;
 
+    MultiSelectImageFragment multiSelectImageFragment;
+
     public Item mItem;
 
+    private StorageReference mStorageRef;
+
+
+
+    MultiSelectImageFragment.IOnImagesSelectedListener mOnImagesSelectedListener = new MultiSelectImageFragment.IOnImagesSelectedListener() {
+        @Override
+        public void onImagesSelected(ArrayList<String> selectedImages) {
+            mItemSelectedImagesList.addAll(0, selectedImages);
+            mPhotosRV.smoothScrollToPosition(mItemSelectedImagesList.size()-1);
+            mAdapter.notifyDataSetChanged();
+        }
+    };
+
+    AddItemPhotosRVAdapter.IOnAddPhotoListener mIOnAddPhotoListener = new AddItemPhotosRVAdapter.IOnAddPhotoListener() {
+        @Override
+        public void addPhoto(String pImageUrl) {
+
+
+            mStorageRef = FirebaseStorage.getInstance().getReference();
+            Uri file = Uri.fromFile(new File(pImageUrl));
+            Random generator = new Random();
+            int n = 10000;
+            n = generator.nextInt(n);
+            StorageReference riversRef = mStorageRef.child(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid()
+                    + "/items/image" + n + ".jpg");
+
+            riversRef.putFile(file)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            // Get a URL to the uploaded content
+                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            mItemImagesListStorage.add(downloadUrl.toString());
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception exception) {
+                            // Handle unsuccessful uploads
+                            // ...
+                            Log.v(TAG, "Storage chkaaaaa");
+                        }
+                    });
+        }
+
+        @Override
+        public void removePhoto(int pPosition) {
+
+        }
+
+        @Override
+        public void openGallery() {
+            showPictureDialog();
+        }
+    };
+
+
+
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_add_item);
+
         mCategoryList = new ArrayList<>();
         mItemSelectedImagesList = new ArrayList<>();
+        mItemImagesListStorage = new ArrayList<>();
 
-        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180804_234229.jpg");
-        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180804_234338.jpg");
-        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180805_184317.jpg");
-        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180805_184317.jpg");
-        mItemSelectedImagesList.add("/storage/emulated/0/Slack/IMG_20180805_184335.jpg");
-
-
-        setHasOptionsMenu(true);
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(getActivity(), new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
         }
-        super.onCreate(savedInstanceState);
+        init();
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_add_item, container, false);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        init(view);
-    }
-
-    public void init(View view){
+    public void init(){
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
 
-        mAddPhotoBtn = view.findViewById(R.id.btn_fragment_add_item_add_photo);
-        mDateTextView = view.findViewById(R.id.text_view_fragment_add_item_start_date);
-        mEndDateTextView = view.findViewById(R.id.text_view_fragment_add_item_end_date);
-        mSaveItemBtn = view.findViewById(R.id.btn_fragment_add_item_save);
-        mItemTitle = view.findViewById(R.id.edit_text_fragment_add_item_name);
-        mItemDescription = view.findViewById(R.id.edit_text_fragment_add_item_description);
-        mStartPrice = view.findViewById(R.id.edit_text_fragment_add_item_start_price);
-        mBuyNowPrice = view.findViewById(R.id.edit_text_fragment_add_item_buy_now_price);
-        mCategorySpinner = view.findViewById(R.id.spinner_fragment_add_item_category);
-        mImageView = view.findViewById(R.id.image_view_fragment_add_item_image);
-        mPhotosRV= view.findViewById(R.id.recycler_view_fragment_add_item_poto);
+        mStorageRef = FirebaseStorage.getInstance().getReference();
+
+
+        mDateTextView = findViewById(R.id.text_view_activity_add_item_start_date);
+        mEndDateTextView = findViewById(R.id.text_view_activity_add_item_end_date);
+        mSaveItemBtn = findViewById(R.id.btn_activity_add_item_save);
+        mItemTitle = findViewById(R.id.edit_text_activity_add_item_name);
+        mItemDescription = findViewById(R.id.edit_text_activity_add_item_description);
+        mStartPrice = findViewById(R.id.edit_text_activity_add_item_start_price);
+        mBuyNowPrice = findViewById(R.id.edit_text_activity_add_item_buy_now_price);
+        mCategorySpinner = findViewById(R.id.spinner_activity_add_item_category);
+        mPhotosRV= findViewById(R.id.recycler_view_activity_add_item_poto);
 
         mPhotosRV.setHasFixedSize(true);
-        mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false);
+        mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         mPhotosRV.setLayoutManager(mLayoutManager);
-        mAdapter = new AddItemPhotosRVAdapter(getContext(), mItemSelectedImagesList);
+        mAdapter = new AddItemPhotosRVAdapter(this, mItemSelectedImagesList);
+        mAdapter.setIOnAddPhotoListener(mIOnAddPhotoListener);
+        mPhotosRV.smoothScrollToPosition(mAdapter.getItemCount());
         mPhotosRV.setAdapter(mAdapter);
 
 
         updateDateLabel();
         updateDateEndLabel();
-
-
-//        firebaseHelper.getCategoryListFromDatabase();
-
-      ArrayList<Item> mItemsList = new ArrayList<>();
-
-
-        mAddPhotoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showPictureDialog();
-            }
-        });
 
         mDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,7 +204,7 @@ public class AddItemFragment extends Fragment {
 
 
         //     GET SPECIFIC LIST
-        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(getActivity()).get(ItemsSpecificListVViewModel.class);
+        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(this).get(ItemsSpecificListVViewModel.class);
         itemsSpecificListVViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
@@ -175,11 +216,11 @@ public class AddItemFragment extends Fragment {
 
 
         //   GET ALL ITEMS LIST
-        ItemsListViewModel itemsListViewModel = ViewModelProviders.of(getActivity()).get(ItemsListViewModel.class);
+        ItemsListViewModel itemsListViewModel = ViewModelProviders.of(this).get(ItemsListViewModel.class);
         itemsListViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
-                
+
             }
         });
         itemsListViewModel.updateData();
@@ -188,9 +229,9 @@ public class AddItemFragment extends Fragment {
 
 
         ///      Spinner
-        final ArrayAdapter<String> mSpinnerAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1);
+        final ArrayAdapter<String> mSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
-        CategoryListViewModel categoryListViewModel = ViewModelProviders.of(getActivity()).get(CategoryListViewModel.class);
+        CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
         categoryListViewModel.getCategory().observe(this, new Observer<Category>() {
             @Override
             public void onChanged(@Nullable Category category) {
@@ -213,8 +254,8 @@ public class AddItemFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-            if (position != 0){
-                mCategorySelectedItemId = findCategoryId(parent.getItemAtPosition(position).toString());
+                if (position != 0){
+                    mCategorySelectedItemId = findCategoryId(parent.getItemAtPosition(position).toString());
                 }
             }
             @Override
@@ -228,26 +269,28 @@ public class AddItemFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO save item
-               Item item = new Item.ItemBuilder().setItemTitle(mItemTitle.getText().toString())
-                       .setItemDescription(mItemDescription.getText().toString())
-                       .setStartPrice(Float.parseFloat(mStartPrice.getText().toString()))
-                       .setBuyNowPrice(Float.parseFloat(mBuyNowPrice.getText().toString()))
-                       .setCategoryId(mCategorySelectedItemId)
-                       .setStartDate(mStartDate.getTime().getTime())
-                       .setEndDate(mEndDate.getTime().getTime())
-                       //todo test
-                       .setUserId(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid())
-                       .setPhotoUrls(mItemSelectedImagesList)
-                       .build();
+                Item item = new Item.ItemBuilder().setItemTitle(mItemTitle.getText().toString())
+                        .setItemDescription(mItemDescription.getText().toString())
+                        .setStartPrice(Float.parseFloat(mStartPrice.getText().toString()))
+                        .setBuyNowPrice(Float.parseFloat(mBuyNowPrice.getText().toString()))
+                        .setCategoryId(mCategorySelectedItemId)
+                        .setStartDate(mStartDate.getTime().getTime())
+                        .setEndDate(mEndDate.getTime().getTime())
+                        //todo test
+                        .setUserId(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid())
+                        .setPhotoUrls(mItemImagesListStorage)
+                        .build();
                 firebaseHelper.setItemToDatabase(item);
             }
         });
+
     }
 
 
 
+
     private void showPictureDialog(){
-        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Action");
         String[] pictureDialogItems = {
                 "Select photo from gallery",
@@ -271,21 +314,20 @@ public class AddItemFragment extends Fragment {
 
 
     public void choosePhotoFromGallary() {
-
-        MultiSelectImageFragment multiSelectImageFragment = new MultiSelectImageFragment();
-        FragmentManager fragmentManager = getFragmentManager();
+        multiSelectImageFragment = new MultiSelectImageFragment();
+        multiSelectImageFragment.setmOnImagesSelectedListener(mOnImagesSelectedListener);
+        FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, multiSelectImageFragment);
+        fragmentTransaction.add(R.id.fragment_container_multiselect, multiSelectImageFragment);
         fragmentTransaction.addToBackStack("ADDITEM");
         fragmentTransaction.commit();
-
     }
 
 
 
     private void takePhotoFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+        if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
     }
@@ -303,8 +345,7 @@ public class AddItemFragment extends Fragment {
             if (data != null){
                 Uri contentURI = data.getData();
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), contentURI);
-                    mImageView.setImageBitmap(bitmap);
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
                     //TODO save image to internal memory & send Firebase storage
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -313,7 +354,8 @@ public class AddItemFragment extends Fragment {
             }
         }else if (requestCode == REQUEST_IMAGE_CAPTURE){
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            mImageView.setImageBitmap(thumbnail);
+            mItemSelectedImagesList.add(saveImage(thumbnail));
+            mAdapter.notifyDataSetChanged();
             //TODO save image to internal memory & send Firebase storage
         }
     }
@@ -329,21 +371,7 @@ public class AddItemFragment extends Fragment {
         return id;
     }
 
-/*
-    public String saveImage(Context context, Bitmap pBitmap, String imageName){
-        FileOutputStream foStream;
-        try {
-            foStream = context.openFileOutput(imageName, Context.MODE_PRIVATE);
-            pBitmap.compress(Bitmap.CompressFormat.PNG, 100, foStream);
-            foStream.close();
-        } catch (Exception e) {
-            Log.d("saveImage", "Exception 2, Something went wrong!");
-            e.printStackTrace();
-        }
-    }*/
 
-
-   /*
     public String saveImage(Bitmap myBitmap){
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
@@ -360,7 +388,7 @@ public class AddItemFragment extends Fragment {
             f.createNewFile();
             FileOutputStream fo = new FileOutputStream(f);
             fo.write(bytes.toByteArray());
-            MediaScannerConnection.scanFile(getContext(),
+            MediaScannerConnection.scanFile(this,
                     new String[]{f.getPath()},
                     new String[]{"image/jpeg"}, null);
             fo.close();
@@ -372,7 +400,7 @@ public class AddItemFragment extends Fragment {
         }
         return "";
 
-    }*/
+    }
 
 
 
@@ -381,13 +409,13 @@ public class AddItemFragment extends Fragment {
 
 
     private void openDatePicker() {
-        new DatePickerDialog(getActivity(), mOnDateSetListener, mStartDate.get(Calendar.YEAR),
+        new DatePickerDialog(this, mOnDateSetListener, mStartDate.get(Calendar.YEAR),
                 mStartDate.get(Calendar.MONTH),
                 mStartDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private void openTimePicker() {
-        new TimePickerDialog(getActivity(), mOnTimeSetListener, mStartDate.get(Calendar.HOUR_OF_DAY),
+        new TimePickerDialog(this, mOnTimeSetListener, mStartDate.get(Calendar.HOUR_OF_DAY),
                 mStartDate.get(Calendar.MINUTE), true).show();
     }
 
@@ -400,7 +428,6 @@ public class AddItemFragment extends Fragment {
             mStartDate.set(Calendar.MONTH, monthOfYear);
             mStartDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
             openTimePicker();
-            //mDateTextView.setText();
         }
     };
 
@@ -420,13 +447,13 @@ public class AddItemFragment extends Fragment {
     }
 
     private void openDatePickerEnd() {
-        new DatePickerDialog(getActivity(), mOnDateEndSetListener, mStartDate.get(Calendar.YEAR),
+        new DatePickerDialog(this, mOnDateEndSetListener, mStartDate.get(Calendar.YEAR),
                 mEndDate.get(Calendar.MONTH),
                 mEndDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private void openTimePickerEnd() {
-        new TimePickerDialog(getActivity(), mOnTimeEndSetListener, mStartDate.get(Calendar.HOUR_OF_DAY),
+        new TimePickerDialog(this, mOnTimeEndSetListener, mStartDate.get(Calendar.HOUR_OF_DAY),
                 mEndDate.get(Calendar.MINUTE), true).show();
     }
 

@@ -58,4 +58,6 @@
     <string name="txt_auction_start_price">Start price</string>
     <string name="txt_auction_current_price">current price</string>
 
+    <string name="show_item_activity_bit_hint">Enter bid price</string>
+
 </resources>

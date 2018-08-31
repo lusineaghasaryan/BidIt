@@ -2,17 +2,18 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/coordinator_show_item_activity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
     tools:context=".activities.ShowItemActivity">
 
     <android.support.design.widget.AppBarLayout
+        android:id="@+id/app_bar_show_item_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        android:fitsSystemWindows="true"
-        android:theme="@style/Theme.Design.Light.NoActionBar">
+        android:fitsSystemWindows="true">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -42,16 +43,37 @@
                     android:orientation="vertical"
                     app:layout_constraintGuide_percent="0.65" />
 
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/view_pager_show_item_activity"
-                    style="@style/show_item_margins"
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
-                    android:background="#000000"
                     app:layout_constraintBottom_toTopOf="@id/guideline_show_item_activity_horizontal_1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <android.support.v4.view.ViewPager
+                        android:id="@+id/view_pager_show_item_activity"
+                        style="@style/show_item_margins"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_above="@+id/relative_show_item_activity_indicator" />
+
+                    <RelativeLayout
+                        android:id="@+id/relative_show_item_activity_indicator"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:layout_alignParentBottom="true">
+
+                        <LinearLayout
+                            android:id="@+id/linear_show_item_activity_count_dots"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:orientation="horizontal" />
+
+                    </RelativeLayout>
+
+                </RelativeLayout>
 
                 <TextView
                     android:id="@+id/txt_show_item_activity_auction_title"
@@ -174,7 +196,17 @@
                 android:id="@+id/main.toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin">
+
+                <TextView
+                    android:id="@+id/txt_toolbar_show_item_activity_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/margin_small"
+                    android:gravity="center"
+                    android:textSize="@dimen/text_size_normal" />
+
+            </android.support.v7.widget.Toolbar>
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
@@ -184,13 +216,17 @@
         android:id="@+id/recycler_view_show_item_activity_messages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/padding_normal"
+        android:paddingBottom="@dimen/padding_bottom_message_recycler"
+        android:paddingEnd="@dimen/padding_normal"
+        android:paddingStart="@dimen/padding_normal"
+        android:paddingTop="@dimen/padding_normal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <LinearLayout
-        android:id="@+id/linear"
+        android:id="@+id/linear_show_item_activity_enter_message_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#FFFFFF"
         android:weightSum="5"
         app:layout_anchor="@id/recycler_view_show_item_activity_messages"
         app:layout_anchorGravity="bottom|right|end">
@@ -201,7 +237,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:hint="enter bid price"
+            android:hint="@string/show_item_activity_bit_hint"
             android:inputType="numberDecimal" />
 
         <Button

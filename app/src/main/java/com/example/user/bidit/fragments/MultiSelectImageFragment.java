@@ -37,6 +37,7 @@ public class MultiSelectImageFragment extends Fragment {
 
     private View mView;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -52,19 +53,19 @@ public class MultiSelectImageFragment extends Fragment {
         mSelectedImagesbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ArrayList<String> selectedItems = multiSelectImageAdapter.getCheckedItems();
-
-                ArrayList<String> selectedItems = multiSelectImageAdapter.getSelectedItemsList();
+                ArrayList<String> selectedItems = new ArrayList<>();
+                selectedItems.addAll(multiSelectImageAdapter.getSelectedItemsList());
                 FragmentManager fragmentManager = getFragmentManager();
                 fragmentManager.popBackStack();
                 if (selectedItems!= null && selectedItems.size() > 0) {
-                    Toast.makeText(getContext(), "Total photos selected: " + selectedItems.size(), Toast.LENGTH_SHORT).show();
-                    Log.d(MultiSelectImageFragment.class.getSimpleName(), "Selected Items: " + selectedItems.toString());
+                    mOnImagesSelectedListener.onImagesSelected(selectedItems);
+                    Log.v("LLLL", "TTTT = " + selectedItems.size());
                 }
             }
         });
         populateImagesFromGallery();
     }
+
 
 
     private void populateImagesFromGallery() {
@@ -174,7 +175,6 @@ public class MultiSelectImageFragment extends Fragment {
 
     public interface IOnImagesSelectedListener {
         void onImagesSelected(ArrayList<String> selectedImages);
-        void onImagesRemovedFormList(int position);
     }
 
 }

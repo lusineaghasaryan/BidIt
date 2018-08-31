@@ -1,11 +1,20 @@
 package com.example.user.bidit.activities;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,33 +22,37 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
+import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.viewModels.CategoryListViewModel;
+import com.example.user.bidit.viewModels.ItemsListViewModel;
+import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
-    public static final String PUT_EXTRA_KEY = "put extra ok";
-
-    //    recyclers and adapters
-    private RecyclerView mRecyclerViewCategories, mRecyclerViewHotList, mRecyclerViewAllList;
+    //    recyclers, viewPager and adapters
+    private RecyclerView mRecyclerViewCategories, mRecyclerViewAllList;
+    private LinearLayoutManager mLayoutManager;
     private CategoryAdapter mCategoryAdapter;
-    private HotListAdapter mHotListAdapter;
     private AllListAdapter mAllListAdapter;
-
-    //    hot recycler prev and next buttons
-    private ImageButton mImgBtnPrevHotItem, mImgBtnNextHotItem; // TODO next and prev logic
+    private ViewPager mViewPagerHotList;
+    private HotItemsVPAdapter mHotListAdapter;
 
     //    data
     private List<Category> mCategoryData;
     private List<Item> mHotItemData;
     private List<Item> mAllItemData;
+
+    //    search view in toolbar
+    private FloatingSearchView mSearchView;
 
 
     @Override
@@ -47,130 +60,121 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        loadCategoryListFromFirebase();
-        tempMethod();
         init();
+        loadCategoryListFromFirebase();
+        loadAllListFromFirebase();
+        setListeners();
     }
 
+    //    initialize fields
     private void init() {
-        mRecyclerViewCategories = findViewById(R.id.recycler_view_home_activity_categories);
-        mRecyclerViewHotList = findViewById(R.id.recycler_view_home_activity_hot_list);
-        mRecyclerViewAllList = findViewById(R.id.recycler_view_home_activity_list);
+        mCategoryData = new ArrayList<>();
+        mHotItemData = new ArrayList<>();
+        mAllItemData = new ArrayList<>();
 
-        mImgBtnNextHotItem = findViewById(R.id.img_btn_home_activity_next_hot_item);
-        mImgBtnPrevHotItem = findViewById(R.id.img_btn_home_activity_prev_hot_item);
+        mRecyclerViewCategories = findViewById(R.id.recycler_view_home_activity_categories);
+        mRecyclerViewAllList = findViewById(R.id.recycler_view_home_activity_list);
+        mViewPagerHotList = findViewById(R.id.view_pager_home_activity_hot_list);
+        mLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
 
         mCategoryAdapter = new CategoryAdapter(mCategoryData);
-        mHotListAdapter = new HotListAdapter(mHotItemData);
         mAllListAdapter = new AllListAdapter(mAllItemData);
+        mHotListAdapter = new HotItemsVPAdapter(mHotItemData, this);
 
-        setRecyclerSittings();
+        mSearchView = findViewById(R.id.search_view_home_activity);
+
+        setRecyclerAndVPSittings();
+        setSearchViewSittings();
     }
 
-    private void setRecyclerSittings() {
+    private void setRecyclerAndVPSittings() {
         mRecyclerViewCategories.setHasFixedSize(true);
         mRecyclerViewCategories.setLayoutManager(new LinearLayoutManager(this,
                 LinearLayoutManager.HORIZONTAL, false));
         mRecyclerViewCategories.setAdapter(mCategoryAdapter);
 
-        mRecyclerViewHotList.setHasFixedSize(true);
-        mRecyclerViewHotList.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.HORIZONTAL, false));
-        mRecyclerViewHotList.setAdapter(mHotListAdapter);
-
         mRecyclerViewAllList.setHasFixedSize(true);
-        mRecyclerViewAllList.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false));
+        mRecyclerViewAllList.setLayoutManager(mLayoutManager);
         mRecyclerViewAllList.setAdapter(mAllListAdapter);
+
+        mViewPagerHotList.setAdapter(mHotListAdapter);
+        mViewPagerHotList.setPageTransformer(true, new ZoomViewPager());
+        mViewPagerHotList.setClipToPadding(false);
+        mViewPagerHotList.setPadding(220, 0, 220, 0);
+    }
+
+    private void setSearchViewSittings() {
+//        mSearchView.attachNavigationDrawerToMenuButton(mDrawerLayout);
+
+        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String oldQuery, String newQuery) {
+
+            }
+        });
     }
 
     private void loadCategoryListFromFirebase() {
-        mCategoryData = new ArrayList<>();
-
-        // TODO load category list
-
-//        CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
-//        categoryListViewModel.getCategory().observe(this, new Observer<Category>() {
-//            @Override
-//            public void onChanged(@Nullable Category category) {
-//                mCategoryData.add(category);
-//            }
-//        });
-//        categoryListViewModel.updateData();
-
-        Category category = new Category();
-        category.setCategoryTitle("AAAA");
-        mCategoryData.add(category);
-        category = new Category();
-        category.setCategoryTitle("BBBB");
-        mCategoryData.add(category);
-        category = new Category();
-        category.setCategoryTitle("CCCC");
-        mCategoryData.add(category);
-        category = new Category();
-        category.setCategoryTitle("DDDD");
-        mCategoryData.add(category);
-        category = new Category();
-        category.setCategoryTitle("EEEE");
-        mCategoryData.add(category);
+        CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
+        categoryListViewModel.getCategory().observe(this, new Observer<Category>() {
+            @Override
+            public void onChanged(@Nullable Category category) {
+                Log.d("ASD", "ASD");
+                mCategoryData.add(category);
+                mCategoryAdapter.notifyDataSetChanged();
+            }
+        });
+        categoryListViewModel.updateData();
     }
 
-    private void setNewHotItemsList(List<Item> pHotItemData) {
-        mHotItemData = pHotItemData;
-        mHotListAdapter.notifyDataSetChanged();
+    private void loadAllListFromFirebase() {
+        ItemsListViewModel itemsListViewModel = ViewModelProviders.of(this).get(ItemsListViewModel.class);
+        itemsListViewModel.getItem().observe(this, new Observer<Item>() {
+            @Override
+            public void onChanged(@Nullable Item pItem) {
+                mAllItemData.add(pItem);
+                mAllListAdapter.notifyDataSetChanged();
+
+                mHotItemData.add(pItem);
+                mHotListAdapter.notifyDataSetChanged();
+            }
+        });
+        itemsListViewModel.updateData();
     }
 
-    private void setNewAllItemsList(List<Item> pAllItemData) {
-        mAllItemData = pAllItemData;
-        mAllListAdapter.notifyDataSetChanged();
-    }
-
-    private void tempMethod() {
-        Item item = new Item();
-        item.setItemTitle("Title");
-        item.setItemDescription("description");
-        item.setStartDate(Calendar.getInstance().getTimeInMillis());
-        item.setStartPrice(500f);
-        item.setEndDate(Calendar.getInstance().getTimeInMillis() + 100000);
-        item.setCurrentPrice(1000f);
-        ArrayList<String> photos = new ArrayList<>();
-        photos.add("");
-        photos.add("");
-        photos.add("");
-        photos.add("");
-        item.setPhotoUrls(photos);
-
-        mHotItemData = new ArrayList<>();
-        mHotItemData.add(item);
-        mHotItemData.add(item);
-        mHotItemData.add(item);
-        mHotItemData.add(item);
-        mHotItemData.add(item);
-        mHotItemData.add(item);
-        mHotItemData.add(item);
-        mHotItemData.add(item);
-        mHotItemData.add(item);
-
-        mAllItemData = new ArrayList<>();
-        mAllItemData.add(item);
-        mAllItemData.add(item);
-        mAllItemData.add(item);
-        mAllItemData.add(item);
-        mAllItemData.add(item);
-        mAllItemData.add(item);
-        mAllItemData.add(item);
-        mAllItemData.add(item);
-        mAllItemData.add(item);
-    }  // TODO delete this method
-
-    private boolean isAuctionStarted(Item pItem) {
-        Long currentDate = Calendar.getInstance().getTimeInMillis();
+    private boolean isAuctionInProgress(Item pItem) {
+        Long currentDate = System.currentTimeMillis();
         return currentDate > pItem.getStartDate() && currentDate < pItem.getEndDate();
+    }
+
+    private boolean isAuctionFinished(Item pItem) {
+        Long currentDate = System.currentTimeMillis();
+        return currentDate > pItem.getEndDate();
     }
 
     private boolean isAuctionFavorite(Item pItem) {
         // TODO is favorite
         return true;
+    }
+
+    private void addToFavorite() {
+        //TODO add to favorite
+    }
+
+    private void setListeners(){
+        mRecyclerViewAllList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                int lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
+
+                if (lastVisibleItemPosition == mAllListAdapter.getItemCount() - 1){
+                    // TODO load next 10 items from fb
+                }
+            }
+        });
     }
 
 
@@ -183,10 +187,22 @@ public class HomeActivity extends AppCompatActivity {
                 new CategoryViewHolder.OnCategoryItemClickListener() {
                     @Override
                     public void OnCategoryClick(int pAdapterPosition) {
+                        Log.d("ASD", "OnCategoryClick: ");
                         // TODO load data by category
+                        mAllItemData.clear();
 
-                        setNewAllItemsList(null);
-                        setNewHotItemsList(null);
+                        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
+                                .of(HomeActivity.this).get(ItemsSpecificListVViewModel.class);
+                        itemsSpecificListVViewModel.updateData("categoryId", mCategories.get(pAdapterPosition).getCategoryId());
+
+                        itemsSpecificListVViewModel.getItem().observe(HomeActivity.this, new Observer<Item>() {
+                            public void onChanged(@Nullable Item pItem) {
+                                Log.d("ASD", "onChanged Size " + mAllItemData.size());
+                                mAllItemData.add(pItem);
+                                mAllListAdapter.notifyDataSetChanged();
+                            }
+                        });
+                        mAllListAdapter.notifyDataSetChanged();
                     }
                 };
 
@@ -261,136 +277,73 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-    //    hot items list recyclerView adapter and ViewHolder
-    private class HotListAdapter extends RecyclerView.Adapter<HotListViewHolder> {
+    //    hot items list viewPager adapter
+    private class HotItemsVPAdapter extends PagerAdapter {
 
-        private List<Item> mHotItems;
+        private List<Item> items = new ArrayList<>();
 
-        private HotListViewHolder.OnHotItemClickListener mClickListener =
-                new HotListViewHolder.OnHotItemClickListener() {
-                    @Override
-                    public void onHotItemCLick(int pAdapterPosition) {
-                        Intent intent = new Intent(HomeActivity.this, ShowItemActivity.class);
-                        intent.putExtra(PUT_EXTRA_KEY, mHotItems.get(pAdapterPosition));
-                        HomeActivity.this.startActivity(intent);
-                    }
+        private Context ctx;
 
-                    @Override
-                    public void onFavoriteClick(int pAdapterPosition) {
-                        if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
-                            Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
-                            startActivity(intent);
-                        } else {
-                            //TODO add to favorite
-                        }
-                    }
-                };
+        HotItemsVPAdapter(List<Item> pItems, Context pCtx) {
+            items = pItems;
+            ctx = pCtx;
+        }
 
-        HotListAdapter(List<Item> pHotItems) {
-            mHotItems = pHotItems;
+        @Override
+        public int getCount() {
+            return items.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
+            return view.equals(object);
+        }
+
+        @Override
+        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
+            container.removeView((CardView)object);
         }
 
         @NonNull
         @Override
-        public HotListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            HotListViewHolder hotListViewHolder = new HotListViewHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.view_bid_it_recycler_hot_item, parent, false));
+        public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
-            setListeners(hotListViewHolder);
+            Item currentItem = items.get(position);
 
-            return hotListViewHolder;
-        }
+            LayoutInflater layoutInflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View item_view = layoutInflater.inflate(R.layout.view_bid_it_hot_item, container, false);
+            ImageView imageView = item_view.findViewById(R.id.pager_image_view)   ;
+            TextView title = item_view.findViewById(R.id.pager_text_title);
+            TextView price = item_view.findViewById(R.id.pager_text_price);
 
-        @Override
-        public void onBindViewHolder(@NonNull HotListViewHolder holder, int position) {
-            holder.getTxtItemTitle().setText(mHotItems.get(position).getItemTitle());
-            holder.getTxtItemCurrentPrice().setText(String.valueOf(mHotItems.get(position).getCurrentPrice()));
-            holder.getImgBtnIsItemFavorite();//TODO is favorite
-            holder.getImgItemImage();//TODO image load
+            Glide.with(ctx).
+                    load(currentItem.getPhotoUrls().get(0))
+                    .into(imageView);
 
-            if (isAuctionStarted(mHotItemData.get(position))) {
-                holder.getImgItemStatus().setImageResource(R.drawable.status_point_active_12dp);
-            } else {
-                holder.getImgItemStatus().setImageResource(R.drawable.status_point_inactive_12dp);
-            }
-        }
+            title.setText(currentItem.getItemTitle());
+            price.setText(String.valueOf(currentItem.getStartPrice()));
 
-        @Override
-        public int getItemCount() {
-            return mHotItems.size();
-        }
-
-        private void setListeners(final HotListViewHolder pHotListViewHolder) {
-            pHotListViewHolder.setClickListener(mClickListener);
+            container.addView(item_view);
+            return item_view;
         }
     }
 
-    private static class HotListViewHolder extends RecyclerView.ViewHolder {
+    private class ZoomViewPager implements ViewPager.PageTransformer {
+        static final float MAX_SCALE = 1.0f;
+        static final float MIN_SCALE = 0.8f;
 
-        private TextView mTxtItemTitle, mTxtItemCurrentPrice;
-        private ImageView mImgItemImage, mImgItemStatus;
-        private ImageButton mImgBtnIsItemFavorite;
+        @Override
+        public void transformPage(View page, float position) {
 
-        private OnHotItemClickListener mClickListener;
+            position = position < -1 ? -1 : position;
+            position = position > 1 ? 1 : position;
 
-        public HotListViewHolder(View itemView) {
-            super(itemView);
+            float tempScale = position < 0 ? 1 + position : 1 - position;
 
-            mTxtItemTitle = itemView.findViewById(R.id.txt_home_activity_holder_item_title);
-            mTxtItemCurrentPrice = itemView.findViewById(R.id.txt_home_activity_holder_item_current_price);
-            mImgItemImage = itemView.findViewById(R.id.img_home_activity_holder_item_image);
-            mImgItemStatus = itemView.findViewById(R.id.img_home_activity_holder_item_status);
-            mImgBtnIsItemFavorite = itemView.findViewById(R.id.img_btn_home_activity_holder_is_item_favorite);
-
-            setListeners(itemView);
-        }
-
-        public TextView getTxtItemTitle() {
-            return mTxtItemTitle;
-        }
-
-        public TextView getTxtItemCurrentPrice() {
-            return mTxtItemCurrentPrice;
-        }
-
-        public ImageView getImgItemImage() {
-            return mImgItemImage;
-        }
-
-        public ImageView getImgItemStatus() {
-            return mImgItemStatus;
-        }
-
-        public ImageButton getImgBtnIsItemFavorite() {
-            return mImgBtnIsItemFavorite;
-        }
-
-        private void setListeners(View pV) {
-            pV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View pView) {
-                    mClickListener.onHotItemCLick(getAdapterPosition());
-                }
-            });
-
-            mImgBtnIsItemFavorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View pView) {
-                    mClickListener.onFavoriteClick(getAdapterPosition());
-                }
-            });
-        }
-
-
-        //        delegation
-        private interface OnHotItemClickListener {
-            void onHotItemCLick(int pAdapterPosition);
-
-            void onFavoriteClick(int pAdapterPosition);
-        }
-
-        public void setClickListener(OnHotItemClickListener pClickListener) {
-            mClickListener = pClickListener;
+            float slope = (MAX_SCALE - MIN_SCALE) / 1;
+            float scaleValue = MIN_SCALE + tempScale * slope;
+            page.setScaleX(scaleValue);
+            page.setScaleY(scaleValue);
         }
     }
 
@@ -400,12 +353,13 @@ public class HomeActivity extends AppCompatActivity {
 
         private List<Item> mAllItems;
 
+        //        on recycler item click listeners
         private AllListViewHolder.OnAllItemClickListener mClickListener =
                 new AllListViewHolder.OnAllItemClickListener() {
                     @Override
                     public void onAllItemClick(int pAdapterPosition) {
                         Intent intent = new Intent(HomeActivity.this, ShowItemActivity.class);
-                        intent.putExtra(PUT_EXTRA_KEY, mAllItems.get(pAdapterPosition));
+                        intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT, mAllItems.get(pAdapterPosition));
                         HomeActivity.this.startActivity(intent);
                     }
 
@@ -415,10 +369,11 @@ public class HomeActivity extends AppCompatActivity {
                             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                             startActivity(intent);
                         } else {
-                            //TODO add to favorite
+                            addToFavorite();
                         }
                     }
                 };
+
 
         AllListAdapter(List<Item> pAllItems) {
             mAllItems = pAllItems;
@@ -436,26 +391,52 @@ public class HomeActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(@NonNull AllListViewHolder holder, int position) {
-            //        get current item
-            Item item = mAllItems.get(position);
+        public void onBindViewHolder(@NonNull final AllListViewHolder holder, int position) {
+//            get current item
+            final Item item = mAllItems.get(position);
 
-//      set item fields into holder
-            holder.getTxtAuctionTitle().setText(item.getItemTitle());
-            holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm:ss")
-                    .format(item.getStartDate()));
-            holder.getTxtAuctionCurrentPrice().setText(String.valueOf(item.getCurrentPrice()) + " AMD");
-            holder.getImgAuctionImage().setImageResource(R.drawable.favorite_star_24dp);
-            if (isAuctionStarted(item)) {
-                holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_active_12dp);
-            } else {
-                holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_inactive_12dp);
-            }
+//            timer
+            final Handler handler = new Handler();
+            final Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    long time = item.getEndDate() - System.currentTimeMillis();
+
+                    if (isAuctionInProgress(item)) {
+                        holder.getTxtAuctionDate().setText(new SimpleDateFormat("HH:mm:ss")
+                                .format(time));
+                        holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_active_12dp);
+                    } else if (isAuctionFinished(item)) {
+                        // TODO auction finished
+                    } else {
+                        holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm")
+                                .format(item.getStartDate()));
+                        holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_inactive_12dp);
+                    }
+
+                    handler.postDelayed(this, 1000);
+                }
+            };
+
+            runnable.run();
+
+//            set item fields into holder
+            setFields(holder, item);
         }
 
         @Override
         public int getItemCount() {
             return mAllItems.size();
+        }
+
+        private void setFields(AllListViewHolder pHolder, Item pItem) {
+            pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
+            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf(pItem.getCurrentPrice()) + " AMD");
+            pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
+
+            Glide.with(HomeActivity.this)
+                    .load(pItem.getPhotoUrls().get(0))
+                    .into(pHolder.getImgAuctionImage());
         }
 
         private void setListener(AllListViewHolder pAllListViewHolder) {

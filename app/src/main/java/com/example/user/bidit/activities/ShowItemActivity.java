@@ -1,9 +1,12 @@
 package com.example.user.bidit.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.Uri;
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
@@ -12,31 +15,46 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class ShowItemActivity extends AppCompatActivity {
 
+    public static final String PUT_EXTRA_KEY_MODE_MY_ITEM = "my_item";
+    public static final String PUT_EXTRA_KEY_MODE_HISTORY = "history";
+    public static final String PUT_EXTRA_KEY_MODE_DEFAULT = "default";
+
+    //    field to now how show this activity
+    private static String mMode;
+
+    //    field to set scroll
+    private AppBarLayout mAppBarLayout;
+
     //    show auction images, fields
     private ViewPager mViewPager;
     private ImageVPAdapter mImageVPAdapter;
+
+    //    dots below view pager
+    private LinearLayout mLinearLayoutDots;
+    private int mDotsCount;
+    private ImageView[] mImgDots;
 
     private TextView mTxtAuctionTitle, mTxtAuctionDescription, mTxtAuctionDuration, mTxtAuctionStartDate,
             mTxtAuctionStartPrice, mTxtAuctionCurrentPrice;
@@ -46,8 +64,13 @@ public class ShowItemActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private RecyclerViewMessageAdapter mMessageAdapter;
     private ArrayList<String> mMessages;
+
+    private LinearLayout mLinearLayout;
     private TextInputEditText mInputMessage;
     private Button mBtnEnterMessage;
+
+    //    toolbar timer text view
+    private TextView mTxtToolbarDuration;
 
     //    data (temp)
     private Item mItem;
@@ -61,7 +84,9 @@ public class ShowItemActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         init();
+        startToolbarTimer();
         setFields();
+        checkForMode();
         setListeners();
     }
 
@@ -69,10 +94,19 @@ public class ShowItemActivity extends AppCompatActivity {
 //        load item from intent
         loadExtra();
 
+//        find parent layout
+        mAppBarLayout = findViewById(R.id.app_bar_show_item_activity);
+
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
         mImageVPAdapter = new ImageVPAdapter(mItem);
         mViewPager.setAdapter(mImageVPAdapter);
+
+//        view pager dots init
+        mLinearLayoutDots = findViewById(R.id.linear_show_item_activity_count_dots);
+        mDotsCount = mImageVPAdapter.getCount();
+        mImgDots = new ImageView[mDotsCount];
+        createViewPagerDots();
 
 //        find and set recyclerView and components
         mRecyclerView = findViewById(R.id.recycler_view_show_item_activity_messages);
@@ -80,6 +114,9 @@ public class ShowItemActivity extends AppCompatActivity {
         mMessages.add(String.valueOf(mItem.getCurrentPrice()));
         mMessageAdapter = new RecyclerViewMessageAdapter(mMessages);
         setRecyclerSittings();
+
+//        enter message layout and buttons
+        mLinearLayout = findViewById(R.id.linear_show_item_activity_enter_message_layout);
         mInputMessage = findViewById(R.id.input_show_item_activity_message);
         mBtnEnterMessage = findViewById(R.id.btn_show_item_activity_enter_message);
 
@@ -92,17 +129,30 @@ public class ShowItemActivity extends AppCompatActivity {
         mTxtAuctionCurrentPrice = findViewById(R.id.txt_show_item_activity_auction_current_price);
         mImgBtnFavorite = findViewById(R.id.img_btn_show_item_activity_favorite_btn);
 
+        mTxtToolbarDuration = findViewById(R.id.txt_toolbar_show_item_activity_duration);
+
 //        check for logged in to disable buttons
         checkForLoggedIn();
     }
 
+    //    load item from intent
     private void loadExtra() {
         Bundle extra = getIntent().getExtras();
-        if (extra != null){
-            mItem = (Item) extra.getSerializable(HomeActivity.PUT_EXTRA_KEY);
+        if (extra != null) {
+            if (extra.containsKey(PUT_EXTRA_KEY_MODE_DEFAULT)) {
+                mItem = (Item) extra.getSerializable(PUT_EXTRA_KEY_MODE_DEFAULT);
+                mMode = PUT_EXTRA_KEY_MODE_DEFAULT;
+            } else if (extra.containsKey(PUT_EXTRA_KEY_MODE_MY_ITEM)) {
+                mItem = (Item) extra.getSerializable(PUT_EXTRA_KEY_MODE_MY_ITEM);
+                mMode = PUT_EXTRA_KEY_MODE_MY_ITEM;
+            } else if (extra.containsKey(PUT_EXTRA_KEY_MODE_HISTORY)) {
+                mItem = (Item) extra.getSerializable(PUT_EXTRA_KEY_MODE_HISTORY);
+                mMode = PUT_EXTRA_KEY_MODE_HISTORY;
+            }
         }
     }
 
+    //    set show item fields from item
     private void setFields() {
         mTxtAuctionTitle.setText(mItem.getItemTitle());
         mTxtAuctionDescription.setText(mItem.getItemDescription());
@@ -117,9 +167,12 @@ public class ShowItemActivity extends AppCompatActivity {
             mImgBtnFavorite.setImageResource(R.drawable.favorite_star_48dp);
         } else {
             mImgBtnFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
-        }// ???
+        }
 
-
+        if (mItem.getStartDate() > System.currentTimeMillis()){
+            mInputMessage.setEnabled(false);
+            mBtnEnterMessage.setEnabled(false);
+        }
     }
 
     private void setRecyclerSittings() {
@@ -128,25 +181,36 @@ public class ShowItemActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(mMessageAdapter);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
         mImgBtnFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addItemToFavorite();
+                if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+                    addItemToFavorite();
+                } else {
+                    Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
         mBtnEnterMessage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View pView) {
-                enterMessageIntoChat();
+                if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+                    enterMessageIntoChat();
+                } else {
+                    Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
             }
         });
 
         mInputMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView pTextView, int pI, KeyEvent pKeyEvent) {
-                if (pI == EditorInfo.IME_ACTION_DONE){
+                if (pI == EditorInfo.IME_ACTION_DONE) {
                     enterMessageIntoChat();
                     pKeyEvent.startTracking();
                 }
@@ -154,9 +218,48 @@ public class ShowItemActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        mInputMessage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View pView) {
+                if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+                    Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        mInputMessage.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View pView, MotionEvent pMotionEvent) {
+                mAppBarLayout.setExpanded(false);
+                return false;
+            }
+        });
+
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+                for (int i = 0; i < mDotsCount; i++) {
+                    mImgDots[i].setImageResource(R.drawable.show_item_view_pager_dot);
+                }
+                mImgDots[position].setImageResource(R.drawable.show_item_view_pager_dot_selected);
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 
-    private void enterMessageIntoChat(){
+    //    check valid bid price and send to fb
+    private void enterMessageIntoChat() {
         // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
         String currentMessage = mInputMessage.getText().toString();
         if (!currentMessage.isEmpty()) {
@@ -168,6 +271,7 @@ public class ShowItemActivity extends AppCompatActivity {
         }
     }
 
+    //    check for user logged in
     private void checkForLoggedIn() {
         if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
             mImgBtnFavorite.setEnabled(true);
@@ -180,13 +284,65 @@ public class ShowItemActivity extends AppCompatActivity {
         }
     }
 
+    //    check show item showing mode
+    private void checkForMode() {
+        switch (mMode) {
+            case PUT_EXTRA_KEY_MODE_DEFAULT: {
+                mImgBtnFavorite.setVisibility(View.VISIBLE);
+                mLinearLayout.setVisibility(View.VISIBLE);
+                mLinearLayout.setEnabled(true);
+                mLinearLayout.setClickable(true);
+                break;
+            }
+            case PUT_EXTRA_KEY_MODE_MY_ITEM: {
+                mImgBtnFavorite.setVisibility(View.GONE);
+                mLinearLayout.setEnabled(false);
+                mLinearLayout.setClickable(false);
+                break;
+            }
+            case PUT_EXTRA_KEY_MODE_HISTORY: {
+                mImgBtnFavorite.setVisibility(View.GONE);
+                mLinearLayout.setVisibility(View.GONE);
+                break;
+            }
+            default: {
+                break;
+            }
+        }
+    }
+
+    //    start tool bar timer if auction have benn started,or show start date
+    private void startToolbarTimer() {
+        final Handler handler = new Handler();
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                long time = System.currentTimeMillis();
+
+                if (mItem.getEndDate() > time && mItem.getStartDate() < time) {
+                    mTxtToolbarDuration.setText(new SimpleDateFormat("HH:mm:ss")
+                            .format(mItem.getEndDate() - time));
+                } else if (mItem.getStartDate() > System.currentTimeMillis()) {
+                    mTxtToolbarDuration.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
+                            .format(mItem.getStartDate()));
+                }
+
+                handler.postDelayed(this, 500);
+            }
+        };
+
+        runnable.run();
+    }
+
     private boolean isFavorite = true;// temp
 
+    //    check is this item favorite for current user
     private boolean isFavorite() {
         isFavorite = !isFavorite;
         return isFavorite; // TODO is favorite logic
     }
 
+    //    add item to current user's favorite list
     private void addItemToFavorite() {
         if (isFavorite()) {
             mImgBtnFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
@@ -196,8 +352,17 @@ public class ShowItemActivity extends AppCompatActivity {
         // TODO add favorite logic
     }
 
+    private void createViewPagerDots() {
+        for (int i = 0; i < mDotsCount; i++) {
+            mImgDots[i] = new ImageView(this);
+            mImgDots[i].setImageResource(R.drawable.show_item_view_pager_dot);
+            mLinearLayoutDots.addView(mImgDots[i]);
+        }
+        mImgDots[0].setImageResource(R.drawable.show_item_view_pager_dot_selected);
+    }
 
-    // ListView adapter
+
+    // Recycler view adapter
     private class RecyclerViewMessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
         private ArrayList<String> mMessages;
 
@@ -270,10 +435,13 @@ public class ShowItemActivity extends AppCompatActivity {
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            View itemView = mLayoutInflater.inflate(R.layout.view_bid_it_image_item, container, false);
+            View itemView = mLayoutInflater.inflate(R.layout.view_bid_it_vp_image_item, container, false);
 
             ImageView imageView = itemView.findViewById(R.id.image_show_item_activity_pager);
-            imageView.setImageURI(Uri.parse(mImages.get(position)));
+
+            Glide.with(ShowItemActivity.this)
+                    .load(mImages.get(position))
+                    .into(imageView);
 
             container.addView(itemView);
 
