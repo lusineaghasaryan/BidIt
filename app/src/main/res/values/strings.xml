@@ -57,6 +57,9 @@
     <string name="txt_auction_duration">Duration</string>
     <string name="txt_auction_start_price">Start price</string>
     <string name="txt_auction_current_price">current price</string>
+    <string name="add_image_messege">Add Image</string>
+    <string name="wrong_date_messege">Wrong Date</string>
+    <string name="choose_category_messege">Choose Category</string>
 
     <string name="show_item_activity_bit_hint">Enter bid price</string>
 

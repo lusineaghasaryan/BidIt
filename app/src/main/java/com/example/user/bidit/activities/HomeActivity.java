@@ -22,7 +22,6 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.arlib.floatingsearchview.FloatingSearchView;
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
@@ -52,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     private List<Item> mAllItemData;
 
     //    search view in toolbar
-    private FloatingSearchView mSearchView;
+//    private FloatingSearchView mSearchView;
 
 
     @Override
@@ -82,7 +81,7 @@ public class HomeActivity extends AppCompatActivity {
         mAllListAdapter = new AllListAdapter(mAllItemData);
         mHotListAdapter = new HotItemsVPAdapter(mHotItemData, this);
 
-        mSearchView = findViewById(R.id.search_view_home_activity);
+//        mSearchView = findViewById(R.id.search_view_home_activity);
 
         setRecyclerAndVPSittings();
         setSearchViewSittings();
@@ -107,22 +106,29 @@ public class HomeActivity extends AppCompatActivity {
     private void setSearchViewSittings() {
 //        mSearchView.attachNavigationDrawerToMenuButton(mDrawerLayout);
 
-        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
-            @Override
-            public void onSearchTextChanged(String oldQuery, String newQuery) {
-
-            }
-        });
+//        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+//            @Override
+//            public void onSearchTextChanged(String oldQuery, String newQuery) {
+//
+//            }
+//        });
     }
 
     private void loadCategoryListFromFirebase() {
         CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
-        categoryListViewModel.getCategory().observe(this, new Observer<Category>() {
+       /* categoryListViewModel.getCategory().observe(this, new Observer<Category>() {
             @Override
             public void onChanged(@Nullable Category category) {
                 Log.d("ASD", "ASD");
                 mCategoryData.add(category);
                 mCategoryAdapter.notifyDataSetChanged();
+            }
+        });*/
+
+        categoryListViewModel.getCategoryList().observe(this, new Observer<ArrayList<Category>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<Category> pCategories) {
+                mCategoryData.addAll(pCategories);
             }
         });
         categoryListViewModel.updateData();

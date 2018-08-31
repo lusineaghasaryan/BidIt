@@ -12,24 +12,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CategoryListViewModel extends ViewModel {
-    private final MutableLiveData<Category> mCategory =
-            new MutableLiveData<>();
+     private final MutableLiveData<ArrayList<Category>> mCategoryList = new MutableLiveData<>();
 
-    public LiveData<Category> getCategory(){
-        return mCategory;
+    public MutableLiveData<ArrayList<Category>> getCategoryList() {
+        return mCategoryList;
     }
-
-    public void setCategory(Category category){
-        mCategory.setValue(category);
-    }
-
 
     public void updateData() {
-        FirebaseHelper.getCategoryListFromDatabase(new FirebaseHelper.Callback<Category>() {
+        FirebaseHelper.getCategoryListFromDatabase(new FirebaseHelper.Callback<ArrayList<Category>>() {
             @Override
-            public void callback(boolean pIsSuccess, Category pValue) {
+            public void callback(boolean pIsSuccess, ArrayList<Category> pValue) {
                 if (pIsSuccess) {
-                    mCategory.setValue(pValue);
+                    mCategoryList.setValue(pValue);
                 }
             }
         });

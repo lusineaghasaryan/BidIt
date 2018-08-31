@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_item_history:{
                 break;
             }
-            case R.id.nav_item_favorite: {
+            case R.id.nav_item_favorite:{
                 startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
                 break;
             }

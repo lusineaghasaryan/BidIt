@@ -88,6 +88,8 @@ public class ShowItemActivity extends AppCompatActivity {
         setFields();
         checkForMode();
         setListeners();
+
+//        ((AppBarLayout) findViewById(R.id.app_bar_layout)).setExpanded(true/false);
     }
 
     private void init() {

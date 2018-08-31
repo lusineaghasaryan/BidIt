@@ -40,14 +40,25 @@ public class AddItemPhotosRVAdapter extends RecyclerView.Adapter<AddItemPhotosVi
     public void onBindViewHolder(@NonNull AddItemPhotosViewHolder holder, final int position) {
 
         final String imageUrl = mPhotosList.get(position);
-        Glide.with(mContext)
-                .load("file://" + imageUrl)
-                .centerCrop()
-                .placeholder(R.drawable.ic_launcher_background)
-                .error(R.drawable.ic_launcher_foreground)
-                .into(holder.mPotoImageView);
+Log.v("IMAGE", "IMAGEURL = " + imageUrl);
+        if (imageUrl.contains("https://firebasestorage.googleapis.com") || imageUrl.equals("drawable://2131165336")){
+            Glide.with(mContext)
+                    .load(imageUrl)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(holder.mPotoImageView);
+        }
+        else {
+            Glide.with(mContext)
+                    .load("file://" + imageUrl)
+                    .centerCrop()
+                    .placeholder(R.drawable.ic_launcher_background)
+                    .error(R.drawable.ic_launcher_foreground)
+                    .into(holder.mPotoImageView);
 
-        mIOnAddPhotoListener.addPhoto(imageUrl);
+            mIOnAddPhotoListener.addPhoto(imageUrl);
+        }
 
 
 

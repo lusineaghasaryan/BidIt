@@ -22,10 +22,10 @@
             android:orientation="vertical">
 
             <ImageView
-                android:layout_margin="@dimen/margin_small"
                 android:id="@+id/image_item_image_my_item_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_small"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/ic_launcher" />
 

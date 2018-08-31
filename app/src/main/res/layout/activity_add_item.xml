@@ -1,91 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_item_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="?attr/actionBarSize"
-    android:orientation="vertical"
     android:background="@android:color/white"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:orientation="vertical">
 
     <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view_activity_add_item_poto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        android:id="@+id/recycler_view_activity_add_item_poto"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/edit_text_activity_add_item_name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="@string/edit_text_hint_title"
-        app:layout_constraintTop_toBottomOf="@id/recycler_view_activity_add_item_poto"/>
+        app:layout_constraintTop_toBottomOf="@id/recycler_view_activity_add_item_poto" />
 
     <EditText
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
         android:id="@+id/edit_text_activity_add_item_description"
-        android:hint="@string/edit_text_hint_description"
-        app:layout_constraintTop_toBottomOf="@id/edit_text_activity_add_item_name"/>
-
-    <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/edit_text_hint_description"
+        app:layout_constraintTop_toBottomOf="@id/edit_text_activity_add_item_name" />
+
+    <EditText
         android:id="@+id/edit_text_activity_add_item_start_price"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="@string/edit_text_hint_start_price"
         android:inputType="numberSigned"
-        app:layout_constraintTop_toBottomOf="@id/edit_text_activity_add_item_description"/>
+        app:layout_constraintTop_toBottomOf="@id/edit_text_activity_add_item_description" />
 
     <EditText
+        android:id="@+id/edit_text_activity_add_item_buy_now_price"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/edit_text_activity_add_item_buy_now_price"
         android:hint="@string/edit_text_hint_buy_now_price"
         android:inputType="numberSigned"
-        app:layout_constraintTop_toBottomOf="@id/edit_text_activity_add_item_start_price"/>
+        app:layout_constraintTop_toBottomOf="@id/edit_text_activity_add_item_start_price" />
 
     <Spinner
+        android:id="@+id/spinner_activity_add_item_category"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/spinner_activity_add_item_category"
-        app:layout_constraintTop_toBottomOf="@id/edit_text_activity_add_item_buy_now_price"/>
+        app:layout_constraintTop_toBottomOf="@id/edit_text_activity_add_item_buy_now_price" />
 
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/text_view_activity_add_item_start_date_text"
-        app:layout_constraintTop_toBottomOf="@id/spinner_activity_add_item_category"/>
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/spinner_activity_add_item_category" />
+
+    <TextView
         android:id="@+id/text_view_activity_add_item_start_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:hint="@string/text_view_hint_choose_date"
         app:layout_constraintLeft_toRightOf="@id/text_view_activity_add_item_start_date_text"
-        app:layout_constraintTop_toBottomOf="@id/spinner_activity_add_item_category"/>
+        app:layout_constraintTop_toBottomOf="@id/spinner_activity_add_item_category" />
 
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/text_view_activity_add_item_end_date_text"
-        app:layout_constraintTop_toBottomOf="@id/text_view_activity_add_item_start_date_text"/>
-    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/text_view_activity_add_item_start_date_text" />
+
+    <TextView
         android:id="@+id/text_view_activity_add_item_end_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:hint="@string/text_view_hint_choose_time"
-        app:layout_constraintTop_toBottomOf="@id/text_view_activity_add_item_start_date"
-        app:layout_constraintLeft_toRightOf="@id/text_view_activity_add_item_end_date_text"/>
+        app:layout_constraintLeft_toRightOf="@id/text_view_activity_add_item_end_date_text"
+        app:layout_constraintTop_toBottomOf="@id/text_view_activity_add_item_start_date" />
 
     <Button
+        android:id="@+id/btn_activity_add_item_save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_activity_add_item_save"
         android:text="@string/btn_save"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
 
     <FrameLayout
