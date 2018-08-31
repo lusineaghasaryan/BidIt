@@ -34,8 +34,8 @@
         <activity
             android:name=".activities.ShowItemActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:windowSoftInputMode="stateHidden"/>
-        <activity android:name=".activities.HomeActivity"></activity>
+            android:windowSoftInputMode="stateHidden" />
+        <activity android:name=".activities.HomeActivity" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -63,6 +63,7 @@
         <activity android:name=".activities.MyAccountActivity" />
         <activity android:name=".activities.MyItemsActivity" />
         <activity android:name=".activities.FavoriteActivity" />
+        <activity android:name=".activities.BaseActivity" />
     </application>
 
 </manifest>

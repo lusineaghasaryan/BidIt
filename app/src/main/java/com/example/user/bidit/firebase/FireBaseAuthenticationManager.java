@@ -87,6 +87,7 @@ public class FireBaseAuthenticationManager {
     public void initCurrentUser() {
         FirebaseHelper.mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
+
             public void onDataChange(DataSnapshot pDataSnapshot) {
                 Log.d("MYTAG", "onDataChange: initCurrentUser");
                 mCurrentUser = User.fromDataSnapshot(pDataSnapshot, mAuth.getCurrentUser().getUid());

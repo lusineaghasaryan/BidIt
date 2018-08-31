@@ -1,4 +1,4 @@
-package com.example.user.bidit.util;
+package com.example.user.bidit.utils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

@@ -16,6 +16,7 @@
 
     <color name="bid_message_color">#000000</color>
     <color name="color_text_login_light_grey">#bfbfbf</color>
+    <color name="color_text_login_light_grey_transparent">#30bfbfbf</color>
     <color name="color_hint_login_dark_grey">#616161</color>
 
 </resources>

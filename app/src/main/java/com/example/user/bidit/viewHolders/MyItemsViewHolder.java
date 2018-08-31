@@ -9,7 +9,7 @@ import com.example.user.bidit.R;
 
 public class MyItemsViewHolder extends RecyclerView.ViewHolder{
     private ImageView imageView;
-    private TextView title, date, duration, startPrice, followersCount;
+    private TextView title, date, startPrice, followersCount;
 
     public MyItemsViewHolder(View itemView) {
         super(itemView);
@@ -17,10 +17,9 @@ public class MyItemsViewHolder extends RecyclerView.ViewHolder{
     }
 
     private void init(){
-        imageView = itemView.findViewById(R.id.image_user_image_my_item_view);
+        imageView = itemView.findViewById(R.id.image_item_image_my_item_view);
         title = itemView.findViewById(R.id.text_title_view_my_item);
         date = itemView.findViewById(R.id.text_start_date_my_item_view);
-        duration = itemView.findViewById(R.id.text_duration_my_item_view);
         startPrice = itemView.findViewById(R.id.text_start_price_my_item_view);
         followersCount = itemView.findViewById(R.id.text_followers_count_view_my_item);
 
@@ -46,7 +45,4 @@ public class MyItemsViewHolder extends RecyclerView.ViewHolder{
         return date;
     }
 
-    public TextView getDuration() {
-        return duration;
-    }
 }
