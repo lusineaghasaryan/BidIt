@@ -2,6 +2,7 @@ package com.example.user.bidit.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -32,15 +34,13 @@ import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
 
-    public static final String PUT_EXTRA_KEY = "put extra ok";
-
     //    recyclers, viewPager and adapters
     private RecyclerView mRecyclerViewCategories, mRecyclerViewAllList;
+    private LinearLayoutManager mLayoutManager;
     private CategoryAdapter mCategoryAdapter;
     private AllListAdapter mAllListAdapter;
     private ViewPager mViewPagerHotList;
@@ -63,6 +63,7 @@ public class HomeActivity extends AppCompatActivity {
         init();
         loadCategoryListFromFirebase();
         loadAllListFromFirebase();
+        setListeners();
     }
 
     //    initialize fields
@@ -74,10 +75,12 @@ public class HomeActivity extends AppCompatActivity {
         mRecyclerViewCategories = findViewById(R.id.recycler_view_home_activity_categories);
         mRecyclerViewAllList = findViewById(R.id.recycler_view_home_activity_list);
         mViewPagerHotList = findViewById(R.id.view_pager_home_activity_hot_list);
+        mLayoutManager = new LinearLayoutManager(this,
+                LinearLayoutManager.VERTICAL, false);
 
         mCategoryAdapter = new CategoryAdapter(mCategoryData);
         mAllListAdapter = new AllListAdapter(mAllItemData);
-        mHotListAdapter = new HotItemsVPAdapter();
+        mHotListAdapter = new HotItemsVPAdapter(mHotItemData, this);
 
         mSearchView = findViewById(R.id.search_view_home_activity);
 
@@ -92,11 +95,13 @@ public class HomeActivity extends AppCompatActivity {
         mRecyclerViewCategories.setAdapter(mCategoryAdapter);
 
         mRecyclerViewAllList.setHasFixedSize(true);
-        mRecyclerViewAllList.setLayoutManager(new LinearLayoutManager(this,
-                LinearLayoutManager.VERTICAL, false));
+        mRecyclerViewAllList.setLayoutManager(mLayoutManager);
         mRecyclerViewAllList.setAdapter(mAllListAdapter);
 
         mViewPagerHotList.setAdapter(mHotListAdapter);
+        mViewPagerHotList.setPageTransformer(true, new ZoomViewPager());
+        mViewPagerHotList.setClipToPadding(false);
+        mViewPagerHotList.setPadding(220, 0, 220, 0);
     }
 
     private void setSearchViewSittings() {
@@ -139,18 +144,37 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private boolean isAuctionInProgress(Item pItem) {
-        Long currentDate = Calendar.getInstance().getTimeInMillis();
+        Long currentDate = System.currentTimeMillis();
         return currentDate > pItem.getStartDate() && currentDate < pItem.getEndDate();
     }
 
     private boolean isAuctionFinished(Item pItem) {
-        Long currentDate = Calendar.getInstance().getTimeInMillis();
+        Long currentDate = System.currentTimeMillis();
         return currentDate > pItem.getEndDate();
     }
 
     private boolean isAuctionFavorite(Item pItem) {
         // TODO is favorite
         return true;
+    }
+
+    private void addToFavorite() {
+        //TODO add to favorite
+    }
+
+    private void setListeners(){
+        mRecyclerViewAllList.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                int lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
+
+                if (lastVisibleItemPosition == mAllListAdapter.getItemCount() - 1){
+                    // TODO load next 10 items from fb
+                }
+            }
+        });
     }
 
 
@@ -256,9 +280,18 @@ public class HomeActivity extends AppCompatActivity {
     //    hot items list viewPager adapter
     private class HotItemsVPAdapter extends PagerAdapter {
 
+        private List<Item> items = new ArrayList<>();
+
+        private Context ctx;
+
+        HotItemsVPAdapter(List<Item> pItems, Context pCtx) {
+            items = pItems;
+            ctx = pCtx;
+        }
+
         @Override
         public int getCount() {
-            return mHotItemData.size();
+            return items.size();
         }
 
         @Override
@@ -268,42 +301,49 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            container.removeView((View) object);
+            container.removeView((CardView)object);
         }
 
         @NonNull
         @Override
         public Object instantiateItem(@NonNull ViewGroup container, int position) {
 
-            Item item = mHotItemData.get(position);
+            Item currentItem = items.get(position);
 
-            View view = LayoutInflater.from(HomeActivity.this)
-                    .inflate(R.layout.view_bid_it_hot_item, container, false);
+            LayoutInflater layoutInflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            View item_view = layoutInflater.inflate(R.layout.view_bid_it_hot_item, container, false);
+            ImageView imageView = item_view.findViewById(R.id.pager_image_view)   ;
+            TextView title = item_view.findViewById(R.id.pager_text_title);
+            TextView price = item_view.findViewById(R.id.pager_text_price);
 
-            ImageView mImgHotItemImage = view.findViewById(R.id.img_home_activity_holder_hot_item_image);
-            TextView mTxtHotItemTitle = view.findViewById(R.id.txt_home_activity_holder_hot_item_title);
-            TextView mTxtHotItemDate = view.findViewById(R.id.img_home_activity_holder_hot_item_date);
-            ImageButton mImgBtnHotItemFavorite = view.findViewById(R.id.img_btn_home_activity_holder_is_hot_item_favorite);
+            Glide.with(ctx).
+                    load(currentItem.getPhotoUrls().get(0))
+                    .into(imageView);
 
-            mTxtHotItemTitle.setText(item.getItemTitle());
+            title.setText(currentItem.getItemTitle());
+            price.setText(String.valueOf(currentItem.getStartPrice()));
 
-            if (isAuctionInProgress(item)) {
-                mTxtHotItemDate.setText(new SimpleDateFormat("MM/dd 'at' HH:mm")
-                        .format(item.getStartDate()) + " - " + new SimpleDateFormat("MM/dd 'at' HH:mm")
-                        .format(item.getEndDate()));
-            } else {
-                mTxtHotItemDate.setText((new SimpleDateFormat("MM/dd 'at' HH:mm")
-                        .format(item.getStartDate()) + " - " + new SimpleDateFormat("MM/dd 'at' HH:mm")
-                        .format(item.getEndDate())));
-            }
+            container.addView(item_view);
+            return item_view;
+        }
+    }
 
-            Glide.with(HomeActivity.this)
-                    .load(item.getPhotoUrls().get(0))
-                    .into(mImgHotItemImage);
+    private class ZoomViewPager implements ViewPager.PageTransformer {
+        static final float MAX_SCALE = 1.0f;
+        static final float MIN_SCALE = 0.8f;
 
-            container.addView(view);
+        @Override
+        public void transformPage(View page, float position) {
 
-            return view;
+            position = position < -1 ? -1 : position;
+            position = position > 1 ? 1 : position;
+
+            float tempScale = position < 0 ? 1 + position : 1 - position;
+
+            float slope = (MAX_SCALE - MIN_SCALE) / 1;
+            float scaleValue = MIN_SCALE + tempScale * slope;
+            page.setScaleX(scaleValue);
+            page.setScaleY(scaleValue);
         }
     }
 
@@ -319,7 +359,7 @@ public class HomeActivity extends AppCompatActivity {
                     @Override
                     public void onAllItemClick(int pAdapterPosition) {
                         Intent intent = new Intent(HomeActivity.this, ShowItemActivity.class);
-                        intent.putExtra(PUT_EXTRA_KEY, mAllItems.get(pAdapterPosition));
+                        intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT, mAllItems.get(pAdapterPosition));
                         HomeActivity.this.startActivity(intent);
                     }
 
@@ -329,7 +369,7 @@ public class HomeActivity extends AppCompatActivity {
                             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                             startActivity(intent);
                         } else {
-                            //TODO add to favorite
+                            addToFavorite();
                         }
                     }
                 };
@@ -360,7 +400,7 @@ public class HomeActivity extends AppCompatActivity {
             final Runnable runnable = new Runnable() {
                 @Override
                 public void run() {
-                    long time = item.getEndDate() - Calendar.getInstance().getTimeInMillis();
+                    long time = item.getEndDate() - System.currentTimeMillis();
 
                     if (isAuctionInProgress(item)) {
                         holder.getTxtAuctionDate().setText(new SimpleDateFormat("HH:mm:ss")
@@ -369,7 +409,7 @@ public class HomeActivity extends AppCompatActivity {
                     } else if (isAuctionFinished(item)) {
                         // TODO auction finished
                     } else {
-                        holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm:ss")
+                        holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm")
                                 .format(item.getStartDate()));
                         holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_inactive_12dp);
                     }
@@ -392,7 +432,7 @@ public class HomeActivity extends AppCompatActivity {
         private void setFields(AllListViewHolder pHolder, Item pItem) {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
             pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf(pItem.getCurrentPrice()) + " AMD");
-            pHolder.getImgAuctionImage().setImageResource(R.drawable.favorite_star_24dp);
+            pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
 
             Glide.with(HomeActivity.this)
                     .load(pItem.getPhotoUrls().get(0))
