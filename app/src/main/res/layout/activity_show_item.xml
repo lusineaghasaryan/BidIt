@@ -53,7 +53,7 @@
                     <RelativeLayout
                         android:id="@+id/relative_show_item_activity_indicator"
                         android:layout_width="match_parent"
-                        android:layout_height="25dp"
+                        android:layout_height="15dp"
                         android:layout_alignParentBottom="true">
                         <LinearLayout
                             android:id="@+id/linear_show_item_activity_count_dots"

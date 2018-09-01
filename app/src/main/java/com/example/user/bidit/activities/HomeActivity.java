@@ -1,5 +1,6 @@
 package com.example.user.bidit.activities;
 
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -22,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
@@ -51,7 +53,7 @@ public class HomeActivity extends AppCompatActivity {
     private List<Item> mAllItemData;
 
     //    search view in toolbar
-//    private FloatingSearchView mSearchView;
+    private FloatingSearchView mSearchView;
 
 
     @Override
@@ -81,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
         mAllListAdapter = new AllListAdapter(mAllItemData);
         mHotListAdapter = new HotItemsVPAdapter(mHotItemData, this);
 
-//        mSearchView = findViewById(R.id.search_view_home_activity);
+        mSearchView = findViewById(R.id.search_view_home_activity);
 
         setRecyclerAndVPSittings();
         setSearchViewSittings();
@@ -106,29 +108,21 @@ public class HomeActivity extends AppCompatActivity {
     private void setSearchViewSittings() {
 //        mSearchView.attachNavigationDrawerToMenuButton(mDrawerLayout);
 
-//        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
-//            @Override
-//            public void onSearchTextChanged(String oldQuery, String newQuery) {
-//
-//            }
-//        });
+        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String oldQuery, String newQuery) {
+
+            }
+        });
     }
 
     private void loadCategoryListFromFirebase() {
         CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
-       /* categoryListViewModel.getCategory().observe(this, new Observer<Category>() {
-            @Override
-            public void onChanged(@Nullable Category category) {
-                Log.d("ASD", "ASD");
-                mCategoryData.add(category);
-                mCategoryAdapter.notifyDataSetChanged();
-            }
-        });*/
-
         categoryListViewModel.getCategoryList().observe(this, new Observer<ArrayList<Category>>() {
             @Override
             public void onChanged(@Nullable ArrayList<Category> pCategories) {
                 mCategoryData.addAll(pCategories);
+                mCategoryAdapter.notifyDataSetChanged();
             }
         });
         categoryListViewModel.updateData();
@@ -189,25 +183,30 @@ public class HomeActivity extends AppCompatActivity {
 
         private List<Category> mCategories;
 
+        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
+                .of(HomeActivity.this).get(ItemsSpecificListVViewModel.class);
+
+        Observer<Item> mObserver = new Observer<Item>() {
+            @Override
+            public void onChanged(@Nullable Item pItem) {
+                Log.d("ASD", "onChanged Size " + mAllItemData.size());
+                mAllItemData.add(pItem);
+                mAllListAdapter.notifyDataSetChanged();
+            }
+        };
+
         private CategoryViewHolder.OnCategoryItemClickListener mClickListener =
                 new CategoryViewHolder.OnCategoryItemClickListener() {
                     @Override
                     public void OnCategoryClick(int pAdapterPosition) {
                         Log.d("ASD", "OnCategoryClick: ");
-                        // TODO load data by category
+
+                        itemsSpecificListVViewModel.getItem().removeObserver(mObserver);
                         mAllItemData.clear();
 
-                        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
-                                .of(HomeActivity.this).get(ItemsSpecificListVViewModel.class);
                         itemsSpecificListVViewModel.updateData("categoryId", mCategories.get(pAdapterPosition).getCategoryId());
 
-                        itemsSpecificListVViewModel.getItem().observe(HomeActivity.this, new Observer<Item>() {
-                            public void onChanged(@Nullable Item pItem) {
-                                Log.d("ASD", "onChanged Size " + mAllItemData.size());
-                                mAllItemData.add(pItem);
-                                mAllListAdapter.notifyDataSetChanged();
-                            }
-                        });
+                        itemsSpecificListVViewModel.getItem().observe(HomeActivity.this, mObserver);
                         mAllListAdapter.notifyDataSetChanged();
                     }
                 };
@@ -359,6 +358,8 @@ public class HomeActivity extends AppCompatActivity {
 
         private List<Item> mAllItems;
 
+
+
         //        on recycler item click listeners
         private AllListViewHolder.OnAllItemClickListener mClickListener =
                 new AllListViewHolder.OnAllItemClickListener() {
@@ -433,6 +434,13 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public int getItemCount() {
             return mAllItems.size();
+        }
+
+        @Override
+        public void onViewDetachedFromWindow(@NonNull AllListViewHolder holder) {
+            super.onViewDetachedFromWindow(holder);
+
+
         }
 
         private void setFields(AllListViewHolder pHolder, Item pItem) {

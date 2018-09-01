@@ -1,14 +1,12 @@
 package com.example.user.bidit.activities;
 
 import android.annotation.SuppressLint;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputEditText;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,14 +24,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
+import com.example.user.bidit.adapters.ImageViewPagerAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.widgets.ImageDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class ShowItemActivity extends AppCompatActivity {
 
@@ -49,7 +47,15 @@ public class ShowItemActivity extends AppCompatActivity {
 
     //    show auction images, fields
     private ViewPager mViewPager;
-    private ImageVPAdapter mImageVPAdapter;
+    private ImageViewPagerAdapter mImageViewPagerAdapter;
+    private ImageViewPagerAdapter.OnImageClickListener mOnImageClickListener =
+            new ImageViewPagerAdapter.OnImageClickListener() {
+                @Override
+                public void onImageClick(int pPosition) {
+                    ImageDialog imageDialog = new ImageDialog(ShowItemActivity.this, mItem, pPosition);
+                    imageDialog.show();
+                }
+            };
 
     //    dots below view pager
     private LinearLayout mLinearLayoutDots;
@@ -88,10 +94,9 @@ public class ShowItemActivity extends AppCompatActivity {
         setFields();
         checkForMode();
         setListeners();
-
-//        ((AppBarLayout) findViewById(R.id.app_bar_layout)).setExpanded(true/false);
     }
 
+    //    init views and fields
     private void init() {
 //        load item from intent
         loadExtra();
@@ -101,12 +106,13 @@ public class ShowItemActivity extends AppCompatActivity {
 
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
-        mImageVPAdapter = new ImageVPAdapter(mItem);
-        mViewPager.setAdapter(mImageVPAdapter);
+        mImageViewPagerAdapter = new ImageViewPagerAdapter(this, mItem);
+        mViewPager.setAdapter(mImageViewPagerAdapter);
+        mImageViewPagerAdapter.setOnImageClickListener(mOnImageClickListener);
 
 //        view pager dots init
         mLinearLayoutDots = findViewById(R.id.linear_show_item_activity_count_dots);
-        mDotsCount = mImageVPAdapter.getCount();
+        mDotsCount = mImageViewPagerAdapter.getCount();
         mImgDots = new ImageView[mDotsCount];
         createViewPagerDots();
 
@@ -171,7 +177,7 @@ public class ShowItemActivity extends AppCompatActivity {
             mImgBtnFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
         }
 
-        if (mItem.getStartDate() > System.currentTimeMillis()){
+        if (mItem.getStartDate() > System.currentTimeMillis()) {
             mInputMessage.setEnabled(false);
             mBtnEnterMessage.setEnabled(false);
         }
@@ -243,9 +249,9 @@ public class ShowItemActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 for (int i = 0; i < mDotsCount; i++) {
-                    mImgDots[i].setImageResource(R.drawable.show_item_view_pager_dot);
+                    mImgDots[i].setImageResource(R.drawable.view_pager_dot);
                 }
-                mImgDots[position].setImageResource(R.drawable.show_item_view_pager_dot_selected);
+                mImgDots[position].setImageResource(R.drawable.view_pager_dot_selected);
             }
 
             @Override
@@ -357,10 +363,10 @@ public class ShowItemActivity extends AppCompatActivity {
     private void createViewPagerDots() {
         for (int i = 0; i < mDotsCount; i++) {
             mImgDots[i] = new ImageView(this);
-            mImgDots[i].setImageResource(R.drawable.show_item_view_pager_dot);
+            mImgDots[i].setImageResource(R.drawable.view_pager_dot);
             mLinearLayoutDots.addView(mImgDots[i]);
         }
-        mImgDots[0].setImageResource(R.drawable.show_item_view_pager_dot_selected);
+        mImgDots[0].setImageResource(R.drawable.view_pager_dot_selected);
     }
 
 
@@ -405,49 +411,6 @@ public class ShowItemActivity extends AppCompatActivity {
 
         public TextView getTxtBidItMessage() {
             return mTxtBidItMessage;
-        }
-    }
-
-    // ViewPager adapter
-    private class ImageVPAdapter extends PagerAdapter {
-        private LayoutInflater mLayoutInflater;
-        private List<String> mImages;
-
-        ImageVPAdapter(Item pItem) {
-            mLayoutInflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            mImages = pItem.getPhotoUrls();
-        }
-
-
-        @Override
-        public int getCount() {
-            return mImages.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(@NonNull View view, @NonNull Object object) {
-            return view.equals(object);
-        }
-
-        @Override
-        public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
-            container.removeView((LinearLayout) object);
-        }
-
-        @NonNull
-        @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
-            View itemView = mLayoutInflater.inflate(R.layout.view_bid_it_vp_image_item, container, false);
-
-            ImageView imageView = itemView.findViewById(R.id.image_show_item_activity_pager);
-
-            Glide.with(ShowItemActivity.this)
-                    .load(mImages.get(position))
-                    .into(imageView);
-
-            container.addView(itemView);
-
-            return itemView;
         }
     }
 }
