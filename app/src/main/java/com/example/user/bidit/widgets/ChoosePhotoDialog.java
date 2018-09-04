@@ -20,7 +20,6 @@ public class ChoosePhotoDialog implements View.OnClickListener {
     public ChoosePhotoDialog(Activity pActivity) {
         mDialogActivity = pActivity;
         photoDialog = new Dialog(mDialogActivity);
-        photoDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         photoDialog.setContentView(R.layout.choose_photo_dialog);
         photoDialog.setCancelable(true);
         init();

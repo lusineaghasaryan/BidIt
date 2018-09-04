@@ -89,7 +89,6 @@ public class FireBaseAuthenticationManager {
             @Override
 
             public void onDataChange(DataSnapshot pDataSnapshot) {
-                Log.d("MYTAG", "onDataChange: initCurrentUser");
                 mCurrentUser = User.fromDataSnapshot(pDataSnapshot, mAuth.getCurrentUser().getUid());
             }
             @Override

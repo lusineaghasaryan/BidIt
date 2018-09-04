@@ -38,7 +38,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mProgressDialog = new ProgressDialog(this);
         findViewById(R.id.btn_log_in_login_activity).setOnClickListener(this);
         findViewById(R.id.btn_registration_login_activity).setOnClickListener(this);
-        findViewById(R.id.btn_facebook_login_activity).setOnClickListener(this);
     }
 
     private void signIn() {
@@ -74,10 +73,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
             case R.id.btn_registration_login_activity: {
                 startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
-                break;
-            }
-            case R.id.btn_facebook_login_activity: {
-                startActivity(new Intent(this, Main2Activity.class));
                 break;
             }
         }
