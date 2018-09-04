@@ -76,7 +76,7 @@ public class AddItemActivity extends AppCompatActivity {
 
     public static final String TAG = "AddItemFragment";
 
-    public Button mSaveItemBtn;
+    public Button mSaveItemBtn, mBtnAddFavorite;
     public EditText mItemTitle, mItemDescription, mStartPrice, mBuyNowPrice;
     public Spinner mCategorySpinner;
     public TextView mDateTextView, mEndDateTextView;
@@ -157,9 +157,11 @@ public class AddItemActivity extends AppCompatActivity {
         Intent intent = getIntent();
         mItemEdit = (Item) intent.getSerializableExtra(AddItemActivity.KEY_EDIT_ITEM);
         if (mItemEdit != null) {
-            setFieldToEdit(mItemEdit);
+            //setFieldToEdit(mItemEdit);
             mMode = KEY_EDIT_ITEM;
             Log.d(TAG, "init:" + mItemEdit.getItemTitle());
+            //addToFavorite(mItemEdit);
+            //removeFavorite(mItemEdit);
         } else {
             mMode = KEY_SAVE_ITEM;
             Log.d(TAG, "init: NULL");
@@ -207,6 +209,8 @@ public class AddItemActivity extends AppCompatActivity {
         mPhotosRV.smoothScrollToPosition(mAdapter.getItemCount());
         mPhotosRV.setAdapter(mAdapter);
 
+        mBtnAddFavorite = findViewById(R.id.add_favorite);
+        mBtnAddFavorite.setVisibility(View.GONE);
 
         updateDateLabel();
         updateDateEndLabel();
@@ -266,7 +270,7 @@ public class AddItemActivity extends AppCompatActivity {
                 mCategoryList.addAll(pCategories);
                 for (int i = 0; i < mCategoryList.size(); i++) {
                     mSpinnerAdapter.add(mCategoryList.get(i).getCategoryTitle());
-                }
+                }setFieldToEdit(mItemEdit);
             }
         });
         categoryListViewModel.updateData();
@@ -344,8 +348,60 @@ public class AddItemActivity extends AppCompatActivity {
             }
         });
 
+
     }
 
+
+    //*********************************************************************************************
+
+
+public void addRemoveFavorite(Item pItem){
+    Item item = pItem;
+    String currentUserId = FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid();
+    ArrayList<String> str;
+
+    if(pItem.getFollowersIds() != null)
+        str = pItem.getFollowersIds();
+    else
+        str = new ArrayList<>();
+    ///////     add ////////
+    if (!str.contains(currentUserId)) {
+        str.add(currentUserId);
+        item.setFollowersIds(str);
+        item.setFollowersCount(item.getFollowersCount() + 1);
+        FirebaseHelper.addFavoriteItem(item);
+    }///////// remove /////////
+    else {
+        str.remove(currentUserId);
+        item.setFollowersIds(str);
+        item.setFollowersCount(item.getFollowersCount() - 1);
+        FirebaseHelper.removeFavoriteItem(item);
+    }
+
+}
+
+
+
+    public void removeFavorite(final Item pItem){
+        Item item = pItem;
+        String currentUserId = FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid();
+        ArrayList<String> str;
+
+        if(pItem.getFollowersIds() != null)
+            str = pItem.getFollowersIds();
+        else
+            str = new ArrayList<>();
+
+        if (str.contains(currentUserId)) {
+            str.remove(currentUserId);
+            item.setFollowersIds(str);
+            item.setFollowersCount(item.getFollowersCount() - 1);
+            FirebaseHelper.removeFavoriteItem(item);
+        }
+        else Log.v("KKKK", "Parunakvuma e");
+    }
+
+// ***********************************************************************************************************
 
     private EditText[] createEditTextsArray() {
         return new EditText[]{mItemTitle, mItemDescription, mStartPrice, mBuyNowPrice};
@@ -431,18 +487,18 @@ public class AddItemActivity extends AppCompatActivity {
         }
         return id;
     }
-    public int selectCategory(String pCategoryId){
+    public String selectCategory(String pCategoryId){
         String categoryTitle = "";
-        int position = 0;Log.v(TAG, "OOOOO = 1111111" + mCategoryList.size());
+        int position = 0;
+        Log.v(TAG, "OOOOO = 1111111" + mCategoryList.size());
         for (Category category : mCategoryList) {
-
             if (category.getCategoryId().equals(pCategoryId)) {
                 categoryTitle = category.getCategoryTitle();
                 position = mSpinnerAdapter.getPosition(categoryTitle);
-                Log.v(TAG, "OOOOO = " + position);
+                Log.v(TAG, "OOOOO = " + categoryTitle);
             }
         }
-        return position;
+        return categoryTitle;
     }
 
 
@@ -571,7 +627,15 @@ public class AddItemActivity extends AppCompatActivity {
         mItemDescription.setText(pItem.getItemDescription());
         mStartPrice.setText(String.valueOf(pItem.getStartPrice()));
         mBuyNowPrice.setText(String.valueOf(pItem.getBuyNowPrice()));
-        mCategorySpinner.setSelection(selectCategory(pItem.getCategoryId()));
+        //mCategorySpinner.setSelection(selectCategory(pItem.getCategoryId()));
+
+
+        String myString = selectCategory(pItem.getCategoryId()); //the value you want the position for
+        ArrayAdapter myAdap = (ArrayAdapter) mCategorySpinner.getAdapter(); //cast to an ArrayAdapter
+        int spinnerPosition = myAdap.getPosition(myString);
+        mCategorySpinner.setSelection(spinnerPosition);
+
+
 
         mDateTextView.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
                 .format(pItem.getStartDate()));
@@ -580,5 +644,6 @@ public class AddItemActivity extends AppCompatActivity {
         mEndDateTextView.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
                 .format(pItem.getEndDate()));
         mEndDate.setTimeInMillis(pItem.getEndDate());
+
     }
 }

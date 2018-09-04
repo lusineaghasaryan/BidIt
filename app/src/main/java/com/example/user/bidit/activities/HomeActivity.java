@@ -51,7 +51,7 @@ public class HomeActivity extends AppCompatActivity {
     private List<Item> mAllItemData;
 
     //    search view in toolbar
-//    private FloatingSearchView mSearchView;
+    //private FloatingSearchView mSearchView;
 
 
     @Override

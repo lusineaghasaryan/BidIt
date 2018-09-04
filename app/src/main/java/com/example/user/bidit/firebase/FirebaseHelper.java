@@ -35,6 +35,7 @@ public class FirebaseHelper {
     StorageReference mUserAvatar = storageRef.child("avatars");
 
 
+    public static final int TOTAL_ITEMS_TO_LOAD = 5;
 
     public ArrayList<Category> mCategoryList = new ArrayList<>();
     public ArrayList<Item> mItemsList = new ArrayList<>();
@@ -85,7 +86,7 @@ public class FirebaseHelper {
         mItemsRef.child(item.getItemId()).setValue(item);//"item" + n
     }
 
-    public void updateItemInDatabase(Item pItem, String pItemId){
+    public static void updateItemInDatabase(Item pItem, String pItemId){
         Log.v("LLLLL", "pItemId = " + pItemId);
         mItemsRef.child(pItemId).setValue(pItem);
     }
@@ -110,7 +111,7 @@ public class FirebaseHelper {
         });
     }
 
-    public static void getItemsSpecificList(String pType, String pTypeValue, int pItemsCount, final Callback<Item> pCallback){
+    public static void getItemsSpecificList(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue);
 
         query.addValueEventListener(new ValueEventListener() {
@@ -129,8 +130,8 @@ public class FirebaseHelper {
         });
     }
 
-    public static void getItemsSpecific(String pType, String pTypeValue, int pItemsCount, final Callback<ArrayList<Item>> pCallback){
-        Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue).limitToFirst(pItemsCount);
+    public static void getItemsSpecific(String pType, String pTypeValue, int pPageNumber, final Callback<ArrayList<Item>> pCallback){
+        Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue).limitToFirst(TOTAL_ITEMS_TO_LOAD * pPageNumber);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -150,31 +151,13 @@ public class FirebaseHelper {
     }
 
 
-    public void addFavoriteItem(Item pItem, String pUserId){
-        mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pUserId);
-        final int followersCount = 0;
-        mItemsRef.child(pItem.getItemId()).child("followersCount").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot pDataSnapshot) {
-                for (DataSnapshot followersSnapshot: pDataSnapshot.getChildren()) {
-                    //followersCount = followersSnapshot.getValue();
-                    Log.v("Followers", "FollowersCount = " + followersSnapshot.getValue());
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError pDatabaseError) {
-
-            }
-        });
-        //mItemsRef.child(pItem.getItemId()).child("followersCount");
+    public static void addFavoriteItem(Item pItem){
+        mItemsRef.child(pItem.getItemId()).setValue(pItem);
      }
 
-     public void removeFavoriteItem(Item pItem, String pUserId){
-        mItemsRef.child(pItem.getItemId()).child("followersIds").child(pUserId).removeValue();
+     public static void removeFavoriteItem(Item pItem){
+         mItemsRef.child(pItem.getItemId()).setValue(pItem);
     }
-
 
     public interface Callback<T> {
         void callback(boolean pIsSuccess, T pValue);
