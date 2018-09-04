@@ -20,7 +20,7 @@
             android:layout_weight="8">
 
             <ImageView
-                android:id="@+id/pager_image_view"
+                android:id="@+id/img_hot_item_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop" />
@@ -40,7 +40,7 @@
                 android:layout_weight="7">
 
                 <TextView
-                    android:id="@+id/pager_text_title"
+                    android:id="@+id/txt_hot_item_view_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -55,7 +55,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/pager_text_price"
+                    android:id="@+id/txt_hot_item_view_price"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
@@ -74,9 +74,9 @@
     </LinearLayout>
 
     <ImageView
-        android:id="@+id/image_view_star_hot_item"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:id="@+id/img_hot_item_view_favorite"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_gravity="end"
         android:src="@drawable/favorite_star_border_24dp" />
 

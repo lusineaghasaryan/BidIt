@@ -15,8 +15,8 @@
 
         <ImageView
             android:id="@+id/img_view_holder_auction_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
             android:layout_margin="@dimen/recycler_view_item_margin_small"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
@@ -44,12 +44,10 @@
             app:layout_constraintStart_toEndOf="@id/guideline1"
             app:layout_constraintTop_toBottomOf="@id/txt_view_holder_auction_title" />
 
-        <ImageButton
+        <ImageView
             android:id="@+id/img_btn_view_holder_favorite_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:contentDescription="TODO"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:src="@drawable/favorite_star_border_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/guideline_recycler_item_view"

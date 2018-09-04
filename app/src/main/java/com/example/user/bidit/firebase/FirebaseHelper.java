@@ -149,30 +149,12 @@ public class FirebaseHelper {
         });
     }
 
+    public static void addFavoriteItem(Item pItem){
+        mItemsRef.child(pItem.getItemId()).setValue(pItem);
+    }
 
-    public void addFavoriteItem(Item pItem, String pUserId){
-        mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pUserId);
-        final int followersCount = 0;
-        mItemsRef.child(pItem.getItemId()).child("followersCount").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot pDataSnapshot) {
-                for (DataSnapshot followersSnapshot: pDataSnapshot.getChildren()) {
-                    //followersCount = followersSnapshot.getValue();
-                    Log.v("Followers", "FollowersCount = " + followersSnapshot.getValue());
-                }
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError pDatabaseError) {
-
-            }
-        });
-        //mItemsRef.child(pItem.getItemId()).child("followersCount");
-     }
-
-     public void removeFavoriteItem(Item pItem, String pUserId){
-        mItemsRef.child(pItem.getItemId()).child("followersIds").child(pUserId).removeValue();
+    public static void removeFavoriteItem(Item pItem){
+        mItemsRef.child(pItem.getItemId()).setValue(pItem);
     }
 
 

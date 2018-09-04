@@ -10,7 +10,7 @@
     app:cardElevation="@dimen/activity_vertical_margin">
 
     <TextView
-        android:id="@+id/txt_home_activity_holder_category"
+        android:id="@+id/txt_category_view_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:padding="@dimen/padding_normal"
