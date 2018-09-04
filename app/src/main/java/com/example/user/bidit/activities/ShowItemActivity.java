@@ -383,7 +383,7 @@ public class ShowItemActivity extends AppCompatActivity {
         @Override
         public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             MessageViewHolder messageViewHolder = new MessageViewHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.view_bid_it_message_item, parent, false));
+                    .inflate(R.layout.view_message_item, parent, false));
             return messageViewHolder;
         }
 
@@ -406,7 +406,7 @@ public class ShowItemActivity extends AppCompatActivity {
         MessageViewHolder(View itemView) {
             super(itemView);
 
-            mTxtBidItMessage = itemView.findViewById(R.id.txt_bid_it_message);
+            mTxtBidItMessage = itemView.findViewById(R.id.txt_message_view);
         }
 
         public TextView getTxtBidItMessage() {

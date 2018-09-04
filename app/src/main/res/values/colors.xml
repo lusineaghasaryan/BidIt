@@ -19,4 +19,7 @@
     <color name="color_text_login_light_grey_transparent">#30bfbfbf</color>
     <color name="color_hint_login_dark_grey">#616161</color>
 
+    <color name="finished_text_color">#3d0000</color>
+    <color name="in_progress_text_color">#ce0000</color>
+
 </resources>

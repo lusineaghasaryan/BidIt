@@ -48,9 +48,9 @@ public class ImageViewPagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
-        View itemView = mLayoutInflater.inflate(R.layout.view_bid_it_vp_image_item, container, false);
+        View itemView = mLayoutInflater.inflate(R.layout.view_vp_image_item, container, false);
 
-        ImageView imageView = itemView.findViewById(R.id.image_show_item_activity_pager);
+        ImageView imageView = itemView.findViewById(R.id.img_view_pager);
 
         Glide.with(mContext)
                 .load(mImages.get(position))
