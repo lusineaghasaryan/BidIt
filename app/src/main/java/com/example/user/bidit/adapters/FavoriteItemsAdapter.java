@@ -37,7 +37,7 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
 
     @Override
     public void onBindViewHolder(@NonNull final FavoriteItemsViewHolder holder, int position) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM  kk:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
         final Item currentItem = mFavoriteItemsList.get(position);
 
         if (mUnFollowedItemsList.contains(currentItem)) {
@@ -57,13 +57,11 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
         holder.getFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (!currentItem.getfo) {
-//                    holder.getmStar().setImageResource(R.drawable.favorite_star_24dp);
-//                    currentItem.setClicked(true);
+//                if (!currentItem.get) {
+//                    holder.getStar().setImageResource(R.drawable.favorite_star_24dp);
 //                    mUnFollowedItemsList.add(currentItem);
 //                } else {
-//                    holder.getmStar().setImageResource(R.drawable.favorite_star_border_24dp);
-//                    currentItem.setClicked(false);
+//                    holder.getStar().setImageResource(R.drawable.favorite_star_border_24dp);
 //                    if (mUnFollowedItemsList.contains(currentItem)) {
 //                        mUnFollowedItemsList.remove(currentItem);
 //                    }

@@ -7,7 +7,39 @@ import android.arch.lifecycle.ViewModel;
 import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Item;
 
+import java.util.ArrayList;
+
 public class ItemsSpecificListVViewModel extends ViewModel {
+    private MutableLiveData<ArrayList<Item>> mItemsList = new MutableLiveData<>();
+
+    public MutableLiveData<ArrayList<Item>> getItemsList() {
+        if (mItemsList == null) {
+            mItemsList = new MutableLiveData<>();
+            //setItems();
+        }
+        return mItemsList;
+    }
+
+    public void setItemsList(MutableLiveData<ArrayList<Item>> pItemsList) {
+        mItemsList = pItemsList;
+    }
+
+    public void setItems(String pType, String pTypeValue){
+       FirebaseHelper.getItemsSpecific(pType, pTypeValue, 3, new FirebaseHelper.Callback<ArrayList<Item>>() {
+           @Override
+           public void callback(boolean pIsSuccess, ArrayList<Item> pValue) {
+               mItemsList.setValue(pValue);
+           }
+       });
+
+    }
+
+
+
+
+
+
+
     private final MutableLiveData<Item> mItem =
             new MutableLiveData<>();
 
@@ -20,7 +52,7 @@ public class ItemsSpecificListVViewModel extends ViewModel {
     }
 
     public void updateData(String pType, String pTypeValue){
-        FirebaseHelper.getItemsSpecificList(pType, pTypeValue, new FirebaseHelper.Callback<Item>() {
+        FirebaseHelper.getItemsSpecificList(pType, pTypeValue, 3, new FirebaseHelper.Callback<Item>() {
             @Override
             public void callback(boolean pIsSuccess, Item pValue) {
                 if (pIsSuccess) {

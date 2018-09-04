@@ -16,6 +16,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,6 +25,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,7 +33,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -43,6 +44,9 @@ import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.fragments.MultiSelectImageFragment;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.utils.DateUtil;
+import com.example.user.bidit.utils.UserMessages;
+import com.example.user.bidit.utils.ValidateForm;
 import com.example.user.bidit.utils.DateUtil;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
@@ -57,6 +61,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -65,7 +70,10 @@ import java.util.Random;
 public class AddItemActivity extends AppCompatActivity {
 
     private static final String IMAGE_DIRECTORY = "/bidit";
-    private int REQUEST_IMAGE_GALLERY  = 1, REQUEST_IMAGE_CAPTURE  = 2;
+    private int REQUEST_IMAGE_GALLERY = 1, REQUEST_IMAGE_CAPTURE = 2;
+    public static String mMode;
+    public static final String KEY_SAVE_ITEM = "Save";
+    public static final String KEY_EDIT_ITEM = "Edit";
 
     public static final String TAG = "AddItemFragment";
 
@@ -75,10 +83,13 @@ public class AddItemActivity extends AppCompatActivity {
     public TextView mDateTextView, mEndDateTextView;
     private Calendar mStartDate = Calendar.getInstance();
     private Calendar mEndDate = Calendar.getInstance();
+    ArrayAdapter<String> mSpinnerAdapter;
     public List<Category> mCategoryList;
     public String mCategorySelectedItemId;
     public ArrayList<String> mItemSelectedImagesList;
     public ArrayList<String> mItemImagesListStorage;
+
+    private ConstraintLayout mParentLayout;
 
     public AddItemPhotosRVAdapter mAdapter;
     public RecyclerView mPhotosRV;
@@ -86,17 +97,16 @@ public class AddItemActivity extends AppCompatActivity {
 
     MultiSelectImageFragment multiSelectImageFragment;
 
-    public Item mItem;
+    public Item mItemEdit;
 
     private StorageReference mStorageRef;
-
 
 
     MultiSelectImageFragment.IOnImagesSelectedListener mOnImagesSelectedListener = new MultiSelectImageFragment.IOnImagesSelectedListener() {
         @Override
         public void onImagesSelected(ArrayList<String> selectedImages) {
             mItemSelectedImagesList.addAll(0, selectedImages);
-            mPhotosRV.smoothScrollToPosition(mItemSelectedImagesList.size()-1);
+            mPhotosRV.smoothScrollToPosition(mItemSelectedImagesList.size() - 1);
             mAdapter.notifyDataSetChanged();
         }
     };
@@ -144,7 +154,18 @@ public class AddItemActivity extends AppCompatActivity {
         }
     };
 
-
+    private void loadExtra() {
+        Intent intent = getIntent();
+        mItemEdit = (Item) intent.getSerializableExtra(AddItemActivity.KEY_EDIT_ITEM);
+        if (mItemEdit != null) {
+            setFieldToEdit(mItemEdit);
+            mMode = KEY_EDIT_ITEM;
+            Log.d(TAG, "init:" + mItemEdit.getItemTitle());
+        } else {
+            mMode = KEY_SAVE_ITEM;
+            Log.d(TAG, "init: NULL");
+        }
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -156,16 +177,18 @@ public class AddItemActivity extends AppCompatActivity {
         mItemImagesListStorage = new ArrayList<>();
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE }, 0);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         }
+
         init();
+        loadExtra();
     }
 
-    public void init(){
+    public void init() {
         final FirebaseHelper firebaseHelper = new FirebaseHelper();
-
         mStorageRef = FirebaseStorage.getInstance().getReference();
 
+        mParentLayout = findViewById(R.id.add_item_layout);
 
         mDateTextView = findViewById(R.id.text_view_activity_add_item_start_date);
         mEndDateTextView = findViewById(R.id.text_view_activity_add_item_end_date);
@@ -175,7 +198,7 @@ public class AddItemActivity extends AppCompatActivity {
         mStartPrice = findViewById(R.id.edit_text_activity_add_item_start_price);
         mBuyNowPrice = findViewById(R.id.edit_text_activity_add_item_buy_now_price);
         mCategorySpinner = findViewById(R.id.spinner_activity_add_item_category);
-        mPhotosRV= findViewById(R.id.recycler_view_activity_add_item_poto);
+        mPhotosRV = findViewById(R.id.recycler_view_activity_add_item_poto);
 
         mPhotosRV.setHasFixedSize(true);
         mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -205,14 +228,22 @@ public class AddItemActivity extends AppCompatActivity {
 
         //     GET SPECIFIC LIST
         ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(this).get(ItemsSpecificListVViewModel.class);
-        itemsSpecificListVViewModel.getItem().observe(this, new Observer<Item>() {
+        /*itemsSpecificListVViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
                 //TODO get one item & use it
+                Log.v(TAG, "item = " + pItem.getItemTitle());
             }
         });
-        itemsSpecificListVViewModel.updateData("userId", "NpYDWad2fDTrAah41O6JC2rgsMs1");
-
+        itemsSpecificListVViewModel.updateData("categoryId", "-LJVutjHBpRf_pfv0pa1");
+*/
+        itemsSpecificListVViewModel.getItemsList().observe(this, new Observer<ArrayList<Item>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<Item> pItems) {
+               // Log.v(TAG, "ItemsListCount = " + pItems.size() + "   Title = " + pItems.get(0).getItemTitle());
+            }
+        });
+        itemsSpecificListVViewModel.setItems("categoryId", "-LJVutjHBpRf_pfv0pa1");
 
 
         //   GET ALL ITEMS LIST
@@ -220,31 +251,28 @@ public class AddItemActivity extends AppCompatActivity {
         itemsListViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
-
+               // Log.v(TAG, "All items = " + pItem.getItemTitle());
             }
         });
         itemsListViewModel.updateData();
 
 
-
-
         ///      Spinner
-        final ArrayAdapter<String> mSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
+        mSpinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1);
 
         CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
-        categoryListViewModel.getCategory().observe(this, new Observer<Category>() {
+        categoryListViewModel.getCategoryList().observe(this, new Observer<ArrayList<Category>>() {
             @Override
-            public void onChanged(@Nullable Category category) {
-                mCategoryList.add(category);
-                mSpinnerAdapter.add(category.getCategoryTitle());
+            public void onChanged(@Nullable ArrayList<Category> pCategories) {
+                mCategoryList.addAll(pCategories);
+                for (int i = 0; i < mCategoryList.size(); i++) {
+                    mSpinnerAdapter.add(mCategoryList.get(i).getCategoryTitle());
+                }
             }
         });
         categoryListViewModel.updateData();
 
         mSpinnerAdapter.add("Choose Category");
-        for (int i = 0; i < mCategoryList.size(); i++){
-            mSpinnerAdapter.add(mCategoryList.get(i).getCategoryTitle());
-        }
 
         mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mCategorySpinner.setAdapter(mSpinnerAdapter);
@@ -254,21 +282,39 @@ public class AddItemActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                if (position != 0){
+                if (position != 0) {
                     mCategorySelectedItemId = findCategoryId(parent.getItemAtPosition(position).toString());
+                    mSpinnerAdapter.remove("Choose Category");
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
         });
 
 
-
         mSaveItemBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //TODO save item
+                EditText[] allFields = createEditTextsArray();
+                if (!ValidateForm.setErrorIfEmpty(allFields)) {
+                    UserMessages.showSnackBarShort(mParentLayout, getString(R.string.empty_fields_message));
+                    return;
+                }
+                if (mItemImagesListStorage.size() == 0) {
+                    UserMessages.showSnackBarShort(mParentLayout, getString(R.string.add_image_messege));
+                    return;
+                }
+                if (mEndDate.getTimeInMillis() <= mStartDate.getTimeInMillis() || mStartDate.getTimeInMillis() < System.currentTimeMillis()) {
+                    UserMessages.showSnackBarShort(mParentLayout, getString(R.string.wrong_date_messege));
+                    return;
+                }
+                if (TextUtils.isEmpty(mCategorySelectedItemId)) {
+                    UserMessages.showSnackBarShort(mParentLayout, getString(R.string.choose_category_messege));
+                    return;
+                }
                 Item item = new Item.ItemBuilder().setItemTitle(mItemTitle.getText().toString())
                         .setItemDescription(mItemDescription.getText().toString())
                         .setStartPrice(Float.parseFloat(mStartPrice.getText().toString()))
@@ -280,21 +326,39 @@ public class AddItemActivity extends AppCompatActivity {
                         .setUserId(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid())
                         .setPhotoUrls(mItemImagesListStorage)
                         .build();
-                firebaseHelper.setItemToDatabase(item);
+
+                switch(mMode) {
+                    case KEY_SAVE_ITEM:
+                        firebaseHelper.setItemToDatabase(item);
+                        break;
+                    case KEY_EDIT_ITEM:
+                        item.setItemId(mItemEdit.getItemId());
+                        firebaseHelper.updateItemInDatabase(item, mItemEdit.getItemId());
+                        Intent intent = new Intent();
+                        intent.putExtra("Item", item);
+                        setResult(RESULT_OK, intent);
+                        break;
+                    default:
+
+                }
+                finish();
             }
         });
 
     }
 
 
+    private EditText[] createEditTextsArray() {
+        return new EditText[]{mItemTitle, mItemDescription, mStartPrice, mBuyNowPrice};
+    }
 
 
-    private void showPictureDialog(){
+    private void showPictureDialog() {
         AlertDialog.Builder pictureDialog = new AlertDialog.Builder(this);
         pictureDialog.setTitle("Select Action");
         String[] pictureDialogItems = {
                 "Select photo from gallery",
-                "Capture photo from camera" };
+                "Capture photo from camera"};
         pictureDialog.setItems(pictureDialogItems,
                 new DialogInterface.OnClickListener() {
                     @Override
@@ -324,7 +388,6 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
 
-
     private void takePhotoFromCamera() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if (takePictureIntent.resolveActivity(this.getPackageManager()) != null) {
@@ -341,8 +404,8 @@ public class AddItemActivity extends AppCompatActivity {
             return;
         }
 
-        if (requestCode == REQUEST_IMAGE_GALLERY){
-            if (data != null){
+        if (requestCode == REQUEST_IMAGE_GALLERY) {
+            if (data != null) {
                 Uri contentURI = data.getData();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
@@ -352,7 +415,7 @@ public class AddItemActivity extends AppCompatActivity {
                 }
 
             }
-        }else if (requestCode == REQUEST_IMAGE_CAPTURE){
+        } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             mItemSelectedImagesList.add(saveImage(thumbnail));
             mAdapter.notifyDataSetChanged();
@@ -360,19 +423,31 @@ public class AddItemActivity extends AppCompatActivity {
         }
     }
 
-    public String findCategoryId(String title){
-        Log.v("LLLL", "title = "+ title);
+    public String findCategoryId(String title) {
         String id = "";
         for (Category category : mCategoryList) {
             if (category.getCategoryTitle().equals(title)) {
-                id =  category.getCategoryId();
+                id = category.getCategoryId();
             }
         }
         return id;
     }
+    public int selectCategory(String pCategoryId){
+        String categoryTitle = "";
+        int position = 0;Log.v(TAG, "OOOOO = 1111111" + mCategoryList.size());
+        for (Category category : mCategoryList) {
+
+            if (category.getCategoryId().equals(pCategoryId)) {
+                categoryTitle = category.getCategoryTitle();
+                position = mSpinnerAdapter.getPosition(categoryTitle);
+                Log.v(TAG, "OOOOO = " + position);
+            }
+        }
+        return position;
+    }
 
 
-    public String saveImage(Bitmap myBitmap){
+    public String saveImage(Bitmap myBitmap) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
         File wallpaperDirectory = new File(
@@ -401,8 +476,6 @@ public class AddItemActivity extends AppCompatActivity {
         return "";
 
     }
-
-
 
 
     /////////          Date  &   Time
@@ -483,5 +556,30 @@ public class AddItemActivity extends AppCompatActivity {
 
     private void updateDateEndLabel() {
         mEndDateTextView.setText(DateUtil.formatDateToLongStyle(mEndDate.getTime()));
+    }
+
+
+
+    private void setFieldToEdit(Item pItem){
+        mSaveItemBtn.setText("Edit");
+        mItemSelectedImagesList.addAll(0, mItemEdit.getPhotoUrls());
+        mItemImagesListStorage.addAll(mItemEdit.getPhotoUrls());
+        Log.v(TAG, "image = " + mItemEdit.getItemId());
+        mPhotosRV.smoothScrollToPosition(mItemSelectedImagesList.size() - 1);
+        mAdapter.notifyDataSetChanged();
+
+        mItemTitle.setText(pItem.getItemTitle());
+        mItemDescription.setText(pItem.getItemDescription());
+        mStartPrice.setText(String.valueOf(pItem.getStartPrice()));
+        mBuyNowPrice.setText(String.valueOf(pItem.getBuyNowPrice()));
+        mCategorySpinner.setSelection(selectCategory(pItem.getCategoryId()));
+
+        mDateTextView.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
+                .format(pItem.getStartDate()));
+        //mStartDate = pItem.getStartDate();
+        mStartDate.setTimeInMillis(pItem.getStartDate());
+        mEndDateTextView.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
+                .format(pItem.getEndDate()));
+        mEndDate.setTimeInMillis(pItem.getEndDate());
     }
 }

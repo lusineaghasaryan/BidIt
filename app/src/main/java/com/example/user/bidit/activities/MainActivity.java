@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
@@ -29,6 +31,8 @@ public class MainActivity extends AppCompatActivity
         init();
         setNavigationDrawer();
         initListeners();
+        Window w = getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
     }
 
@@ -70,7 +74,7 @@ public class MainActivity extends AppCompatActivity
             case R.id.nav_item_history:{
                 break;
             }
-            case R.id.nav_item_favorite: {
+            case R.id.nav_item_favorite:{
                 startActivity(new Intent(MainActivity.this, FavoriteActivity.class));
                 break;
             }
@@ -122,7 +126,7 @@ public class MainActivity extends AppCompatActivity
         mToggle.syncState();
         mNavigationView.setNavigationItemSelectedListener(this);
         mToggle.setDrawerIndicatorEnabled(false);
-        mToggle.setHomeAsUpIndicator(R.drawable.ic_account_circle_black_24dp);
+        mToggle.setHomeAsUpIndicator(R.drawable.ic_hamburger);
     }
 
     public void updateNavigationDrawer() {

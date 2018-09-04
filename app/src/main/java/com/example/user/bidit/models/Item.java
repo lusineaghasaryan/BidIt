@@ -24,6 +24,8 @@ public class Item implements Serializable{
     private int followersCount;
     private ArrayList<String> followersIds;
     private String buyerId;
+    private ArrayList<String> bids;
+    private String status;
 
     public Item() {
     }
@@ -31,7 +33,7 @@ public class Item implements Serializable{
     private Item(String pUserId, String pItemId, ArrayList<String> pPhotoUrls, String pItemTitle,
                  String pItemDescription, float pStartPrice, float pBuyNowPrice, String pCategoryId,
                  long pStartDate, long pEndDate, float pCurrentPrice, boolean pIsAproved, int pFollowersCount,
-                 ArrayList<String> pFollowersIds, String pBuyerId) {
+                 ArrayList<String> pFollowersIds, String pBuyerId, ArrayList<String> pBids, String pStatus) {
         userId = pUserId;
         itemId = pItemId;
         photoUrls = pPhotoUrls;
@@ -47,6 +49,8 @@ public class Item implements Serializable{
         followersCount = pFollowersCount;
         followersIds = pFollowersIds;
         buyerId = pBuyerId;
+        bids = pBids;
+        status = pStatus;
     }
 
     private Item(final ItemBuilder builder) {
@@ -65,6 +69,7 @@ public class Item implements Serializable{
         followersCount = builder.followersCount;
         followersIds = builder.followersIds;
         buyerId = builder.buyerId;
+        bids = builder.bids;
     }
 
     public String getUserId() {
@@ -187,6 +192,22 @@ public class Item implements Serializable{
         buyerId = pBuyerId;
     }
 
+    public ArrayList<String> getBids() {
+        return bids;
+    }
+
+    public void setBids(ArrayList<String> pBids) {
+        photoUrls = pBids;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String pStatus) {
+        status = pStatus;
+    }
+
     public static class ItemBuilder {
         private String userId;
         private String itemId;
@@ -203,7 +224,8 @@ public class Item implements Serializable{
         private int followersCount;
         private ArrayList<String> followersIds;
         private String buyerId;
-
+        private ArrayList<String> bids;
+        private String status;
 
         public ItemBuilder setUserId(String pUserId) {
             userId = pUserId;
@@ -277,6 +299,16 @@ public class Item implements Serializable{
 
         public ItemBuilder setBuyerId(String pBuyerId) {
             buyerId = pBuyerId;
+            return this;
+        }
+
+        public ItemBuilder setBids(ArrayList<String> pBids) {
+            bids = pBids;
+            return this;
+        }
+
+        public ItemBuilder setStatus(String pStatus) {
+            status = pStatus;
             return this;
         }
 

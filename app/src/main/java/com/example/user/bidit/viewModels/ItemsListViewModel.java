@@ -7,8 +7,27 @@ import android.arch.lifecycle.ViewModel;
 import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Item;
 
-public class ItemsListViewModel extends ViewModel {
+import java.util.List;
 
+public class ItemsListViewModel extends ViewModel {
+   /* private MutableLiveData<List<Item>> mItemsList = new MutableLiveData<>();
+
+    public MutableLiveData<List<Item>> getItemsList() {
+        if (mItemsList == null) {
+            mItemsList = new MutableLiveData<>();
+            setItems();
+        }
+        return mItemsList;
+    }
+
+    public void setItemsList(MutableLiveData<List<Item>> pItemsList) {
+        mItemsList = pItemsList;
+    }
+
+    public void setItems(){
+       // mItemsList.setValue(pItem);
+    }
+*/
     private final MutableLiveData<Item> mItem =
             new MutableLiveData<>();
 

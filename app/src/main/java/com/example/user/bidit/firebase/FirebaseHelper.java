@@ -55,15 +55,17 @@ public class FirebaseHelper {
         mCategoryRef.child("category" + n).setValue(category);
     }
 
-    public static void getCategoryListFromDatabase(final Callback<Category> pCallback){
+    public static void getCategoryListFromDatabase(final Callback<ArrayList<Category>> pCallback){
 
         mCategoryRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                ArrayList<Category> tempList = new ArrayList<>();
                 for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
                     Category category = messageSnapshot.getValue(Category.class);
-                    pCallback.callback(true, category);
+                    tempList.add(category);
                 }
+                pCallback.callback(true, tempList);
             }
 
             @Override
@@ -80,7 +82,12 @@ public class FirebaseHelper {
         Random generator = new Random();
         int n = 10000;
         n = generator.nextInt(n);
-        mItemsRef.child("item" + n).setValue(item);
+        mItemsRef.child(item.getItemId()).setValue(item);//"item" + n
+    }
+
+    public void updateItemInDatabase(Item pItem, String pItemId){
+        Log.v("LLLLL", "pItemId = " + pItemId);
+        mItemsRef.child(pItemId).setValue(pItem);
     }
 
 
@@ -103,7 +110,7 @@ public class FirebaseHelper {
         });
     }
 
-    public static void getItemsSpecificList(String pType, String pTypeValue, final Callback<Item> pCallback){
+    public static void getItemsSpecificList(String pType, String pTypeValue, int pItemsCount, final Callback<Item> pCallback){
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue);
 
         query.addValueEventListener(new ValueEventListener() {
@@ -122,8 +129,50 @@ public class FirebaseHelper {
         });
     }
 
-    public static void getItemsListByFollowersCount(){
+    public static void getItemsSpecific(String pType, String pTypeValue, int pItemsCount, final Callback<ArrayList<Item>> pCallback){
+        Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue).limitToFirst(pItemsCount);
 
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot pDataSnapshot) {
+                ArrayList<Item> temp = new ArrayList<>();
+                for (DataSnapshot single : pDataSnapshot.getChildren()) {
+                    Item item = single.getValue(Item.class);
+                    temp.add(item);
+                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
+                }
+                pCallback.callback(true, temp);
+            }
+            @Override
+            public void onCancelled(DatabaseError pDatabaseError) {
+            }
+        });
+    }
+
+
+    public void addFavoriteItem(Item pItem, String pUserId){
+        mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pUserId);
+        final int followersCount = 0;
+        mItemsRef.child(pItem.getItemId()).child("followersCount").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot pDataSnapshot) {
+                for (DataSnapshot followersSnapshot: pDataSnapshot.getChildren()) {
+                    //followersCount = followersSnapshot.getValue();
+                    Log.v("Followers", "FollowersCount = " + followersSnapshot.getValue());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError pDatabaseError) {
+
+            }
+        });
+        //mItemsRef.child(pItem.getItemId()).child("followersCount");
+     }
+
+     public void removeFavoriteItem(Item pItem, String pUserId){
+        mItemsRef.child(pItem.getItemId()).child("followersIds").child(pUserId).removeValue();
     }
 
 

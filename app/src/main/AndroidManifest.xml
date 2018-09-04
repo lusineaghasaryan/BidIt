@@ -59,7 +59,8 @@
         </activity>
         <activity android:name=".activities.AddItemActivity" />
         <activity android:name=".activities.Main2Activity" />
-        <activity android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.LoginActivity"
+            android:windowSoftInputMode="adjustResize"/>
         <activity android:name=".activities.RegistrationActivity" />
         <activity android:name=".activities.MyAccountActivity" />
         <activity android:name=".activities.MyItemsActivity" />
