@@ -10,6 +10,8 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
@@ -25,51 +27,19 @@ import java.util.List;
 public class MyItemsActivity extends BaseActivity {
     private MyItemsAdapter mMyItemsAdapter;
     private List<Item> mMyItemsList;
+    private LinearLayout mParentLayout;
     public static final int REQUEST_CODE = 1;
     private int mItemEditPosition = -1;
-
-    MyItemsAdapter.IOnItemClick mIOnItemClick = new MyItemsAdapter.IOnItemClick() {
-        @Override
-        public void onItemClick(Item pItem, int pPosition) {
-            Intent intent;
-                if (pItem.getStartDate() > System.currentTimeMillis()) {
-
-                    mItemEditPosition = pPosition;
-                    intent = new Intent(MyItemsActivity.this, AddItemActivity.class);
-                    intent.putExtra(AddItemActivity.KEY_EDIT_ITEM, pItem);
-                    startActivityForResult(intent, REQUEST_CODE);
-                } else {
-                    intent = new Intent(MyItemsActivity.this, ShowItemActivity.class);
-                    intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_MY_ITEM, pItem);
-                    startActivity(intent);
-                }
-
-        }
-    };
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
-
-            if (resultCode == Activity.RESULT_OK) {
-                Item item = (Item) data.getSerializableExtra("Item");
-                mMyItemsList.set(mItemEditPosition, item);
-                mMyItemsAdapter.notifyItemChanged(mItemEditPosition);
-            } else if (resultCode == Activity.RESULT_CANCELED) {
-                // some stuff that will happen if there's no result
-            }
-        }
-    }
-    private LinearLayout mParentLayout;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_items);
         init();
+        initListeners();
         getItemsListByUserFromServer();
+        Window w = getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
     @Override
@@ -85,6 +55,27 @@ public class MyItemsActivity extends BaseActivity {
         mMyItemsAdapter = new MyItemsAdapter(mMyItemsList, MyItemsActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(mMyItemsAdapter);
+
+    }
+
+    private void initListeners() {
+        MyItemsAdapter.IOnItemClick mIOnItemClick = new MyItemsAdapter.IOnItemClick() {
+            @Override
+            public void onItemClick(Item pItem, int pPosition) {
+                Intent intent;
+                if (pItem.getStartDate() > System.currentTimeMillis()) {
+
+                    mItemEditPosition = pPosition;
+                    intent = new Intent(MyItemsActivity.this, AddItemActivity.class);
+                    intent.putExtra(AddItemActivity.KEY_EDIT_ITEM, pItem);
+                    startActivityForResult(intent, REQUEST_CODE);
+                } else {
+                    intent = new Intent(MyItemsActivity.this, ShowItemActivity.class);
+                    intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_MY_ITEM, pItem);
+                    startActivity(intent);
+                }
+            }
+        };
         mMyItemsAdapter.setIOnItemClick(mIOnItemClick);
     }
 
@@ -102,8 +93,22 @@ public class MyItemsActivity extends BaseActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE) {
+
+            if (resultCode == Activity.RESULT_OK) {
+                Item item = (Item) data.getSerializableExtra("Item");
+                mMyItemsList.set(mItemEditPosition, item);
+                mMyItemsAdapter.notifyItemChanged(mItemEditPosition);
+            }
+        }
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mBroadcastReceiver);
     }
+
 }

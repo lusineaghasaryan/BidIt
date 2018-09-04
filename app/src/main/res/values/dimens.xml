@@ -6,7 +6,8 @@
     <dimen name="nav_header_height">176dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
 
-    <dimen name="profile_image_size">100dp</dimen>
+    <dimen name="profile_image_size">150dp</dimen>
+
     <dimen name="padding_small">10dp</dimen>
     <dimen name="padding_normal">20dp</dimen>
     <dimen name="padding_extra_large">50dp</dimen>
@@ -40,4 +41,6 @@
 
 
     <dimen name="line_size">1dp</dimen>
+    <dimen name="item_corner_radius">8dp</dimen>
+    <dimen name="item_height">100dp</dimen>
 </resources>

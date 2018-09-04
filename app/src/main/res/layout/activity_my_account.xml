@@ -4,87 +4,134 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/shape_gradient_background"
     android:orientation="vertical"
-    android:background="@drawable/aaa"
+    android:weightSum="10"
     tools:context="com.example.user.bidit.activities.MyAccountActivity">
 
-    <LinearLayout
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
-        android:orientation="horizontal">
+        android:layout_weight="5"
+        android:background="@drawable/my_account_background">
 
-    </LinearLayout>
+        <android.support.constraint.Guideline
+            android:id="@+id/image_guide_vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            fnBtn:layout_constraintGuide_percent="0.5" />
 
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/account_image_my_account_activity"
+            android:layout_width="@dimen/profile_image_size"
+            android:layout_height="@dimen/profile_image_size"
+            android:clickable="true"
+            android:src="@mipmap/ic_launcher"
+            fnBtn:border_color="@color/color_hint_login_dark_grey"
+            fnBtn:border_width="1dp"
+            fnBtn:layout_constraintBottom_toBottomOf="parent"
+            fnBtn:layout_constraintEnd_toEndOf="parent"
+            fnBtn:layout_constraintStart_toEndOf="@id/image_guide_vertical"
+            fnBtn:layout_constraintTop_toTopOf="parent" />
+
+    </android.support.constraint.ConstraintLayout>
 
     <LinearLayout
-        android:background="@drawable/gradient_login"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="5"
         android:orientation="vertical"
-        android:padding="@dimen/padding_normal">
+        android:padding="@dimen/padding_small">
 
-        <android.support.design.widget.TextInputLayout
+        <EditText
+            android:id="@+id/edit_text_account_name"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_normal"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:background="@null"
+            android:hint="@string/hint_name"
+            android:inputType="textPersonName"
+            android:textColor="@color/color_text_login_light_grey"
+            android:textColorHint="@color/color_text_login_light_grey_transparent" />
 
-            <EditText
-                android:id="@+id/edit_text_account_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_name"
-                android:inputType="textPersonName"
-                android:textColor="@color/color_text_login_light_grey" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/line_size"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:background="@color/color_text_login_light_grey_transparent" />
 
-            <EditText
-                android:id="@+id/edit_text_account_surname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_surname"
-                android:inputType="textPersonName"
-                android:textColor="@color/color_text_login_light_grey" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
+        <EditText
+            android:layout_margin="@dimen/margin_normal"
+            android:id="@+id/edit_text_account_surname"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:background="@null"
+            android:hint="@string/hint_surname"
+            android:inputType="textPersonName"
+            android:textColor="@color/color_text_login_light_grey"
+            android:textColorHint="@color/color_text_login_light_grey_transparent" />
 
-            <EditText
-                android:id="@+id/edit_text_account_phone_number"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_phone"
-                android:inputType="phone"
-                android:textColor="@color/color_text_login_light_grey" />
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="@dimen/line_size"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:background="@color/color_text_login_light_grey_transparent" />
 
-            <EditText
-                android:id="@+id/edit_text_account_passport_series"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_passport_series"
-                android:textColor="@color/color_text_login_light_grey" />
-        </android.support.design.widget.TextInputLayout>
+        <EditText
+            android:id="@+id/edit_text_account_phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:background="@null"
+            android:hint="@string/hint_phone"
+            android:inputType="phone"
+            android:layout_margin="@dimen/margin_normal"
+            android:textColor="@color/color_text_login_light_grey"
+            android:textColorHint="@color/color_text_login_light_grey_transparent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_size"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:background="@color/color_text_login_light_grey_transparent" />
+
+        <EditText
+            android:id="@+id/edit_text_account_passport_series"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/margin_normal"
+            android:background="@null"
+            android:hint="@string/hint_passport_series"
+            android:layout_margin="@dimen/margin_normal"
+            android:textColor="@color/color_text_login_light_grey"
+            android:textColorHint="@color/color_text_login_light_grey_transparent" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/line_size"
+            android:layout_marginBottom="@dimen/margin_large"
+            android:layout_marginEnd="@dimen/margin_normal"
+            android:layout_marginStart="@dimen/margin_normal"
+            android:background="@color/color_text_login_light_grey_transparent" />
 
         <com.ekalips.fancybuttonproj.FancyButton
             android:id="@+id/btn_change_info_account_activity"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="wrap_content"
             fnBtn:btnStyle="stroke_fill"
             fnBtn:fillColor="@null"
             fnBtn:hideFillAfterCollapse="false"
-            fnBtn:progressColor="@color/colorAccent"
-            fnBtn:strokeColor="@color/colorAccent"
+            fnBtn:progressColor="@color/light_blue"
+            fnBtn:strokeColor="@color/light_blue"
             fnBtn:text="Change"
             fnBtn:textColor="@color/color_text_login_light_grey" />
 

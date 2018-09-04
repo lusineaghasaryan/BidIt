@@ -47,6 +47,7 @@ import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.DateUtil;
 import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
+import com.example.user.bidit.utils.DateUtil;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
@@ -159,12 +160,8 @@ public class AddItemActivity extends AppCompatActivity {
         if (mItemEdit != null) {
             //setFieldToEdit(mItemEdit);
             mMode = KEY_EDIT_ITEM;
-            Log.d(TAG, "init:" + mItemEdit.getItemTitle());
-            //addToFavorite(mItemEdit);
-            //removeFavorite(mItemEdit);
         } else {
             mMode = KEY_SAVE_ITEM;
-            Log.d(TAG, "init: NULL");
         }
     }
 
@@ -270,7 +267,9 @@ public class AddItemActivity extends AppCompatActivity {
                 mCategoryList.addAll(pCategories);
                 for (int i = 0; i < mCategoryList.size(); i++) {
                     mSpinnerAdapter.add(mCategoryList.get(i).getCategoryTitle());
-                }setFieldToEdit(mItemEdit);
+                }
+                if (mMode == KEY_EDIT_ITEM)
+                    setFieldToEdit(mItemEdit);
             }
         });
         categoryListViewModel.updateData();
@@ -325,7 +324,7 @@ public class AddItemActivity extends AppCompatActivity {
                         .setCategoryId(mCategorySelectedItemId)
                         .setStartDate(mStartDate.getTime().getTime())
                         .setEndDate(mEndDate.getTime().getTime())
-                        //todo test
+                        .setCurrentPrice(Float.parseFloat(mStartPrice.getText().toString()))
                         .setUserId(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid())
                         .setPhotoUrls(mItemImagesListStorage)
                         .build();

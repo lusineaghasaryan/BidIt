@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.activities.AddItemActivity;
@@ -19,7 +18,6 @@ import com.example.user.bidit.activities.HomeActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewHolders.MyItemsViewHolder;
-
 import java.text.SimpleDateFormat;
 import java.util.List;
 
@@ -47,7 +45,7 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull MyItemsViewHolder holder, final int position) {
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MMM kk:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
         Item currentItem = mMyItemList.get(position);
 
         Glide.with(mContext)
@@ -59,46 +57,14 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
         holder.getFollowersCount().setText(String.valueOf(currentItem.getFollowersCount()));
         holder.getStartPrice().setText(String.valueOf(currentItem.getStartPrice()));
 
-//        MyItemsViewHolder.OnViewHolderItemClickListener mOnViewHolderItemClickListener =
-//                new MyItemsViewHolder.OnViewHolderItemClickListener() {
-//                    @Override
-//                    public void onClick(int pPosition) {
-//                        mIOnItemClick.onItemClick(mItemList.get(pPosition), pPosition);
-//                    }
-//                };
-
         holder.setOnViewHolderItemClickListener(new MyItemsViewHolder.OnViewHolderItemClickListener() {
             @Override
             public void onClick(int pPosition) {
                 mIOnItemClick.onItemClick(mMyItemList.get(pPosition), pPosition);
             }
         });
-        //mIOnItemClick.onItemClick(currentItem, position);
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                /*Intent intent;
-//                if (currentItem.getStartDate() > System.currentTimeMillis()) {
-//                    intent = new Intent(mContext, AddItemActivity.class);
-//                } else {
-//                    intent = new Intent(mContext, ShowItemActivity.class);
-//                }
-//                intent.putExtra(HomeActivity.PUT_EXTRA_KEY, currentItem);
-//                mContext.startActivity(intent);*/
-//            }
-//        });
 
         holder.getStartPrice().setText(String.valueOf((int)currentItem.getStartPrice()) + "$");
-//
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(mContext,ShowItemActivity.class);
-//                intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_MY_ITEM, mMyItemList.get(position));
-//                mContext.startActivity(intent);
-//            }
-//        });
     }
 
     @Override

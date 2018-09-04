@@ -62,5 +62,9 @@
     <string name="choose_category_messege">Choose Category</string>
 
     <string name="show_item_activity_bit_hint">Enter bid price</string>
+    <string name="item_price_text">price</string>
+    <string name="item_start_date_text">start date</string>
+    <string name="item_follower_text">follower</string>
+    <string name="text_cancel">Cancel</string>
 
 </resources>

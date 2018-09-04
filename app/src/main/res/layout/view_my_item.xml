@@ -1,18 +1,19 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="100dp"
+    android:layout_height="@dimen/item_height"
     android:layout_margin="@dimen/margin_small"
     app:cardBackgroundColor="@color/color_hint_login_dark_grey"
-    app:cardCornerRadius="8dp"
+    app:cardCornerRadius="@dimen/item_corner_radius"
     app:cardElevation="@dimen/cardview_default_elevation">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:padding="5dp"
-        android:weightSum="10">
+        android:padding="@dimen/margin_small"
+        android:weightSum="10"
+        android:baselineAligned="false">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -50,7 +51,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="top"
-                    android:text="@string/text_complete"
                     android:textColor="@color/color_text_login_light_grey"
                     android:textSize="@dimen/text_size_normal" />
 
@@ -76,7 +76,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:text="$ 500"
+                        android:textColor="@color/item_price_color_dark_grey"
                         android:textSize="@dimen/text_size_normal" />
 
                     <TextView
@@ -84,7 +84,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:text="price`"
+                        android:text="@string/item_price_text"
                         android:textColor="@color/color_text_login_light_grey_transparent" />
 
                 </LinearLayout>
@@ -104,13 +104,13 @@
                     android:weightSum="10">
 
                     <TextView
+
                         android:id="@+id/text_start_date_my_item_view"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:text="30.08"
-                        android:textColor="@color/color_text_login_light_grey"
+                        android:textColor="@color/item_price_color_dark_grey"
                         android:textSize="@dimen/text_size_normal" />
 
                     <TextView
@@ -118,7 +118,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:text="start date"
+                        android:text="@string/item_start_date_text"
                         android:textColor="@color/color_text_login_light_grey_transparent" />
 
                 </LinearLayout>
@@ -143,8 +143,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:text="30"
-                        android:textColor="@color/color_text_login_light_grey"
+                        android:textColor="@color/item_price_color_dark_grey"
                         android:textSize="@dimen/text_size_normal" />
 
                     <TextView
@@ -152,7 +151,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:text="follower"
+                        android:text="@string/item_follower_text"
                         android:textColor="@color/color_text_login_light_grey_transparent" />
 
                 </LinearLayout>

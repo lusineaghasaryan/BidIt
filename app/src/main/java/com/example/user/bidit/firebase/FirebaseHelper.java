@@ -2,12 +2,16 @@ package com.example.user.bidit.firebase;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -17,7 +21,9 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,12 +158,45 @@ public class FirebaseHelper {
 
 
     public static void addFavoriteItem(Item pItem){
-        mItemsRef.child(pItem.getItemId()).setValue(pItem);
+        mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
+        //mItemsRef.child(pItem.getItemId()).setValue(pItem);
      }
 
      public static void removeFavoriteItem(Item pItem){
-         mItemsRef.child(pItem.getItemId()).setValue(pItem);
+         mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
+        //mItemsRef.child(pItem.getItemId()).setValue(pItem);
     }
+
+    public static void removeItem(Item pItem){
+        mItemsRef.child(pItem.getItemId()).removeValue();
+    }
+
+    public void sendAvatarToStorage(String pImageUrl){
+        storageRef = FirebaseStorage.getInstance().getReference();
+        Uri file = Uri.fromFile(new File(pImageUrl));
+        Random generator = new Random();
+        int n = 10000;
+        n = generator.nextInt(n);
+        StorageReference riversRef = storageRef.child(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid()
+                + "/user/avatar" + n + ".jpg");
+
+        riversRef.putFile(file)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        // Get a URL to the uploaded content
+                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception exception) {
+                        // Handle unsuccessful uploads
+                        // ...
+                    }
+                });
+    }
+
 
     public interface Callback<T> {
         void callback(boolean pIsSuccess, T pValue);

@@ -33,14 +33,13 @@ public class RegistrationActivity extends AppCompatActivity {
         Window w = getWindow();
         w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
-        mBtnAccept.setOnClickListener(new View.OnClickListener()
-            {
-                @Override
-                public void onClick (View v){
+        mBtnAccept.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 createAccount();
             }
-            });
-        }
+        });
+    }
 
     private void getTextFromFilledField() {
         mName = mEditTextName.getText().toString();

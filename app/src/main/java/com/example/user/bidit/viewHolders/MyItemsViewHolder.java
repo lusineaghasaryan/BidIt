@@ -9,7 +9,7 @@ import com.example.user.bidit.R;
 
 public class MyItemsViewHolder extends RecyclerView.ViewHolder{
     private ImageView imageView;
-    private TextView title, date, duration, startPrice, followersCount;
+    private TextView title, date, startPrice, followersCount;
     private OnViewHolderItemClickListener mOnViewHolderItemClickListener;
 
     public MyItemsViewHolder(View itemView) {
@@ -53,15 +53,11 @@ public class MyItemsViewHolder extends RecyclerView.ViewHolder{
         return date;
     }
 
-    public TextView getDuration() {
-        return duration;
-    }
-
     public void setOnViewHolderItemClickListener(OnViewHolderItemClickListener pOnViewHolderItemClickListener) {
         mOnViewHolderItemClickListener = pOnViewHolderItemClickListener;
     }
 
     public interface OnViewHolderItemClickListener{
-        public void onClick(int pPosition);
+        void onClick(int pPosition);
     }
 }

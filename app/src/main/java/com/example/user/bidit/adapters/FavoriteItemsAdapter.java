@@ -37,8 +37,14 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
 
     @Override
     public void onBindViewHolder(@NonNull final FavoriteItemsViewHolder holder, int position) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM  kk:mm");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
         final Item currentItem = mFavoriteItemsList.get(position);
+
+        if (mUnFollowedItemsList.contains(currentItem)) {
+            holder.getFollow().setImageResource(R.drawable.favorite_star_24dp);
+        }else {
+            holder.getFollow().setImageResource(R.drawable.favorite_star_border_24dp);
+        }
 
         Glide.with(mContext)
                 .load(currentItem.getPhotoUrls().get(0))
@@ -47,6 +53,21 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
         holder.getStartPrice().setText(String.valueOf(currentItem.getStartPrice()));
         holder.getTitle().setText(currentItem.getItemTitle());
         holder.getDate().setText(dateFormat.format(currentItem.getStartDate()));
+
+        holder.getFollow().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                if (!currentItem.get) {
+//                    holder.getStar().setImageResource(R.drawable.favorite_star_24dp);
+//                    mUnFollowedItemsList.add(currentItem);
+//                } else {
+//                    holder.getStar().setImageResource(R.drawable.favorite_star_border_24dp);
+//                    if (mUnFollowedItemsList.contains(currentItem)) {
+//                        mUnFollowedItemsList.remove(currentItem);
+//                    }
+//                }
+            }
+        });
 
     }
 
