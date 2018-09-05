@@ -12,11 +12,18 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
-        <ImageView
+        <android.support.constraint.Guideline
+            android:id="@+id/guide_center_horizontal_login_activity"
+            android:orientation="horizontal"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            app:layout_constraintGuide_percent="0.5"/>
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_marginTop="@dimen/margin_logo"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/logo_login"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -29,9 +36,10 @@
             android:layout_marginEnd="@dimen/page_sides_margin"
             android:layout_marginStart="@dimen/page_sides_margin"
             android:orientation="vertical"
-            app:layout_constraintBottom_toBottomOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/guide_center_horizontal_login_activity">
 
             <EditText
+                android:focusable="false"
                 android:id="@+id/edit_text_email_login_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -53,6 +61,7 @@
                 android:background="@color/color_hint_login_dark_grey" />
 
             <EditText
+                android:focusable="false"
                 android:id="@+id/edit_text_password_login_activity"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

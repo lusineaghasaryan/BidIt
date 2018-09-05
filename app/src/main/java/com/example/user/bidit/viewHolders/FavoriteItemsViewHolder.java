@@ -18,12 +18,12 @@ public class FavoriteItemsViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void init(){
-        imageView = itemView.findViewById(R.id.image_item_image_favorite_view);
-        title = itemView.findViewById(R.id.text_view_title_favorite_view);
-        date = itemView.findViewById(R.id.text_view_start_date_favorite_view);
+        imageView = itemView.findViewById(R.id.image_item_image_item_view);
+        title = itemView.findViewById(R.id.text_view_title_item_view);
+        date = itemView.findViewById(R.id.text_view_start_date_item_view);
 //        duration = itemView.findViewById(R.id.text_view_end_date_favorite_view);
-        startPrice = itemView.findViewById(R.id.text_view_start_price_favorite_view);
-        follow = itemView.findViewById(R.id.image_view_follow_favorite_view);
+        startPrice = itemView.findViewById(R.id.text_view_start_price_item_view);
+        follow = itemView.findViewById(R.id.image_view_follow_item_view);
 
     }
 

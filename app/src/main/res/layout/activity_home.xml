@@ -18,7 +18,7 @@
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFF"
+            android:background="@drawable/shape_gradient_background"
             android:fitsSystemWindows="true"
             android:padding="@dimen/margin_small">
 
@@ -35,7 +35,8 @@
                     app:floatingSearch_leftActionMode="showHamburger"
                     app:floatingSearch_searchHint="Search..."
                     app:floatingSearch_showSearchKey="false"
-                    app:floatingSearch_suggestionsListAnimDuration="250" />
+                    app:floatingSearch_suggestionsListAnimDuration="250"
+                    app:floatingSearch_backgroundColor="@color/color_text_login_light_grey"/>
 
             </android.support.v7.widget.Toolbar>
 
@@ -72,10 +73,10 @@
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="@dimen/margin_small"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <android.support.v7.widget.RecyclerView
+                android:background="@drawable/shape_gradient_background"
                 android:id="@+id/recycler_view_home_activity_list"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

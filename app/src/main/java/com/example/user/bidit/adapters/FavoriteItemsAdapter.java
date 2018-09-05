@@ -4,7 +4,6 @@ package com.example.user.bidit.adapters;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,7 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
     @NonNull
     @Override
     public FavoriteItemsViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {;
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_favorite_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_view, parent, false);
         return new FavoriteItemsViewHolder(view);
     }
 

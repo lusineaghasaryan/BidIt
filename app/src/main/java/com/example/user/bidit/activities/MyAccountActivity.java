@@ -6,28 +6,17 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.ekalips.fancybuttonproj.FancyButton;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.User;
 import com.example.user.bidit.widgets.ChoosePhotoDialog;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -37,9 +26,12 @@ public class MyAccountActivity extends AppCompatActivity {
     private FancyButton changeButton;
     private ButtonAsyncTask mButtonAsyncTask;
     private User mUser;
-    ChoosePhotoDialog mChoosePhotoDialog;
+    private Bitmap mBitmap = null;
+    private ChoosePhotoDialog mChoosePhotoDialog;
     public static final int CAMERA_REQUEST_CODE = 88;
     public static final int GALLERY_REQUEST_CODE = 77;
+    //
+    private Uri mUri = null;
 
 
     @Override
@@ -73,23 +65,24 @@ public class MyAccountActivity extends AppCompatActivity {
         if (resultCode == RESULT_CANCELED) {
             return;
         }
-        Bitmap bitmap = null;
         switch (requestCode) {
             case GALLERY_REQUEST_CODE: {
                     Uri selectedImage = data.getData();
+                    //
+                    mUri = selectedImage;
                     try {
-                        bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+                        mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 break;
             }
             case CAMERA_REQUEST_CODE:{
-                    bitmap = (Bitmap) data.getExtras().get("data");
+                    mBitmap = (Bitmap) data.getExtras().get("data");
             }
         }
         mChoosePhotoDialog.dismiss();
-        mAccountImage.setImageBitmap(bitmap);
+        mAccountImage.setImageBitmap(mBitmap);
     }
 
     private void acceptChanges() {
@@ -103,6 +96,8 @@ public class MyAccountActivity extends AppCompatActivity {
                 .setSurname(mEditTextSurname.getText().toString())
                 .setPhoneNumber(mEditTextPhone.getText().toString())
                 .setPassportSeries(mEditTextPassportSeries.getText().toString())
+                //
+                .setPhotoUrl(mUri.getAuthority())
                 .create();
     }
 
@@ -111,6 +106,11 @@ public class MyAccountActivity extends AppCompatActivity {
         mEditTextSurname.setHint(firstLetterToUpCase(mUser.getSurname()));
         mEditTextPhone.setHint(mUser.getPhoneNumber());
         mEditTextPassportSeries.setHint(mUser.getPassportSeries());
+        //
+        if (mBitmap != null) {
+            mAccountImage.setImageBitmap(mBitmap);
+        }
+
     }
 
     private void init() {

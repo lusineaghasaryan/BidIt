@@ -252,7 +252,7 @@ public class HomeActivity extends AppCompatActivity {
             mViewPagerHotList.setVisibility(View.VISIBLE);
             loadAllItemListFromFirebase();
 
-            isInHome = false;
+            isInHome = true;
         } else {
             finish();
         }
@@ -488,7 +488,7 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public AllListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             AllListViewHolder allListViewHolder = new AllListViewHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.view_recycler_item, parent, false));
+                    .inflate(R.layout.item_view, parent, false));
 
             setListener(allListViewHolder);
 
@@ -510,7 +510,6 @@ public class HomeActivity extends AppCompatActivity {
                     if (isItemInProgress(item)) {
                         holder.getTxtAuctionDate().setText(new SimpleDateFormat("HH:mm:ss")
                                 .format(time));
-                        holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_active_12dp);
                         holder.getTxtAuctionDate().setTextColor(Color.RED);
                     } else if (isItemHaveBeenFinished(item)) {
                         holder.getTxtAuctionDate().setText("finished");
@@ -520,7 +519,6 @@ public class HomeActivity extends AppCompatActivity {
                     } else {
                         holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm")
                                 .format(item.getStartDate()));
-                        holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_inactive_12dp);
                         holder.getTxtAuctionDate().setTextColor(Color.GRAY);
                     }
 
@@ -551,7 +549,7 @@ public class HomeActivity extends AppCompatActivity {
 
         private void setFields(AllListViewHolder pHolder, Item pItem) {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
-            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf(pItem.getCurrentPrice()) + " AMD");
+            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf((int)pItem.getCurrentPrice()) + "$");
             pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
 
             Glide.with(HomeActivity.this)
@@ -568,7 +566,7 @@ public class HomeActivity extends AppCompatActivity {
 
         //        view holder item fields
         private TextView mTxtAuctionTitle, mTxtAuctionDate, mTxtAuctionCurrentPrice;
-        private ImageView mImgAuctionImage, mImgAuctionStatus;
+        private ImageView mImgAuctionImage;
         private ImageView mImgFavorite;
 
         private OnAllItemClickListener mClickListener;
@@ -577,12 +575,11 @@ public class HomeActivity extends AppCompatActivity {
             super(itemView);
 
 //            initialize fields
-            mTxtAuctionTitle = itemView.findViewById(R.id.txt_view_holder_auction_title);
-            mTxtAuctionDate = itemView.findViewById(R.id.txt_view_holder_auction_date);
-            mTxtAuctionCurrentPrice = itemView.findViewById(R.id.txt_view_holder_auction_current_price);
-            mImgAuctionImage = itemView.findViewById(R.id.img_view_holder_auction_image);
-            mImgAuctionStatus = itemView.findViewById(R.id.img_view_holder_auction_status);
-            mImgFavorite = itemView.findViewById(R.id.img_btn_view_holder_favorite_btn);
+            mTxtAuctionTitle = itemView.findViewById(R.id.text_view_title_item_view);
+            mTxtAuctionDate = itemView.findViewById(R.id.text_view_start_date_item_view);
+            mTxtAuctionCurrentPrice = itemView.findViewById(R.id.text_view_start_price_item_view);
+            mImgAuctionImage = itemView.findViewById(R.id.image_item_image_item_view);
+            mImgFavorite = itemView.findViewById(R.id.image_view_follow_item_view);
 
             setListeners(itemView);
         }
@@ -601,10 +598,6 @@ public class HomeActivity extends AppCompatActivity {
 
         public ImageView getImgAuctionImage() {
             return mImgAuctionImage;
-        }
-
-        public ImageView getImgAuctionStatus() {
-            return mImgAuctionStatus;
         }
 
         public ImageView getImgFavorite() {

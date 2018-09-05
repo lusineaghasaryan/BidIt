@@ -64,7 +64,6 @@ public class MyItemsActivity extends BaseActivity {
             public void onItemClick(Item pItem, int pPosition) {
                 Intent intent;
                 if (pItem.getStartDate() > System.currentTimeMillis()) {
-
                     mItemEditPosition = pPosition;
                     intent = new Intent(MyItemsActivity.this, AddItemActivity.class);
                     intent.putExtra(AddItemActivity.KEY_EDIT_ITEM, pItem);
@@ -81,6 +80,8 @@ public class MyItemsActivity extends BaseActivity {
 
     private void getItemsListByUserFromServer() {
         ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(MyItemsActivity.this).get(ItemsSpecificListVViewModel.class);
+        //
+        itemsSpecificListVViewModel.getItem().removeObservers(MyItemsActivity.this);
         itemsSpecificListVViewModel.updateData("userId", FireBaseAuthenticationManager.getInstance().mAuth.getUid());
 
         itemsSpecificListVViewModel.getItem().observe(MyItemsActivity.this, new Observer<Item>() {
