@@ -10,12 +10,12 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +24,6 @@ import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Category;
@@ -38,6 +35,9 @@ import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.user.bidit.utils.ItemStatus.isItemHaveBeenFinished;
+import static com.example.user.bidit.utils.ItemStatus.isItemInProgress;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -102,10 +102,9 @@ public class HomeActivity extends AppCompatActivity {
         mRecyclerViewAllList.setLayoutManager(mLayoutManager);
         mRecyclerViewAllList.setAdapter(mAllListAdapter);
 
-        ViewPager.PageTransformer transformer = new ZoomViewPager();
-
         mViewPagerHotList.setAdapter(mHotListAdapter);
-        mViewPagerHotList.setPageTransformer(true, new ZoomViewPager());
+        mViewPagerHotList.setPageMargin(100);
+        mViewPagerHotList.setPageTransformer(true, new ZoomViewPager(this));
         mViewPagerHotList.setClipToPadding(false);
         mViewPagerHotList.setPadding(220, 0, 220, 0);
     }
@@ -171,16 +170,6 @@ public class HomeActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean isItemInProgress(Item pItem) {
-        Long currentDate = System.currentTimeMillis();
-        return currentDate > pItem.getStartDate() && currentDate < pItem.getEndDate();
-    }
-
-    private boolean isItemHaveBeenFinished(Item pItem) {
-        Long currentDate = System.currentTimeMillis();
-        return currentDate > pItem.getEndDate();
-    }
-
     private boolean isItemFavorite(Item pItem) {
         // TODO is favorite
         return true;
@@ -209,8 +198,6 @@ public class HomeActivity extends AppCompatActivity {
             public void onSearchTextChanged(String oldQuery, String newQuery) {
 
                 mAllListAdapter.clearTimers();
-
-                Log.d("asdasd", "onSearchTextChanged: ");
 
                 ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
                         .of(HomeActivity.this)
@@ -243,6 +230,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     @Override
@@ -250,6 +238,8 @@ public class HomeActivity extends AppCompatActivity {
 
         if (!isInHome) {
             mViewPagerHotList.setVisibility(View.VISIBLE);
+            mSearchView.setLeftMenuOpen(false);
+
             loadAllItemListFromFirebase();
 
             isInHome = false;
@@ -272,8 +262,10 @@ public class HomeActivity extends AppCompatActivity {
                         // hide hot items when click on category
                         mViewPagerHotList.setVisibility(View.GONE);
                         isInHome = false;
+                        mSearchView.setLeftMenuOpen(true);
 
                         loadItemListByCategoryFromFirebase(mCategories.get(pAdapterPosition).getCategoryId());
+                        mAllListAdapter.notifyDataSetChanged();
                     }
                 };
 
@@ -432,21 +424,50 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private class ZoomViewPager implements ViewPager.PageTransformer {
-        static final float MAX_SCALE = 1.0f;
-        static final float MIN_SCALE = 0.8f;
+//        static final float MAX_SCALE = 1.0f;
+//        static final float MIN_SCALE = 0.8f;
+
+        private int maxTranslateOffsetX;
+
+        ZoomViewPager(Context context) {
+            this.maxTranslateOffsetX = dp2px(context, 180);
+        }
 
         @Override
         public void transformPage(@NonNull View page, float position) {
 
-            position = position < -1 ? -1 : position;
-            position = position > 1 ? 1 : position;
+//            position = position < -1 ? -1 : position;
+//            position = position > 1 ? 1 : position;
+//
+//            float tempScale = position < 0 ? 1 + position : 1 - position;
+//
+//            float slope = (MAX_SCALE - MIN_SCALE) / 1;
+//            float scaleValue = MIN_SCALE + tempScale * slope;
+//            page.setScaleX(scaleValue);
+//            page.setScaleY(scaleValue);
 
-            float tempScale = position < 0 ? 1 + position : 1 - position;
+            if (mViewPagerHotList == null) {
+                mViewPagerHotList = (ViewPager) page.getParent();
+            }
 
-            float slope = (MAX_SCALE - MIN_SCALE) / 1;
-            float scaleValue = MIN_SCALE + tempScale * slope;
-            page.setScaleX(scaleValue);
-            page.setScaleY(scaleValue);
+            int leftInScreen = page.getLeft() - mViewPagerHotList.getScrollX();
+            int centerXInViewPager = leftInScreen + page.getMeasuredWidth() / 2;
+            int offsetX = centerXInViewPager - mViewPagerHotList.getMeasuredWidth() / 2;
+            float offsetRate = (float) offsetX * 0.38f / mViewPagerHotList.getMeasuredWidth();
+            float scaleFactor = 1 - Math.abs(offsetRate);
+
+            if (scaleFactor > 0) {
+                page.setScaleX(scaleFactor);
+                page.setScaleY(scaleFactor);
+                page.setTranslationX(-maxTranslateOffsetX * offsetRate);
+                //ViewCompat.setElevation(view, 0.0f);
+            }
+            ViewCompat.setElevation(page, scaleFactor);
+        }
+
+        private int dp2px(Context context, float dipValue) {
+            float m = context.getResources().getDisplayMetrics().density;
+            return (int) (dipValue * m + 0.5f);
         }
     }
 

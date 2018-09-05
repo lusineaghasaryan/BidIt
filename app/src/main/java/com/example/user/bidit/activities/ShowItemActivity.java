@@ -46,9 +46,10 @@ public class ShowItemActivity extends AppCompatActivity {
     //    field to set scroll
     private AppBarLayout mAppBarLayout;
 
-    //    show auction images, fields
+    //    show item images
     private ViewPager mViewPager;
-    private ImageViewPagerAdapter mImageViewPagerAdapter;
+
+    //    zoom viewpager images
     private ImageViewPagerAdapter.OnImageClickListener mOnImageClickListener =
             new ImageViewPagerAdapter.OnImageClickListener() {
                 @Override
@@ -73,6 +74,9 @@ public class ShowItemActivity extends AppCompatActivity {
     private RecyclerViewMessageAdapter mMessageAdapter;
     private ArrayList<String> mMessages;
 
+    //    bid  allowing step
+    private int mBidStep;
+
     private LinearLayout mLinearLayout;
     private TextInputEditText mInputMessage;
     private Button mBtnEnterMessage;
@@ -94,7 +98,7 @@ public class ShowItemActivity extends AppCompatActivity {
         init();
         startToolbarTimer();
         setFields();
-        checkForMode();
+        checkMode();
         setListeners();
     }
 
@@ -108,13 +112,13 @@ public class ShowItemActivity extends AppCompatActivity {
 
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
-        mImageViewPagerAdapter = new ImageViewPagerAdapter(this, mItem);
-        mViewPager.setAdapter(mImageViewPagerAdapter);
-        mImageViewPagerAdapter.setOnImageClickListener(mOnImageClickListener);
+        ImageViewPagerAdapter imageViewPagerAdapter = new ImageViewPagerAdapter(this, mItem);
+        mViewPager.setAdapter(imageViewPagerAdapter);
+        imageViewPagerAdapter.setOnImageClickListener(mOnImageClickListener);
 
 //        view pager dots init
-        mLinearLayoutDots = findViewById(R.id.linear_show_item_activity_count_dots);
-        mDotsCount = mImageViewPagerAdapter.getCount();
+        mLinearLayoutDots = findViewById(R.id.linear_show_item_activity_dots);
+        mDotsCount = imageViewPagerAdapter.getCount();
         mImgDots = new ImageView[mDotsCount];
         createViewPagerDots();
 
@@ -141,7 +145,9 @@ public class ShowItemActivity extends AppCompatActivity {
 
         mTxtToolbarDuration = findViewById(R.id.txt_toolbar_show_item_activity_duration);
 
-//        check for logged in to disable buttons
+        mBidStep = (int) (mItem.getStartPrice() + mItem.getStartDate() / 10);
+
+//        check for logged in, to disable buttons
         checkForLoggedIn();
     }
 
@@ -222,7 +228,7 @@ public class ShowItemActivity extends AppCompatActivity {
             public boolean onEditorAction(TextView pTextView, int pI, KeyEvent pKeyEvent) {
                 if (pI == EditorInfo.IME_ACTION_DONE) {
                     enterMessageIntoChat();
-                    pKeyEvent.startTracking();
+//                    pKeyEvent.startTracking();
                 }
 
                 return false;
@@ -272,12 +278,14 @@ public class ShowItemActivity extends AppCompatActivity {
     private void enterMessageIntoChat() {
         // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
         String currentMessage = mInputMessage.getText().toString();
-        if (!currentMessage.isEmpty()) {
+        if (!currentMessage.isEmpty() && Integer.parseInt(currentMessage) > mItem.getStartPrice() + mBidStep) {
             mMessages.add(currentMessage);
             mInputMessage.setText("");
             mMessageAdapter.notifyDataSetChanged();
             mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
             mRecyclerView.scrollToPosition(mMessages.size() - 1);
+
+//            mItem.setCurrentPrice(Integer.parseInt(currentMessage));
         }
     }
 
@@ -295,7 +303,7 @@ public class ShowItemActivity extends AppCompatActivity {
     }
 
     //    check show item showing mode
-    private void checkForMode() {
+    private void checkMode() {
         switch (mMode) {
             case PUT_EXTRA_KEY_MODE_DEFAULT: {
                 mImgBtnFavorite.setVisibility(View.VISIBLE);
@@ -372,6 +380,12 @@ public class ShowItemActivity extends AppCompatActivity {
         mImgDots[0].setImageResource(R.drawable.view_pager_dot_selected);
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+
+    }
 
     // Recycler view adapter
     private class RecyclerViewMessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
