@@ -40,8 +40,9 @@ public class AddItemPhotosRVAdapter extends RecyclerView.Adapter<AddItemPhotosVi
     public void onBindViewHolder(@NonNull AddItemPhotosViewHolder holder, final int position) {
 
         final String imageUrl = mPhotosList.get(position);
-Log.v("IMAGE", "IMAGEURL = " + imageUrl);
-        if (imageUrl.contains("https://firebasestorage.googleapis.com") || imageUrl.equals("drawable://2131165336")){
+        Log.v("IMAGE", "IMAGEURL = " + imageUrl);
+
+        if (imageUrl.contains("https://firebasestorage.googleapis.com") || imageUrl.equals("drawable:")){
             Glide.with(mContext)
                     .load(imageUrl)
                     .centerCrop()

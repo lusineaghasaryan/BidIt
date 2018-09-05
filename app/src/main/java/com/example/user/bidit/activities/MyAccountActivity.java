@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -17,9 +18,16 @@ import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.User;
 import com.example.user.bidit.widgets.ChoosePhotoDialog;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Random;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -114,6 +122,9 @@ public class MyAccountActivity extends AppCompatActivity {
         changeButton = findViewById(R.id.btn_change_info_account_activity);
         mAccountImage = findViewById(R.id.account_image_my_account_activity);
     }
+
+
+
 
     private String firstLetterToUpCase(String pName) {
         return pName.substring(0, 1).toUpperCase() + pName.substring(1).toLowerCase();

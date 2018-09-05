@@ -32,4 +32,21 @@ public class FollowAndUnfollow {
         }
     }
 
+
+    public boolean isFollowed(Item pItem){
+        String currentUserId = FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid();
+        ArrayList<String> str;
+        if (pItem.getFollowersIds() != null)
+            str = pItem.getFollowersIds();
+        else
+            str = new ArrayList<>();
+
+        if (!str.contains(currentUserId)) {
+            return false;
+        }///////// remove /////////
+        else {
+            return true;
+        }
+    }
+
 }
