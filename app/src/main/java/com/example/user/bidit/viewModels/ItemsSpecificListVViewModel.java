@@ -24,8 +24,8 @@ public class ItemsSpecificListVViewModel extends ViewModel {
         mItemsList = pItemsList;
     }
 
-    public void setItems(String pType, String pTypeValue){
-       FirebaseHelper.getItemsSpecific(pType, pTypeValue, 3, new FirebaseHelper.Callback<ArrayList<Item>>() {
+    public void setItems(String pType, String pTypeValue, int pPageNumber){
+       FirebaseHelper.getItemsSpecific(pType, pTypeValue, pPageNumber, new FirebaseHelper.Callback<ArrayList<Item>>() {
            @Override
            public void callback(boolean pIsSuccess, ArrayList<Item> pValue) {
                mItemsList.setValue(pValue);

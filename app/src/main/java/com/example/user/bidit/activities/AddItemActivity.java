@@ -243,7 +243,7 @@ public class AddItemActivity extends AppCompatActivity {
                // Log.v(TAG, "ItemsListCount = " + pItems.size() + "   Title = " + pItems.get(0).getItemTitle());
             }
         });
-        itemsSpecificListVViewModel.setItems("categoryId", "-LJVutjHBpRf_pfv0pa1");
+        itemsSpecificListVViewModel.setItems("categoryId", "-LJVutjHBpRf_pfv0pa1", 1);
 
 
         //   GET ALL ITEMS LIST
