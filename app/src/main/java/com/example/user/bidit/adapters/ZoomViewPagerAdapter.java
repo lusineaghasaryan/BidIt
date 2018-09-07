@@ -46,9 +46,9 @@ public class ZoomViewPagerAdapter extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, final int position) {
-        View itemView = mLayoutInflater.inflate(R.layout.view_vp_image_item, container, false);
+        View itemView = mLayoutInflater.inflate(R.layout.view_vp_zoom_image_item, container, false);
 
-        ImageView imageView = itemView.findViewById(R.id.img_view_pager);
+        ImageView imageView = itemView.findViewById(R.id.img_view_pager_zoom);
 
         Glide.with(mContext)
                 .load(mImages.get(position))

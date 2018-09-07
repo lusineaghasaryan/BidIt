@@ -14,7 +14,6 @@
 
         <android.support.v4.view.ViewPager
             android:id="@+id/view_pager_image_dialog"
-            style="@style/show_item_margins"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

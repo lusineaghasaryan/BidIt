@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,6 +29,7 @@ import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.utils.FollowAndUnfollow;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
@@ -40,6 +42,7 @@ import static com.example.user.bidit.utils.ItemStatus.isItemHaveBeenFinished;
 import static com.example.user.bidit.utils.ItemStatus.isItemInProgress;
 
 public class HomeActivity extends AppCompatActivity {
+    public static final String TAG = "asd";
 
     //    recyclers, viewPager and adapters
     private RecyclerView mRecyclerViewCategories, mRecyclerViewAllList;
@@ -111,6 +114,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void loadCategoryListFromFirebase() {
         CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
+        categoryListViewModel.getCategoryList().removeObservers(this);
         categoryListViewModel.getCategoryList().observe(this, new Observer<ArrayList<Category>>() {
             @Override
             public void onChanged(@Nullable ArrayList<Category> pCategories) {
@@ -123,22 +127,28 @@ public class HomeActivity extends AppCompatActivity {
 
     private void loadAllItemListFromFirebase() {
 //        clear list and timers(handlers)
-        mAllItemData.clear();
-        mHotItemData.clear();
-        mAllListAdapter.clearTimers();
-
-//        load list
         ItemsListViewModel itemsListViewModel = ViewModelProviders.of(this).get(ItemsListViewModel.class);
         itemsListViewModel.getItem().removeObservers(this);
+        itemsListViewModel.setItem(null);
+        mAllListAdapter.clearTimers();
+        mAllItemData.clear();
+        mHotItemData.clear();
+        mAllListAdapter.notifyDataSetChanged();
+        mHotListAdapter.notifyDataSetChanged();
+
+
+//        load list
         itemsListViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
-                mAllItemData.add(pItem);
-                mAllListAdapter.notifyDataSetChanged();
+                if (pItem != null) {
+                    mAllItemData.add(pItem);
+                    mAllListAdapter.notifyDataSetChanged();
 
-                mHotItemData.add(pItem);
-                mHotListAdapter.notifyDataSetChanged();
-                mViewPagerHotList.setCurrentItem(0);
+                    mHotItemData.add(pItem);
+                    mHotListAdapter.notifyDataSetChanged();
+                    mViewPagerHotList.setCurrentItem(0);
+                }
             }
         });
         itemsListViewModel.updateData();
@@ -149,10 +159,10 @@ public class HomeActivity extends AppCompatActivity {
                 .of(HomeActivity.this).get(ItemsSpecificListVViewModel.class);
 
         // clear last version of list, and load new list, by category
-        mAllListAdapter.clearTimers();
-        mAllItemData.clear();
         itemsSpecificListVViewModel.setItem(null);
         itemsSpecificListVViewModel.getItem().removeObservers(HomeActivity.this);
+        mAllListAdapter.clearTimers();
+        mAllItemData.clear();
 
         itemsSpecificListVViewModel.updateData("categoryId",
                 pCategoryName);
@@ -168,15 +178,6 @@ public class HomeActivity extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    private boolean isItemFavorite(Item pItem) {
-        // TODO is favorite
-        return true;
-    }
-
-    private void addItemToFavorite() {
-        //TODO add to favorite
     }
 
     private void setListeners() {
@@ -196,9 +197,6 @@ public class HomeActivity extends AppCompatActivity {
         mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
-
-                mAllListAdapter.clearTimers();
-
                 ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
                         .of(HomeActivity.this)
                         .get(ItemsSpecificListVViewModel.class);
@@ -227,27 +225,25 @@ public class HomeActivity extends AppCompatActivity {
                 if (!isInHome) {
                     mViewPagerHotList.setVisibility(View.VISIBLE);
                     loadAllItemListFromFirebase();
+                    mAllListAdapter.notifyDataSetChanged();
+                    isInHome = true;
                 }
             }
         });
-
     }
 
     @Override
     public void onBackPressed() {
-
         if (!isInHome) {
             mViewPagerHotList.setVisibility(View.VISIBLE);
             mSearchView.setLeftMenuOpen(false);
 
             loadAllItemListFromFirebase();
-
-            isInHome = false;
+            isInHome = true;
         } else {
             finish();
         }
     }
-
 
     //    category mHotItems list recyclerView adapter and ViewHolder
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
@@ -268,7 +264,6 @@ public class HomeActivity extends AppCompatActivity {
                         mAllListAdapter.notifyDataSetChanged();
                     }
                 };
-
 
         CategoryAdapter(List<Category> pCategories) {
             mCategories = pCategories;
@@ -379,13 +374,14 @@ public class HomeActivity extends AppCompatActivity {
                     (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View item_view = layoutInflater.inflate(R.layout.view_hot_item, container, false);
 
-            ImageView imageView = item_view.findViewById(R.id.img_hot_item_view);
+            ImageView imageIcon = item_view.findViewById(R.id.img_hot_item_view);
+            ImageView imageFavorite = item_view.findViewById(R.id.img_hot_item_view_favorite);
             TextView title = item_view.findViewById(R.id.txt_hot_item_view_title);
             TextView price = item_view.findViewById(R.id.txt_hot_item_view_price);
 
             Glide.with(mContext).
                     load(currentItem.getPhotoUrls().get(0))
-                    .into(imageView);
+                    .into(imageIcon);
 
             title.setText(currentItem.getItemTitle());
             price.setText(String.valueOf(currentItem.getStartPrice()));
@@ -397,17 +393,28 @@ public class HomeActivity extends AppCompatActivity {
             return item_view;
         }
 
+        private void follow(Item pItem, ImageView pFavoriteView) {
+            if (!FollowAndUnfollow.isFollowed(pItem)) {
+                FollowAndUnfollow.addToFavorite(pItem);
+                pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
+            } else {
+                FollowAndUnfollow.removeFromFavorite(pItem);
+                pFavoriteView.setImageResource(R.drawable.favorite_star_border_48dp);
+            }
+        }
+
         private void setListeners(View pView, final int position) {
             pView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View pView) {
+                    ImageView mFavorite = pView.findViewById(R.id.img_hot_item_view_favorite);
                     switch (pView.getId()) {
                         case R.id.img_hot_item_view_favorite: {
                             if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                                 Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                                 startActivity(intent);
                             } else {
-                                addItemToFavorite();
+                                follow(mHotItems.get(position), mFavorite);
                             }
                             break;
                         }
@@ -435,7 +442,6 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         public void transformPage(@NonNull View page, float position) {
-
 //            position = position < -1 ? -1 : position;
 //            position = position > 1 ? 1 : position;
 //
@@ -490,12 +496,20 @@ public class HomeActivity extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onAllFavoriteClick(int pAdapterPosition) {
+                    public void onAllFavoriteClick(int pAdapterPosition, ImageView pFavoriteView) {
                         if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                             startActivity(intent);
                         } else {
-                            addItemToFavorite();
+                            if (!FollowAndUnfollow.isFollowed(mAllItems.get(pAdapterPosition))) {
+                                FollowAndUnfollow.addToFavorite(mAllItems.get(pAdapterPosition));
+                                pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
+                                Log.d(TAG, "onAllFavoriteClick: add " + mAllItems.size());
+                            } else {
+                                FollowAndUnfollow.removeFromFavorite(mAllItems.get(pAdapterPosition));
+                                pFavoriteView.setImageResource(R.drawable.favorite_star_border_48dp);
+                                Log.d(TAG, "onAllFavoriteClick: remove " + mAllItems.size());
+                            }
                         }
                     }
                 };
@@ -586,7 +600,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private static class AllListViewHolder extends RecyclerView.ViewHolder {
-
         //        view holder item fields
         private TextView mTxtAuctionTitle, mTxtAuctionDate, mTxtAuctionCurrentPrice;
         private ImageView mImgAuctionImage, mImgAuctionStatus;
@@ -597,7 +610,7 @@ public class HomeActivity extends AppCompatActivity {
         public AllListViewHolder(View itemView) {
             super(itemView);
 
-//            initialize fields
+            //        initialize fields
             mTxtAuctionTitle = itemView.findViewById(R.id.txt_view_holder_auction_title);
             mTxtAuctionDate = itemView.findViewById(R.id.txt_view_holder_auction_date);
             mTxtAuctionCurrentPrice = itemView.findViewById(R.id.txt_view_holder_auction_current_price);
@@ -643,16 +656,15 @@ public class HomeActivity extends AppCompatActivity {
             mImgFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View pView) {
-                    mClickListener.onAllFavoriteClick(getAdapterPosition());
+                    mClickListener.onAllFavoriteClick(getAdapterPosition(), mImgFavorite);
                 }
             });
         }
 
-
         private interface OnAllItemClickListener {
             void onAllItemClick(int pAdapterPosition);
 
-            void onAllFavoriteClick(int pAdapterPosition);
+            void onAllFavoriteClick(int pAdapterPosition, ImageView pFavoriteView);
         }
 
         public void setClickListener(OnAllItemClickListener pClickListener) {

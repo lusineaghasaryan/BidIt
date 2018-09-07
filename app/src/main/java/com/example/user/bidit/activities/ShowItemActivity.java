@@ -2,6 +2,7 @@ package com.example.user.bidit.activities;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -11,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,7 +21,6 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -29,12 +30,14 @@ import com.example.user.bidit.adapters.ImageViewPagerAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.FollowAndUnfollow;
+import com.example.user.bidit.utils.ItemStatus;
 import com.example.user.bidit.widgets.ImageDialog;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class ShowItemActivity extends AppCompatActivity {
+    public static final String TAG = "tag";
 
     public static final String PUT_EXTRA_KEY_MODE_MY_ITEM = "my_item";
     public static final String PUT_EXTRA_KEY_MODE_HISTORY = "history";
@@ -67,7 +70,7 @@ public class ShowItemActivity extends AppCompatActivity {
 
     private TextView mTxtAuctionTitle, mTxtAuctionDescription, mTxtAuctionDuration, mTxtAuctionStartDate,
             mTxtAuctionStartPrice, mTxtAuctionCurrentPrice;
-    private ImageButton mImgBtnFavorite;
+    private ImageView mImgFavorite;
 
     //    show chat, messages
     private RecyclerView mRecyclerView;
@@ -81,11 +84,12 @@ public class ShowItemActivity extends AppCompatActivity {
     private TextInputEditText mInputMessage;
     private Button mBtnEnterMessage;
 
-    //    toolbar timer text view
-    private TextView mTxtToolbarDuration;
-
     //    data (temp)
     private Item mItem;
+
+    //time
+    private Handler mTimer;
+    private Runnable mRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +100,7 @@ public class ShowItemActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         init();
-        startToolbarTimer();
+        startTimer();
         setFields();
         checkMode();
         setListeners();
@@ -141,11 +145,20 @@ public class ShowItemActivity extends AppCompatActivity {
         mTxtAuctionDuration = findViewById(R.id.txt_show_item_activity_auction_duration);
         mTxtAuctionStartPrice = findViewById(R.id.txt_show_item_activity_auction_start_price);
         mTxtAuctionCurrentPrice = findViewById(R.id.txt_show_item_activity_auction_current_price);
-        mImgBtnFavorite = findViewById(R.id.img_btn_show_item_activity_favorite_btn);
+        mImgFavorite = findViewById(R.id.img_show_item_activity_favorite_btn);
 
-        mTxtToolbarDuration = findViewById(R.id.txt_toolbar_show_item_activity_duration);
+        mBidStep = (int) mItem.getStartPrice() + (int) mItem.getStartPrice() / 10;
 
-        mBidStep = (int) (mItem.getStartPrice() + mItem.getStartDate() / 10);
+        mTimer = new Handler();
+        mRunnable = new Runnable() {
+            @Override
+            public void run() {
+                if (ItemStatus.isItemInProgress(mItem))
+                    mTxtAuctionDuration.setText(new SimpleDateFormat("HHH:mm:ss")
+                            .format(mItem.getEndDate() - System.currentTimeMillis()));
+                mTimer.postDelayed(this, 1000);
+            }
+        };
 
 //        check for logged in, to disable buttons
         checkForLoggedIn();
@@ -174,15 +187,19 @@ public class ShowItemActivity extends AppCompatActivity {
         mTxtAuctionDescription.setText(mItem.getItemDescription());
         mTxtAuctionStartDate.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
                 .format(mItem.getStartDate()));
-        mTxtAuctionDuration.setText(new SimpleDateFormat("dd 'day' HH:mm")
-                .format(mItem.getEndDate() - mItem.getStartDate()));
+        if (!ItemStatus.isItemInProgress(mItem)) {
+            mTxtAuctionDuration.setText(new SimpleDateFormat("dd 'day' HH:mm")
+                    .format(mItem.getEndDate() - mItem.getStartDate()));
+        } else {
+            mTxtAuctionDuration.setTextColor(Color.RED);
+        }
         mTxtAuctionStartPrice.setText(String.valueOf(mItem.getStartPrice()));
         mTxtAuctionCurrentPrice.setText(String.valueOf(mItem.getCurrentPrice()));
 
-        if (isFavorite()) {
-            mImgBtnFavorite.setImageResource(R.drawable.favorite_star_48dp);
+        if (FollowAndUnfollow.isFollowed(mItem)) {
+            mImgFavorite.setImageResource(R.drawable.favorite_star_48dp);
         } else {
-            mImgBtnFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
+            mImgFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
         }
 
         if (mItem.getStartDate() > System.currentTimeMillis()) {
@@ -199,11 +216,17 @@ public class ShowItemActivity extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
-        mImgBtnFavorite.setOnClickListener(new View.OnClickListener() {
+        mImgFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
-                    addItemToFavorite();
+                    if (!FollowAndUnfollow.isFollowed(mItem)) {
+                        FollowAndUnfollow.addToFavorite(mItem);
+                        mImgFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                    } else {
+                        FollowAndUnfollow.removeFromFavorite(mItem);
+                        mImgFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
+                    }
                 } else {
                     Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
                     startActivity(intent);
@@ -276,27 +299,27 @@ public class ShowItemActivity extends AppCompatActivity {
 
     //    check valid bid price and send to fb
     private void enterMessageIntoChat() {
-        // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
+
         String currentMessage = mInputMessage.getText().toString();
-        if (!currentMessage.isEmpty() && Integer.parseInt(currentMessage) > mItem.getStartPrice() + mBidStep) {
+        int currentNumber = Integer.parseInt(currentMessage);
+        if (!currentMessage.isEmpty() && currentNumber > mItem.getCurrentPrice() + mBidStep) {
             mMessages.add(currentMessage);
             mInputMessage.setText("");
             mMessageAdapter.notifyDataSetChanged();
             mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
             mRecyclerView.scrollToPosition(mMessages.size() - 1);
-
-//            mItem.setCurrentPrice(Integer.parseInt(currentMessage));
+            // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
         }
     }
 
     //    check for user logged in
     private void checkForLoggedIn() {
         if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
-            mImgBtnFavorite.setEnabled(true);
+            mImgFavorite.setEnabled(true);
             mInputMessage.setEnabled(true);
             mBtnEnterMessage.setEnabled(true);
         } else {
-            mImgBtnFavorite.setClickable(false);
+            mImgFavorite.setClickable(false);
             mInputMessage.setEnabled(false);
             mBtnEnterMessage.setEnabled(false);
         }
@@ -306,20 +329,20 @@ public class ShowItemActivity extends AppCompatActivity {
     private void checkMode() {
         switch (mMode) {
             case PUT_EXTRA_KEY_MODE_DEFAULT: {
-                mImgBtnFavorite.setVisibility(View.VISIBLE);
+                mImgFavorite.setVisibility(View.VISIBLE);
                 mLinearLayout.setVisibility(View.VISIBLE);
                 mLinearLayout.setEnabled(true);
                 mLinearLayout.setClickable(true);
                 break;
             }
             case PUT_EXTRA_KEY_MODE_MY_ITEM: {
-                mImgBtnFavorite.setVisibility(View.GONE);
+                mImgFavorite.setVisibility(View.GONE);
                 mLinearLayout.setEnabled(false);
                 mLinearLayout.setClickable(false);
                 break;
             }
             case PUT_EXTRA_KEY_MODE_HISTORY: {
-                mImgBtnFavorite.setVisibility(View.GONE);
+                mImgFavorite.setVisibility(View.GONE);
                 mLinearLayout.setVisibility(View.GONE);
                 break;
             }
@@ -327,48 +350,6 @@ public class ShowItemActivity extends AppCompatActivity {
                 break;
             }
         }
-    }
-
-    //    start tool bar timer if auction have benn started,or show start date
-    private void startToolbarTimer() {
-        final Handler handler = new Handler();
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                long time = System.currentTimeMillis();
-
-                if (mItem.getEndDate() > time && mItem.getStartDate() < time) {
-                    mTxtToolbarDuration.setText(new SimpleDateFormat("HH:mm:ss")
-                            .format(mItem.getEndDate() - time));
-                } else if (mItem.getStartDate() > System.currentTimeMillis()) {
-                    mTxtToolbarDuration.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
-                            .format(mItem.getStartDate()));
-                }
-
-                handler.postDelayed(this, 500);
-            }
-        };
-
-        runnable.run();
-    }
-
-    private boolean isFavorite = true;// temp
-
-    //    check is this item favorite for current user
-    private boolean isFavorite() {
-        isFavorite = !isFavorite;
-        return isFavorite; // TODO is favorite logic
-    }
-
-    //    add item to current user's favorite list
-    private void addItemToFavorite() {
-        FollowAndUnfollow.addRemoveFavorite(mItem);
-//        if (isFavorite()) {
-//            mImgBtnFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
-//        } else {
-//            mImgBtnFavorite.setImageResource(R.drawable.favorite_star_48dp);
-//        }
-//        // TODO add favorite logic
     }
 
     private void createViewPagerDots() {
@@ -380,11 +361,8 @@ public class ShowItemActivity extends AppCompatActivity {
         mImgDots[0].setImageResource(R.drawable.view_pager_dot_selected);
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-
-
+    private void startTimer() {
+        mTimer.postDelayed(mRunnable, 0);
     }
 
     // Recycler view adapter
@@ -394,7 +372,6 @@ public class ShowItemActivity extends AppCompatActivity {
         RecyclerViewMessageAdapter(ArrayList<String> pMessages) {
             mMessages = pMessages;
         }
-
 
         @NonNull
         @Override
