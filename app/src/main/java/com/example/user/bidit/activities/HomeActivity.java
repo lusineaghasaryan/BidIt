@@ -210,7 +210,7 @@ public class HomeActivity extends AppCompatActivity {
                                 mAllListAdapter.notifyDataSetChanged();
                             }
                         });
-                itemsSpecificListVViewModel.setItems("itemTitle", newQuery);
+                itemsSpecificListVViewModel.setItems("itemTitle", newQuery, 0 );
             }
         });
 
