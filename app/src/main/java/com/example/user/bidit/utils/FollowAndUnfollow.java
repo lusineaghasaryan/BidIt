@@ -1,6 +1,9 @@
 package com.example.user.bidit.utils;
 
 
+import android.widget.ImageView;
+
+import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Item;
@@ -33,7 +36,7 @@ public class FollowAndUnfollow {
     }
 
 
-    public boolean isFollowed(Item pItem){
+    public static boolean isFollowed(Item pItem) {
         String currentUserId = FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid();
         ArrayList<String> str;
         if (pItem.getFollowersIds() != null)
@@ -41,12 +44,32 @@ public class FollowAndUnfollow {
         else
             str = new ArrayList<>();
 
-        if (!str.contains(currentUserId)) {
-            return false;
-        }///////// remove /////////
-        else {
-            return true;
-        }
+        return str.contains(currentUserId);
     }
 
+    public static void addToFavorite(Item pItem) {
+        ArrayList<String> str;
+        if (pItem.getFollowersIds() != null) {
+            str = pItem.getFollowersIds();
+        } else {
+            str = new ArrayList<>();
+        }
+        str.add(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid());
+        pItem.setFollowersIds(str);
+        pItem.setFollowersCount(pItem.getFollowersCount() + 1);
+        FirebaseHelper.addFavoriteItem(pItem);
+    }
+
+    public static void removeFromFavorite(Item pItem) {
+        ArrayList<String> str;
+        if (pItem.getFollowersIds() != null) {
+            str = pItem.getFollowersIds();
+        } else {
+            str = new ArrayList<>();
+        }
+        str.remove(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid());
+        pItem.setFollowersIds(str);
+        pItem.setFollowersCount(pItem.getFollowersCount() - 1);
+        FirebaseHelper.addFavoriteItem(pItem);
+    }
 }
