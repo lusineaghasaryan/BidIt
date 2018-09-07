@@ -472,7 +472,9 @@ public void addRemoveFavorite(Item pItem){
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            mItemSelectedImagesList.add(saveImage(thumbnail));
+            String url = saveImage(thumbnail);
+            Log.v("PPPPP", "URL = " + url);
+            mItemSelectedImagesList.add(url);
             mAdapter.notifyDataSetChanged();
             //TODO save image to internal memory & send Firebase storage
         }
