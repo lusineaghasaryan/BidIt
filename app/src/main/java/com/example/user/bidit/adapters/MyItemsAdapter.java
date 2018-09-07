@@ -16,6 +16,7 @@ import com.example.user.bidit.activities.MyItemsActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.activities.HomeActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
+import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewHolders.MyItemsViewHolder;
 import java.text.SimpleDateFormat;
@@ -26,7 +27,7 @@ import java.util.List;
 public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
     private List<Item> mMyItemList;
     private Context mContext;
-    public IOnItemClick mIOnItemClick;
+    private IOnItemClick mIOnItemClick;
 
 
 
@@ -46,7 +47,7 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
     public void onBindViewHolder(@NonNull MyItemsViewHolder holder, final int position) {
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
-        Item currentItem = mMyItemList.get(position);
+        final Item currentItem = mMyItemList.get(position);
 
         Glide.with(mContext)
                 .load(currentItem.getPhotoUrls().get(0))
@@ -55,7 +56,16 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
         holder.getTitle().setText(currentItem.getItemTitle());
         holder.getDate().setText(dateFormat.format(currentItem.getStartDate()));
         holder.getFollowersCount().setText(String.valueOf(currentItem.getFollowersCount()));
-        holder.getStartPrice().setText(String.valueOf(currentItem.getStartPrice()));
+        holder.getStartPrice().setText(String.valueOf((int)currentItem.getStartPrice()) + "$");
+
+        holder.getRemoveItem().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FirebaseHelper.removeItem(currentItem);
+                mMyItemList.remove(currentItem);
+                mMyItemList.clear();
+            }
+        });
 
         holder.setOnViewHolderItemClickListener(new MyItemsViewHolder.OnViewHolderItemClickListener() {
             @Override
@@ -64,7 +74,6 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
             }
         });
 
-        holder.getStartPrice().setText(String.valueOf((int)currentItem.getStartPrice()) + "$");
     }
 
     @Override

@@ -270,6 +270,7 @@ public class AddItemActivity extends AppCompatActivity {
                 }
                 if (mMode == KEY_EDIT_ITEM)
                     setFieldToEdit(mItemEdit);
+                    setFieldToEdit(mItemEdit);
             }
         });
         categoryListViewModel.updateData();
@@ -471,7 +472,9 @@ public void addRemoveFavorite(Item pItem){
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            mItemSelectedImagesList.add(saveImage(thumbnail));
+            String url = saveImage(thumbnail);
+            Log.v("PPPPP", "URL = " + url);
+            mItemSelectedImagesList.add(url);
             mAdapter.notifyDataSetChanged();
             //TODO save image to internal memory & send Firebase storage
         }
@@ -502,6 +505,7 @@ public void addRemoveFavorite(Item pItem){
 
 
     public String saveImage(Bitmap myBitmap) {
+        Log.d("MYTAG", "saveImage: " + myBitmap);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
         File wallpaperDirectory = new File(

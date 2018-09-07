@@ -30,8 +30,8 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-        Window w = getWindow();
-        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//        Window w = getWindow();
+//        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
         mBtnAccept.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,8 +81,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void createAccount() {
         getTextFromFilledField();
-        EditText[] allFields = createEditTextsArray();
-        if (!ValidateForm.setErrorIfEmpty(allFields)) {
+        if (!ValidateForm.setErrorIfEmpty(createEditTextsArray())) {
             UserMessages.showSnackBarShort(mParentLayout, getString(R.string.empty_fields_message));
             return;
         }

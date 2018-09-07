@@ -7,10 +7,9 @@
 
     <ImageView
         android:id="@+id/image_view_item_add_photo_rv"
-        android:layout_width="150dp"
+        android:layout_width="120dp"
         android:layout_height="150dp"
-        android:src="@android:drawable/ic_menu_gallery"
-    />
+        android:src="@drawable/pic_trans"/>
 
     <Button
         android:id="@+id/btn_remove_item_add_photo_rv"

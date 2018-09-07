@@ -9,17 +9,25 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,7 +49,7 @@ import java.util.List;
 import static com.example.user.bidit.utils.ItemStatus.isItemHaveBeenFinished;
 import static com.example.user.bidit.utils.ItemStatus.isItemInProgress;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String TAG = "asd";
 
     //    recyclers, viewPager and adapters
@@ -60,6 +68,12 @@ public class HomeActivity extends AppCompatActivity {
     //    search view in toolbar
     private FloatingSearchView mSearchView;
 
+    //navDrawer
+    private NavigationView mNavigationView;
+    private DrawerLayout mDrawer;
+    private Toolbar mToolbar;
+    private ActionBarDrawerToggle mToggle;
+
     private boolean isInHome = true;
 
 
@@ -69,9 +83,19 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         init();
+        setNavigationDrawer();
         loadCategoryListFromFirebase();
         loadAllItemListFromFirebase();
         setListeners();
+        Window w = getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (FireBaseAuthenticationManager.getInstance().isLoggedIn())
+            FireBaseAuthenticationManager.getInstance().initCurrentUser();
     }
 
     //    initialize fields
@@ -92,7 +116,13 @@ public class HomeActivity extends AppCompatActivity {
 
         mSearchView = findViewById(R.id.search_view_home_activity);
 
+        mToolbar = findViewById(R.id.toolbar);
+        mDrawer = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.nav_view);
+
         setRecyclerAndVPSittings();
+
+        mSearchView.attachNavigationDrawerToMenuButton(mDrawer);
     }
 
     private void setRecyclerAndVPSittings() {
@@ -210,14 +240,14 @@ public class HomeActivity extends AppCompatActivity {
                                 mAllListAdapter.notifyDataSetChanged();
                             }
                         });
-                itemsSpecificListVViewModel.setItems("itemTitle", newQuery, 0 );
+                itemsSpecificListVViewModel.setItems("itemTitle", newQuery, 1);
             }
         });
 
         mSearchView.setOnLeftMenuClickListener(new FloatingSearchView.OnLeftMenuClickListener() {
             @Override
             public void onMenuOpened() {
-
+                updateNavigationDrawer();
             }
 
             @Override
@@ -234,16 +264,85 @@ public class HomeActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
+        }
         if (!isInHome) {
             mViewPagerHotList.setVisibility(View.VISIBLE);
             mSearchView.setLeftMenuOpen(false);
 
             loadAllItemListFromFirebase();
+
             isInHome = true;
         } else {
             finish();
         }
     }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        updateNavigationDrawer();
+        switch (item.getItemId()) {
+            case R.id.nav_item_my_account: {
+                startActivity(new Intent(HomeActivity.this, MyAccountActivity.class));
+                break;
+            }
+            case R.id.nav_item_balance: {
+                break;
+            }
+            case R.id.nav_item_history: {
+                break;
+            }
+            case R.id.nav_item_favorite: {
+                startActivity(new Intent(HomeActivity.this, FavoriteActivity.class));
+                break;
+            }
+            case R.id.nav_item_my_items: {
+                startActivity(new Intent(HomeActivity.this, MyItemsActivity.class));
+                break;
+            }
+            case R.id.nav_item_log_out: {
+                FireBaseAuthenticationManager.getInstance().signOut();
+                break;
+            }
+            case R.id.nav_item_log_in: {
+                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                break;
+            }
+            case R.id.nav_item_help: {
+                break;
+            }
+            case R.id.nav_item_about_us:
+                Intent addItemIntent = new Intent(HomeActivity.this, AddItemActivity.class);
+                startActivity(addItemIntent);
+        }
+
+        mDrawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void setNavigationDrawer() {
+        setSupportActionBar(mToolbar);
+        mToggle = new ActionBarDrawerToggle(
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(mToggle);
+        mToggle.syncState();
+        mNavigationView.setNavigationItemSelectedListener(this);
+        mToggle.setDrawerIndicatorEnabled(false);
+    }
+
+    public void updateNavigationDrawer() {
+        Log.d("MYTAG", "updateNavigationDrawer: ");
+        if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+            mNavigationView.getMenu().setGroupVisible(R.id.menu_group_signed, true);
+            mNavigationView.getMenu().findItem(R.id.nav_item_log_in).setVisible(false);
+        } else {
+            mNavigationView.getMenu().setGroupVisible(R.id.menu_group_signed, false);
+            mNavigationView.getMenu().findItem(R.id.nav_item_log_in).setVisible(true);
+        }
+    }
+
 
     //    category mHotItems list recyclerView adapter and ViewHolder
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
@@ -523,7 +622,7 @@ public class HomeActivity extends AppCompatActivity {
         @Override
         public AllListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             AllListViewHolder allListViewHolder = new AllListViewHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.view_recycler_item, parent, false));
+                    .inflate(R.layout.item_view, parent, false));
 
             setListener(allListViewHolder);
 
@@ -545,7 +644,6 @@ public class HomeActivity extends AppCompatActivity {
                     if (isItemInProgress(item)) {
                         holder.getTxtAuctionDate().setText(new SimpleDateFormat("HH:mm:ss")
                                 .format(time));
-                        holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_active_12dp);
                         holder.getTxtAuctionDate().setTextColor(Color.RED);
                     } else if (isItemHaveBeenFinished(item)) {
                         holder.getTxtAuctionDate().setText("finished");
@@ -555,7 +653,6 @@ public class HomeActivity extends AppCompatActivity {
                     } else {
                         holder.getTxtAuctionDate().setText(new SimpleDateFormat("MM/dd - HH:mm")
                                 .format(item.getStartDate()));
-                        holder.getImgAuctionStatus().setImageResource(R.drawable.status_point_inactive_12dp);
                         holder.getTxtAuctionDate().setTextColor(Color.GRAY);
                     }
 
@@ -586,7 +683,7 @@ public class HomeActivity extends AppCompatActivity {
 
         private void setFields(AllListViewHolder pHolder, Item pItem) {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
-            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf(pItem.getCurrentPrice()) + " AMD");
+            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf((int) pItem.getCurrentPrice()) + "$");
             pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
 
             Glide.with(HomeActivity.this)
@@ -602,7 +699,7 @@ public class HomeActivity extends AppCompatActivity {
     private static class AllListViewHolder extends RecyclerView.ViewHolder {
         //        view holder item fields
         private TextView mTxtAuctionTitle, mTxtAuctionDate, mTxtAuctionCurrentPrice;
-        private ImageView mImgAuctionImage, mImgAuctionStatus;
+        private ImageView mImgAuctionImage;
         private ImageView mImgFavorite;
 
         private OnAllItemClickListener mClickListener;
@@ -615,7 +712,6 @@ public class HomeActivity extends AppCompatActivity {
             mTxtAuctionDate = itemView.findViewById(R.id.txt_view_holder_auction_date);
             mTxtAuctionCurrentPrice = itemView.findViewById(R.id.txt_view_holder_auction_current_price);
             mImgAuctionImage = itemView.findViewById(R.id.img_view_holder_auction_image);
-            mImgAuctionStatus = itemView.findViewById(R.id.img_view_holder_auction_status);
             mImgFavorite = itemView.findViewById(R.id.img_btn_view_holder_favorite_btn);
 
             setListeners(itemView);
@@ -635,10 +731,6 @@ public class HomeActivity extends AppCompatActivity {
 
         public ImageView getImgAuctionImage() {
             return mImgAuctionImage;
-        }
-
-        public ImageView getImgAuctionStatus() {
-            return mImgAuctionStatus;
         }
 
         public ImageView getImgFavorite() {

@@ -2,6 +2,7 @@ package com.example.user.bidit.viewHolders;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,6 +12,7 @@ public class MyItemsViewHolder extends RecyclerView.ViewHolder{
     private ImageView imageView;
     private TextView title, date, startPrice, followersCount;
     private OnViewHolderItemClickListener mOnViewHolderItemClickListener;
+    private Button removeItem;
 
     public MyItemsViewHolder(View itemView) {
         super(itemView);
@@ -24,6 +26,7 @@ public class MyItemsViewHolder extends RecyclerView.ViewHolder{
     }
 
     private void init(){
+        removeItem = itemView.findViewById(R.id.btn_remove_my_item_view);
         imageView = itemView.findViewById(R.id.image_item_image_my_item_view);
         title = itemView.findViewById(R.id.text_title_view_my_item);
         date = itemView.findViewById(R.id.text_start_date_my_item_view);
@@ -31,6 +34,10 @@ public class MyItemsViewHolder extends RecyclerView.ViewHolder{
         followersCount = itemView.findViewById(R.id.text_followers_count_view_my_item);
 
 
+    }
+
+    public Button getRemoveItem() {
+        return removeItem;
     }
 
     public TextView getStartPrice() {

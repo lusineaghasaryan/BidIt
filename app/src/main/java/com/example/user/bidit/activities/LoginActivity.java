@@ -9,6 +9,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
@@ -26,8 +27,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        Window w = getWindow();
-        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//        Window w = getWindow();
+//        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
     }
 
@@ -38,7 +39,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mProgressDialog = new ProgressDialog(this);
         findViewById(R.id.btn_log_in_login_activity).setOnClickListener(this);
         findViewById(R.id.btn_registration_login_activity).setOnClickListener(this);
-        findViewById(R.id.btn_facebook_login_activity).setOnClickListener(this);
+        mEditTextEmail.setOnClickListener(this);
+        mEditTextPassword.setOnClickListener(this);
     }
 
     private void signIn() {
@@ -76,8 +78,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
                 break;
             }
-            case R.id.btn_facebook_login_activity: {
-                startActivity(new Intent(this, Main2Activity.class));
+            case R.id.edit_text_email_login_activity: {
+                mEditTextEmail.setFocusableInTouchMode(true);
+                mEditTextPassword.setFocusableInTouchMode(true);
+                break;
+            }
+            case R.id.edit_text_password_login_activity: {
+                mEditTextPassword.setFocusableInTouchMode(true);
+                mEditTextEmail.setFocusableInTouchMode(true);
                 break;
             }
         }

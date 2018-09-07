@@ -28,7 +28,6 @@ public class AddItemPhotosRVAdapter extends RecyclerView.Adapter<AddItemPhotosVi
         mPhotosList.add("drawable://" + R.drawable.favorite_star_24dp);
     }
 
-
     @NonNull
     @Override
     public AddItemPhotosViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {

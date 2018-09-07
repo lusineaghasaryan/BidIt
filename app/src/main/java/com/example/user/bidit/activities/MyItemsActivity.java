@@ -4,17 +4,14 @@ import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.MyItemsAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
@@ -64,7 +61,6 @@ public class MyItemsActivity extends BaseActivity {
             public void onItemClick(Item pItem, int pPosition) {
                 Intent intent;
                 if (pItem.getStartDate() > System.currentTimeMillis()) {
-
                     mItemEditPosition = pPosition;
                     intent = new Intent(MyItemsActivity.this, AddItemActivity.class);
                     intent.putExtra(AddItemActivity.KEY_EDIT_ITEM, pItem);
@@ -81,6 +77,8 @@ public class MyItemsActivity extends BaseActivity {
 
     private void getItemsListByUserFromServer() {
         ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(MyItemsActivity.this).get(ItemsSpecificListVViewModel.class);
+        //
+        itemsSpecificListVViewModel.getItem().removeObservers(MyItemsActivity.this);
         itemsSpecificListVViewModel.updateData("userId", FireBaseAuthenticationManager.getInstance().mAuth.getUid());
 
         itemsSpecificListVViewModel.getItem().observe(MyItemsActivity.this, new Observer<Item>() {

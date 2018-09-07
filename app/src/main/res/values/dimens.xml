@@ -7,6 +7,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="profile_image_size">150dp</dimen>
+    <dimen name="item_height">100dp</dimen>
 
     <dimen name="padding_small">10dp</dimen>
     <dimen name="padding_normal">20dp</dimen>
@@ -26,6 +27,7 @@
     <dimen name="margin_normal">10dp</dimen>
     <dimen name="margin_large">15dp</dimen>
     <dimen name="margin_extra_large">30dp</dimen>
+    <dimen name="page_sides_margin">40dp</dimen>
 
     <dimen name="text_size_small">15sp</dimen>
     <dimen name="text_size_normal">20sp</dimen>
@@ -41,6 +43,8 @@
 
 
     <dimen name="line_size">1dp</dimen>
+
     <dimen name="item_corner_radius">8dp</dimen>
-    <dimen name="item_height">100dp</dimen>
+    <dimen name="margin_logo">70dp</dimen>
+
 </resources>

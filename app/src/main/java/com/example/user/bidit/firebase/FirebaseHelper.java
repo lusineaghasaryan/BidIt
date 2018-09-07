@@ -35,8 +35,8 @@ public class FirebaseHelper {
     static DatabaseReference mUsersRef = database.getReference("users");
     static DatabaseReference mItemsRef = database.getReference("items");
     static DatabaseReference mCategoryRef = database.getReference("categories");
-    FirebaseStorage storage = FirebaseStorage.getInstance();
-    StorageReference storageRef = storage.getReference();
+    static FirebaseStorage storage = FirebaseStorage.getInstance();
+    static StorageReference storageRef = storage.getReference();
     StorageReference mItemImages = storageRef.child("itemImages");
     StorageReference mUserAvatar = storageRef.child("avatars");
 
@@ -171,7 +171,7 @@ public class FirebaseHelper {
         mItemsRef.child(pItem.getItemId()).removeValue();
     }
 
-    public void sendAvatarToStorage(String pImageUrl){
+    public static void sendAvatarToStorage(String pImageUrl){
         storageRef = FirebaseStorage.getInstance().getReference();
         Uri file = Uri.fromFile(new File(pImageUrl));
         Random generator = new Random();
@@ -179,13 +179,14 @@ public class FirebaseHelper {
         n = generator.nextInt(n);
         StorageReference riversRef = storageRef.child(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid()
                 + "/user/avatar" + n + ".jpg");
-
         riversRef.putFile(file)
                 .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // Get a URL to the uploaded content
                         Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        FireBaseAuthenticationManager.getInstance().setUserPhotoUrl(downloadUrl.toString());
+
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {

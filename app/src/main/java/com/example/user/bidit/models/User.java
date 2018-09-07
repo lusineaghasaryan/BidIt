@@ -6,18 +6,20 @@ import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 
 public class User {
-    private String name, surname, phoneNumber, id, email, passportSeries;
+    private String name, surname, phoneNumber, id, email, passportSeries, photoUrl;
 
     public User() {
     }
 
-    public User(String pName, String pSurname, String pPhoneNumber, String pId, String pEmail, String pPassportSeries) {
+    public User(String pName, String pSurname, String pPhoneNumber, String pId, String pEmail, String pPassportSeries, String pPhotoUrl) {
         this.name = pName;
         this.surname = pSurname;
         this.phoneNumber = pPhoneNumber;
         this.id = pId;
         this.email = pEmail;
         this.passportSeries = pPassportSeries;
+        this.photoUrl = pPhotoUrl;
+
     }
 
     public String getName() {
@@ -68,17 +70,26 @@ public class User {
         this.passportSeries = passportSeries;
     }
 
-        private User(final Builder builder) {
+    public String getPhotoUrl() {
+        return photoUrl;
+    }
+
+    public void setPhotoUrl(String photoUrl) {
+        this.photoUrl = photoUrl;
+    }
+
+    private User(final Builder builder) {
         name = builder.name;
         surname = builder.surname;
         phoneNumber = builder.phoneNumber;
         id = builder.id;
         email = builder.email;
         passportSeries = builder.passportSeria;
+        photoUrl = builder.photoUrl;
     }
 
     public static class Builder {
-        private String name, surname, phoneNumber, id, email, passportSeria;
+        private String name, surname, phoneNumber, id, email, passportSeria, photoUrl;
 
         public Builder setName(String name) {
             this.name = name;
@@ -110,6 +121,11 @@ public class User {
             return this;
         }
 
+        public Builder setPhotoUrl(String pPhotoUrl) {
+            this.photoUrl = pPhotoUrl;
+            return this;
+        }
+
         public User create() {
             return new User(this);
         }
@@ -125,6 +141,7 @@ public class User {
         user.setEmail((String) pDataSnapshot.child(pCurrentUId).child("email").getValue());
         user.setPassportSeries((String) pDataSnapshot.child(pCurrentUId).child("passportSeries").getValue());
         user.setPhoneNumber((String) pDataSnapshot.child(pCurrentUId).child("phoneNumber").getValue());
+        user.setPhotoUrl((String) pDataSnapshot.child(pCurrentUId).child("photoUrl").getValue());
         return user;
     }
 }
