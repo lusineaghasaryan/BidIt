@@ -39,6 +39,7 @@ public class ChoosePhotoDialog implements View.OnClickListener {
         photoDialog.findViewById(R.id.btn_dialog_cancel).setOnClickListener(this);
         photoDialog.findViewById(R.id.img_gallery_dialog).setOnClickListener(this);
         photoDialog.findViewById(R.id.img_camera_dialog).setOnClickListener(this);
+
     }
 
 

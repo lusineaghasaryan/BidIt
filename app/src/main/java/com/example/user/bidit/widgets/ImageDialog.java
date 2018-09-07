@@ -11,6 +11,7 @@ import android.widget.LinearLayout;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.ImageViewPagerAdapter;
+import com.example.user.bidit.adapters.ZoomViewPagerAdapter;
 import com.example.user.bidit.models.Item;
 
 public class ImageDialog extends Dialog {
@@ -18,7 +19,7 @@ public class ImageDialog extends Dialog {
     private Context mContext;
 
     private ViewPager mViewPager;
-    private ImageViewPagerAdapter mImageViewPagerAdapter;
+    private ZoomViewPagerAdapter mZoomViewPagerAdapter;
     private int mImagePosition;
 
     private LinearLayout mLinearLayoutDots;
@@ -57,12 +58,12 @@ public class ImageDialog extends Dialog {
     private void init(){
         mViewPager = findViewById(R.id.view_pager_image_dialog);
 
-        mImageViewPagerAdapter = new ImageViewPagerAdapter(mContext, mItem);
-        mViewPager.setAdapter(mImageViewPagerAdapter);
+        mZoomViewPagerAdapter = new ZoomViewPagerAdapter(mContext, mItem);
+        mViewPager.setAdapter(mZoomViewPagerAdapter);
         mViewPager.setCurrentItem(mImagePosition);
 
         mLinearLayoutDots = findViewById(R.id.linear_image_dialog_count_dots);
-        mDotsCount = mImageViewPagerAdapter.getCount();
+        mDotsCount = mZoomViewPagerAdapter.getCount();
         mImgDots = new ImageView[mDotsCount];
         createViewPagerDots();
     }

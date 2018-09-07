@@ -243,7 +243,7 @@ public class AddItemActivity extends AppCompatActivity {
                // Log.v(TAG, "ItemsListCount = " + pItems.size() + "   Title = " + pItems.get(0).getItemTitle());
             }
         });
-        itemsSpecificListVViewModel.setItems("categoryId", "-LJVutjHBpRf_pfv0pa1");
+        itemsSpecificListVViewModel.setItems("categoryId", "-LJVutjHBpRf_pfv0pa1", 1);
 
 
         //   GET ALL ITEMS LIST
@@ -269,6 +269,7 @@ public class AddItemActivity extends AppCompatActivity {
                     mSpinnerAdapter.add(mCategoryList.get(i).getCategoryTitle());
                 }
                 if (mMode == KEY_EDIT_ITEM)
+                    setFieldToEdit(mItemEdit);
                     setFieldToEdit(mItemEdit);
             }
         });
@@ -502,6 +503,7 @@ public void addRemoveFavorite(Item pItem){
 
 
     public String saveImage(Bitmap myBitmap) {
+        Log.d("MYTAG", "saveImage: " + myBitmap);
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
         File wallpaperDirectory = new File(

@@ -81,8 +81,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void createAccount() {
         getTextFromFilledField();
-        EditText[] allFields = createEditTextsArray();
-        if (!ValidateForm.setErrorIfEmpty(allFields)) {
+        if (!ValidateForm.setErrorIfEmpty(createEditTextsArray())) {
             UserMessages.showSnackBarShort(mParentLayout, getString(R.string.empty_fields_message));
             return;
         }

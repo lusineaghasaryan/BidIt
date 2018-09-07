@@ -70,6 +70,12 @@ public class FireBaseAuthenticationManager {
         FirebaseHelper.mUsersRef.child(currentAuthUserID).setValue(pUser);
     }
 
+    public void setUserPhotoUrl(final String pPhotoUrl) {
+        String currentAuthUserID = mAuth.getCurrentUser().getUid();
+        FirebaseHelper.mUsersRef.child(currentAuthUserID).child("photoUrl").setValue(pPhotoUrl);
+    }
+
+
     public void signOut() {
         mCurrentUser = null;
         mAuth.signOut();
@@ -80,6 +86,7 @@ public class FireBaseAuthenticationManager {
     }
 
     public boolean isLoggedIn() {
+        Log.d("MYTAG", "isLoggedIn: ");
         return mAuth.getCurrentUser() != null;
 
     }

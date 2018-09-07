@@ -9,24 +9,30 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
-import com.bumptech.glide.request.RequestListener;
-import com.bumptech.glide.request.target.Target;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Category;
@@ -39,7 +45,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity {
+import static com.example.user.bidit.utils.ItemStatus.isItemHaveBeenFinished;
+import static com.example.user.bidit.utils.ItemStatus.isItemInProgress;
+
+public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     //    recyclers, viewPager and adapters
     private RecyclerView mRecyclerViewCategories, mRecyclerViewAllList;
@@ -57,6 +66,12 @@ public class HomeActivity extends AppCompatActivity {
     //    search view in toolbar
     private FloatingSearchView mSearchView;
 
+    //navDrawer
+    private NavigationView mNavigationView;
+    private DrawerLayout mDrawer;
+    private Toolbar mToolbar;
+    private ActionBarDrawerToggle mToggle;
+
     private boolean isInHome = true;
 
 
@@ -66,9 +81,27 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         init();
+        setNavigationDrawer();
         loadCategoryListFromFirebase();
         loadAllItemListFromFirebase();
         setListeners();
+        Window w = getWindow();
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+//        mToggle.setToolbarNavigationClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                mDrawer.openDrawer(GravityCompat.START);
+//                Log.d("MYTAG", "onClick: navbar");
+//                updateNavigationDrawer();
+//            }
+//        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (FireBaseAuthenticationManager.getInstance().isLoggedIn())
+            FireBaseAuthenticationManager.getInstance().initCurrentUser();
     }
 
     //    initialize fields
@@ -89,7 +122,13 @@ public class HomeActivity extends AppCompatActivity {
 
         mSearchView = findViewById(R.id.search_view_home_activity);
 
+        mToolbar = findViewById(R.id.toolbar);
+        mDrawer = findViewById(R.id.drawer_layout);
+        mNavigationView = findViewById(R.id.nav_view);
+
         setRecyclerAndVPSittings();
+
+        mSearchView.attachNavigationDrawerToMenuButton(mDrawer);
     }
 
     private void setRecyclerAndVPSittings() {
@@ -102,10 +141,9 @@ public class HomeActivity extends AppCompatActivity {
         mRecyclerViewAllList.setLayoutManager(mLayoutManager);
         mRecyclerViewAllList.setAdapter(mAllListAdapter);
 
-        ViewPager.PageTransformer transformer = new ZoomViewPager();
-
         mViewPagerHotList.setAdapter(mHotListAdapter);
-        mViewPagerHotList.setPageTransformer(true, new ZoomViewPager());
+        mViewPagerHotList.setPageMargin(100);
+        mViewPagerHotList.setPageTransformer(true, new ZoomViewPager(this));
         mViewPagerHotList.setClipToPadding(false);
         mViewPagerHotList.setPadding(220, 0, 220, 0);
     }
@@ -171,16 +209,6 @@ public class HomeActivity extends AppCompatActivity {
                 });
     }
 
-    private boolean isItemInProgress(Item pItem) {
-        Long currentDate = System.currentTimeMillis();
-        return currentDate > pItem.getStartDate() && currentDate < pItem.getEndDate();
-    }
-
-    private boolean isItemHaveBeenFinished(Item pItem) {
-        Long currentDate = System.currentTimeMillis();
-        return currentDate > pItem.getEndDate();
-    }
-
     private boolean isItemFavorite(Item pItem) {
         // TODO is favorite
         return true;
@@ -210,8 +238,6 @@ public class HomeActivity extends AppCompatActivity {
 
                 mAllListAdapter.clearTimers();
 
-                Log.d("asdasd", "onSearchTextChanged: ");
-
                 ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
                         .of(HomeActivity.this)
                         .get(ItemsSpecificListVViewModel.class);
@@ -225,14 +251,14 @@ public class HomeActivity extends AppCompatActivity {
                                 mAllListAdapter.notifyDataSetChanged();
                             }
                         });
-                itemsSpecificListVViewModel.setItems("itemTitle", newQuery);
+                itemsSpecificListVViewModel.setItems("itemTitle", newQuery, 1);
             }
         });
 
         mSearchView.setOnLeftMenuClickListener(new FloatingSearchView.OnLeftMenuClickListener() {
             @Override
             public void onMenuOpened() {
-
+                updateNavigationDrawer();
             }
 
             @Override
@@ -243,18 +269,88 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+
+
     }
 
     @Override
     public void onBackPressed() {
-
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
+        }
         if (!isInHome) {
             mViewPagerHotList.setVisibility(View.VISIBLE);
+            mSearchView.setLeftMenuOpen(false);
+
             loadAllItemListFromFirebase();
 
             isInHome = true;
         } else {
             finish();
+        }
+    }
+
+    @SuppressWarnings("StatementWithEmptyBody")
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        updateNavigationDrawer();
+        switch (item.getItemId()) {
+            case R.id.nav_item_my_account: {
+                startActivity(new Intent(HomeActivity.this, MyAccountActivity.class));
+                break;
+            }
+            case R.id.nav_item_balance: {
+                break;
+            }
+            case R.id.nav_item_history: {
+                break;
+            }
+            case R.id.nav_item_favorite: {
+                startActivity(new Intent(HomeActivity.this, FavoriteActivity.class));
+                break;
+            }
+            case R.id.nav_item_my_items: {
+                startActivity(new Intent(HomeActivity.this, MyItemsActivity.class));
+                break;
+            }
+            case R.id.nav_item_log_out: {
+                FireBaseAuthenticationManager.getInstance().signOut();
+                break;
+            }
+            case R.id.nav_item_log_in: {
+                startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                break;
+            }
+            case R.id.nav_item_help: {
+                break;
+            }
+            case R.id.nav_item_about_us:
+                Intent addItemIntent = new Intent(HomeActivity.this, AddItemActivity.class);
+                startActivity(addItemIntent);
+        }
+
+        mDrawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    private void setNavigationDrawer() {
+        setSupportActionBar(mToolbar);
+        mToggle = new ActionBarDrawerToggle(
+                this, mDrawer, mToolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(mToggle);
+        mToggle.syncState();
+        mNavigationView.setNavigationItemSelectedListener(this);
+        mToggle.setDrawerIndicatorEnabled(false);
+    }
+
+    public void updateNavigationDrawer() {
+        Log.d("MYTAG", "updateNavigationDrawer: ");
+        if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+            mNavigationView.getMenu().setGroupVisible(R.id.menu_group_signed, true);
+            mNavigationView.getMenu().findItem(R.id.nav_item_log_in).setVisible(false);
+        } else {
+            mNavigationView.getMenu().setGroupVisible(R.id.menu_group_signed, false);
+            mNavigationView.getMenu().findItem(R.id.nav_item_log_in).setVisible(true);
         }
     }
 
@@ -272,8 +368,10 @@ public class HomeActivity extends AppCompatActivity {
                         // hide hot items when click on category
                         mViewPagerHotList.setVisibility(View.GONE);
                         isInHome = false;
+                        mSearchView.setLeftMenuOpen(true);
 
                         loadItemListByCategoryFromFirebase(mCategories.get(pAdapterPosition).getCategoryId());
+                        mAllListAdapter.notifyDataSetChanged();
                     }
                 };
 
@@ -432,21 +530,50 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private class ZoomViewPager implements ViewPager.PageTransformer {
-        static final float MAX_SCALE = 1.0f;
-        static final float MIN_SCALE = 0.8f;
+//        static final float MAX_SCALE = 1.0f;
+//        static final float MIN_SCALE = 0.8f;
+
+        private int maxTranslateOffsetX;
+
+        ZoomViewPager(Context context) {
+            this.maxTranslateOffsetX = dp2px(context, 180);
+        }
 
         @Override
         public void transformPage(@NonNull View page, float position) {
 
-            position = position < -1 ? -1 : position;
-            position = position > 1 ? 1 : position;
+//            position = position < -1 ? -1 : position;
+//            position = position > 1 ? 1 : position;
+//
+//            float tempScale = position < 0 ? 1 + position : 1 - position;
+//
+//            float slope = (MAX_SCALE - MIN_SCALE) / 1;
+//            float scaleValue = MIN_SCALE + tempScale * slope;
+//            page.setScaleX(scaleValue);
+//            page.setScaleY(scaleValue);
 
-            float tempScale = position < 0 ? 1 + position : 1 - position;
+            if (mViewPagerHotList == null) {
+                mViewPagerHotList = (ViewPager) page.getParent();
+            }
 
-            float slope = (MAX_SCALE - MIN_SCALE) / 1;
-            float scaleValue = MIN_SCALE + tempScale * slope;
-            page.setScaleX(scaleValue);
-            page.setScaleY(scaleValue);
+            int leftInScreen = page.getLeft() - mViewPagerHotList.getScrollX();
+            int centerXInViewPager = leftInScreen + page.getMeasuredWidth() / 2;
+            int offsetX = centerXInViewPager - mViewPagerHotList.getMeasuredWidth() / 2;
+            float offsetRate = (float) offsetX * 0.38f / mViewPagerHotList.getMeasuredWidth();
+            float scaleFactor = 1 - Math.abs(offsetRate);
+
+            if (scaleFactor > 0) {
+                page.setScaleX(scaleFactor);
+                page.setScaleY(scaleFactor);
+                page.setTranslationX(-maxTranslateOffsetX * offsetRate);
+                //ViewCompat.setElevation(view, 0.0f);
+            }
+            ViewCompat.setElevation(page, scaleFactor);
+        }
+
+        private int dp2px(Context context, float dipValue) {
+            float m = context.getResources().getDisplayMetrics().density;
+            return (int) (dipValue * m + 0.5f);
         }
     }
 
@@ -549,7 +676,7 @@ public class HomeActivity extends AppCompatActivity {
 
         private void setFields(AllListViewHolder pHolder, Item pItem) {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
-            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf((int)pItem.getCurrentPrice()) + "$");
+            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf((int) pItem.getCurrentPrice()) + "$");
             pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
 
             Glide.with(HomeActivity.this)

@@ -85,6 +85,7 @@ public class User {
         id = builder.id;
         email = builder.email;
         passportSeries = builder.passportSeria;
+        photoUrl = builder.photoUrl;
     }
 
     public static class Builder {

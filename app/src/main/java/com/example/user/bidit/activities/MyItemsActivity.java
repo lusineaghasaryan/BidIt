@@ -4,17 +4,14 @@ import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
-import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.MyItemsAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
