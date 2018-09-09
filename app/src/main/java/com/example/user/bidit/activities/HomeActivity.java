@@ -260,7 +260,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 }
             }
         });
-
     }
 
     @Override
@@ -474,14 +473,13 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View item_view = layoutInflater.inflate(R.layout.view_hot_item, container, false);
 
-            ImageView imageIcon = item_view.findViewById(R.id.img_hot_item_view);
-            ImageView imageFavorite = item_view.findViewById(R.id.img_hot_item_view_favorite);
+            ImageView imageView = item_view.findViewById(R.id.img_hot_item_view);
             TextView title = item_view.findViewById(R.id.txt_hot_item_view_title);
             TextView price = item_view.findViewById(R.id.txt_hot_item_view_price);
 
             Glide.with(mContext).
                     load(currentItem.getPhotoUrls().get(0))
-                    .into(imageIcon);
+                    .into(imageView);
 
             title.setText(currentItem.getItemTitle());
             price.setText(String.valueOf(currentItem.getStartPrice()));
@@ -493,28 +491,17 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             return item_view;
         }
 
-        private void follow(Item pItem, ImageView pFavoriteView) {
-            if (!FollowAndUnfollow.isFollowed(pItem)) {
-                FollowAndUnfollow.addToFavorite(pItem);
-                pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
-            } else {
-                FollowAndUnfollow.removeFromFavorite(pItem);
-                pFavoriteView.setImageResource(R.drawable.favorite_star_border_48dp);
-            }
-        }
-
         private void setListeners(View pView, final int position) {
             pView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View pView) {
-                    ImageView mFavorite = pView.findViewById(R.id.img_hot_item_view_favorite);
                     switch (pView.getId()) {
                         case R.id.img_hot_item_view_favorite: {
                             if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                                 Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                                 startActivity(intent);
                             } else {
-                                follow(mHotItems.get(position), mFavorite);
+//                                addItemToFavorite();
                             }
                             break;
                         }
@@ -542,6 +529,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         @Override
         public void transformPage(@NonNull View page, float position) {
+
 //            position = position < -1 ? -1 : position;
 //            position = position > 1 ? 1 : position;
 //
@@ -596,20 +584,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                     }
 
                     @Override
-                    public void onAllFavoriteClick(int pAdapterPosition, ImageView pFavoriteView) {
+                    public void onAllFavoriteClick(int pAdapterPosition) {
                         if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                             Intent intent = new Intent(HomeActivity.this, LoginActivity.class);
                             startActivity(intent);
                         } else {
-                            if (!FollowAndUnfollow.isFollowed(mAllItems.get(pAdapterPosition))) {
-                                FollowAndUnfollow.addToFavorite(mAllItems.get(pAdapterPosition));
-                                pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
-                                Log.d(TAG, "onAllFavoriteClick: add " + mAllItems.size());
-                            } else {
-                                FollowAndUnfollow.removeFromFavorite(mAllItems.get(pAdapterPosition));
-                                pFavoriteView.setImageResource(R.drawable.favorite_star_border_48dp);
-                                Log.d(TAG, "onAllFavoriteClick: remove " + mAllItems.size());
-                            }
+//                            addItemToFavorite();
                         }
                     }
                 };
@@ -684,7 +664,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         private void setFields(AllListViewHolder pHolder, Item pItem) {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
-            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf((int) pItem.getCurrentPrice()) + "$");
+            pHolder.getTxtAuctionCurrentPrice().setText(String.valueOf(pItem.getCurrentPrice()) + " AMD");
             pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
 
             Glide.with(HomeActivity.this)
@@ -698,22 +678,22 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private static class AllListViewHolder extends RecyclerView.ViewHolder {
+
         //        view holder item fields
         private TextView mTxtAuctionTitle, mTxtAuctionDate, mTxtAuctionCurrentPrice;
-        private ImageView mImgAuctionImage;
-        private ImageView mImgFavorite;
+        private ImageView mImgAuctionImage, mImgFavorite;
 
         private OnAllItemClickListener mClickListener;
 
         public AllListViewHolder(View itemView) {
             super(itemView);
 
-            //        initialize fields
-            mTxtAuctionTitle = itemView.findViewById(R.id.txt_view_holder_auction_title);
-            mTxtAuctionDate = itemView.findViewById(R.id.txt_view_holder_auction_date);
-            mTxtAuctionCurrentPrice = itemView.findViewById(R.id.txt_view_holder_auction_current_price);
-            mImgAuctionImage = itemView.findViewById(R.id.img_view_holder_auction_image);
-            mImgFavorite = itemView.findViewById(R.id.img_btn_view_holder_favorite_btn);
+//            initialize fields
+            mTxtAuctionTitle = itemView.findViewById(R.id.text_view_title_item_view);
+            mTxtAuctionDate = itemView.findViewById(R.id.text_view_start_date_item_view);
+            mTxtAuctionCurrentPrice = itemView.findViewById(R.id.text_view_start_price_item_view);
+            mImgAuctionImage = itemView.findViewById(R.id.image_item_image_item_view);
+            mImgFavorite = itemView.findViewById(R.id.image_view_follow_item_view);
 
             setListeners(itemView);
         }
@@ -734,9 +714,9 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             return mImgAuctionImage;
         }
 
-        public ImageView getImgFavorite() {
-            return mImgFavorite;
-        }
+//        public ImageView getImgFavorite() {
+//            return mImgFavorite;
+//        }
 
         private void setListeners(View pV) {
             pV.setOnClickListener(new View.OnClickListener() {
@@ -749,15 +729,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             mImgFavorite.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View pView) {
-                    mClickListener.onAllFavoriteClick(getAdapterPosition(), mImgFavorite);
+                    mClickListener.onAllFavoriteClick(getAdapterPosition());
                 }
             });
         }
 
+
         private interface OnAllItemClickListener {
             void onAllItemClick(int pAdapterPosition);
 
-            void onAllFavoriteClick(int pAdapterPosition, ImageView pFavoriteView);
+            void onAllFavoriteClick(int pAdapterPosition);
         }
 
         public void setClickListener(OnAllItemClickListener pClickListener) {

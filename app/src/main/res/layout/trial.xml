@@ -1,132 +1,147 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/add_item_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/shape_gradient_background"
-        android:orientation="vertical"
-        android:padding="@dimen/padding_small">
+        android:layout_height="match_parent"
+        android:background="@drawable/shape_gradient_background">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_view_activity_add_item_poto"
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:orientation="horizontal"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:orientation="vertical"
+            android:padding="@dimen/padding_small">
 
-        <EditText
-            android:id="@+id/edit_text_activity_add_item_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/shape_grey_edit_text_stroke"
-            android:hint="title"
-            android:padding="10dp"
-            android:textColor="@color/color_text_login_light_grey"
-            android:textColorHint="@color/color_text_login_light_grey_transparent"
-            android:textSize="@dimen/text_size_normal" />
-
-        <EditText
-            android:id="@+id/edit_text_activity_add_item_description"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/shape_grey_edit_text_stroke"
-            android:gravity="top"
-            android:hint="@string/edit_text_hint_description"
-            android:padding="10dp"
-            android:textColor="@color/color_text_login_light_grey"
-            android:textColorHint="@color/color_text_login_light_grey_transparent"
-            android:textSize="@dimen/text_size_normal" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_weight="10"
-            android:orientation="horizontal">
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view_activity_add_item_poto"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <EditText
-                android:id="@+id/edit_text_activity_add_item_start_price"
-                android:layout_width="0dp"
+                android:id="@+id/edit_text_activity_add_item_name"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_weight="5"
+                android:layout_marginBottom="15dp"
                 android:background="@drawable/shape_grey_edit_text_stroke"
-                android:hint="start price"
+                android:hint="title"
                 android:padding="10dp"
                 android:textColor="@color/color_text_login_light_grey"
                 android:textColorHint="@color/color_text_login_light_grey_transparent"
                 android:textSize="@dimen/text_size_normal" />
 
             <EditText
-                android:id="@+id/edit_text_activity_add_item_buy_now_price"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"
+                android:id="@+id/edit_text_activity_add_item_description"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_marginBottom="15dp"
                 android:background="@drawable/shape_grey_edit_text_stroke"
-                android:hint="buy now price"
+                android:gravity="top"
+                android:hint="@string/edit_text_hint_description"
                 android:padding="10dp"
                 android:textColor="@color/color_text_login_light_grey"
                 android:textColorHint="@color/color_text_login_light_grey_transparent"
                 android:textSize="@dimen/text_size_normal" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_weight="10"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edit_text_activity_add_item_start_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight="5"
+                    android:background="@drawable/shape_grey_edit_text_stroke"
+                    android:hint="start price"
+                    android:inputType="numberDecimal"
+                    android:padding="10dp"
+                    android:textColor="@color/color_text_login_light_grey"
+                    android:textColorHint="@color/color_text_login_light_grey_transparent"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <EditText
+                    android:id="@+id/edit_text_activity_add_item_buy_now_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:background="@drawable/shape_grey_edit_text_stroke"
+                    android:hint="buy now price"
+                    android:inputType="numberDecimal"
+                    android:padding="10dp"
+                    android:textColor="@color/color_text_login_light_grey"
+                    android:textColorHint="@color/color_text_login_light_grey_transparent"
+                    android:textSize="@dimen/text_size_normal" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:layout_weight="10"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/text_view_activity_add_item_start_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="15dp"
+                    android:layout_weight="5"
+                    android:background="@drawable/shape_grey_edit_text_stroke"
+                    android:hint="start date"
+                    android:padding="10dp"
+                    android:textColor="@color/color_text_login_light_grey"
+                    android:textColorHint="@color/color_text_login_light_grey_transparent"
+                    android:textSize="@dimen/text_size_normal" />
+
+                <TextView
+                    android:id="@+id/text_view_activity_add_item_end_date"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="5"
+                    android:background="@drawable/shape_grey_edit_text_stroke"
+                    android:hint="end date"
+                    android:padding="10dp"
+                    android:textColor="@color/color_text_login_light_grey"
+                    android:textColorHint="@color/color_text_login_light_grey_transparent"
+                    android:textSize="@dimen/text_size_normal" />
+
+            </LinearLayout>
+
+            <Spinner
+                android:id="@+id/spinner_activity_add_item_category"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:background="@drawable/shape_grey_edit_text_stroke"
+                android:padding="5dp"
+                android:textColor="@color/color_text_login_light_grey" />
+
+            <Button
+                android:id="@+id/btn_activity_add_item_save"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/shape_blue_gradient_90_degree"
+                android:text="Complate" />
 
         </LinearLayout>
+    </ScrollView>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:layout_weight="10"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/text_view_activity_add_item_start_date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="15dp"
-                android:layout_weight="5"
-                android:background="@drawable/shape_grey_edit_text_stroke"
-                android:hint="start date"
-                android:padding="10dp"
-                android:textColor="@color/color_text_login_light_grey"
-                android:textColorHint="@color/color_text_login_light_grey_transparent"
-                android:textSize="@dimen/text_size_normal" />
-
-            <TextView
-                android:id="@+id/text_view_activity_add_item_end_date"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="5"
-                android:background="@drawable/shape_grey_edit_text_stroke"
-                android:hint="end date"
-                android:padding="10dp"
-                android:textColor="@color/color_text_login_light_grey"
-                android:textColorHint="@color/color_text_login_light_grey_transparent"
-                android:textSize="@dimen/text_size_normal" />
-
-        </LinearLayout>
-
-        <Spinner
-            android:id="@+id/spinner_activity_add_item_category"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="15dp"
-            android:background="@drawable/shape_grey_edit_text_stroke"
-            android:padding="5dp"
-            android:textColor="@color/color_text_login_light_grey" />
-
-        <Button
-            android:id="@+id/btn_activity_add_item_save"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/shape_blue_gradient_90_degree"
-            android:text="Complate" />
-
-    </LinearLayout>
-</ScrollView>
+    <FrameLayout
+        android:id="@+id/fragment_container_multiselect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</android.support.constraint.ConstraintLayout>
