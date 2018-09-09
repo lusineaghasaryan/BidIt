@@ -16,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +24,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
-import com.example.user.bidit.activities.HomeActivity;
 import com.example.user.bidit.activities.LoginActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
-import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.FollowAndUnfollow;
 import com.example.user.bidit.viewModels.CategorySearchListViewModel;
@@ -47,8 +44,6 @@ public class HomeListFragment extends Fragment {
 
     public static final String TAG = "asd";
 
-    private OnFragmentInteractionListener mClickListener;
-
     private RecyclerView mRecyclerViewAllList;
     private AllListAdapter mAllListAdapter;
     private ViewPager mViewPagerHotList;
@@ -57,17 +52,15 @@ public class HomeListFragment extends Fragment {
 
     private List<Item> mHotItemData;
     private List<Item> mAllItemData;
-    private int mCurrentListSize;
+
+    private boolean isLoggedInMode;
 
     public HomeListFragment() {
         // Required empty public constructor
     }
 
-    private View mView;
-
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_home_list, container, false);
@@ -90,7 +83,7 @@ public class HomeListFragment extends Fragment {
                 LinearLayoutManager.VERTICAL, false);
 
         mAllListAdapter = new AllListAdapter();
-        mHotListAdapter = new HotItemsVPAdapter(mHotItemData, getActivity());
+        mHotListAdapter = new HotItemsVPAdapter(getActivity());
 
         setRecyclerAndVPSittings();
     }
@@ -112,9 +105,7 @@ public class HomeListFragment extends Fragment {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
-
 //                int lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
-//
 //                if (lastVisibleItemPosition == mAllListAdapter.getItemCount() - 1) {
 //                    // TODO load next 10 mHotItems from fb
 //                }
@@ -179,7 +170,7 @@ public class HomeListFragment extends Fragment {
                         mAllListAdapter.notifyDataSetChanged();
                     }
                 });
-        categorySearchListViewModel.updateData(pQuery, pCategoryId, 1);
+        categorySearchListViewModel.updateData(pQuery, 1, pCategoryId);
         mAllListAdapter.notifyDataSetChanged();
     }
 
@@ -275,29 +266,18 @@ public class HomeListFragment extends Fragment {
     }
 
 
-    public interface OnFragmentInteractionListener {
-        void onListItemClick(Item pItem);
-    }
-
-    public void setClickListener(OnFragmentInteractionListener pClickListener) {
-        mClickListener = pClickListener;
-    }
-
-
     //    hot mHotItems list viewPager adapter
     private class HotItemsVPAdapter extends PagerAdapter {
 
-        private List<Item> mHotItems;
         private Context mContext;
 
-        HotItemsVPAdapter(List<Item> pMHotItems, Context pCtx) {
-            mHotItems = pMHotItems;
+        HotItemsVPAdapter(Context pCtx) {
             mContext = pCtx;
         }
 
         @Override
         public int getCount() {
-            return mHotItems.size();
+            return mHotItemData.size();
         }
 
         @Override
@@ -312,70 +292,66 @@ public class HomeListFragment extends Fragment {
 
         @NonNull
         @Override
-        public Object instantiateItem(@NonNull ViewGroup container, int position) {
+        public Object instantiateItem(@NonNull ViewGroup container, final int position) {
 
-            Item currentItem = mHotItems.get(position);
+            Item currentItem = mHotItemData.get(position);
 
-            LayoutInflater layoutInflater =
-                    (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            View item_view = layoutInflater.inflate(R.layout.view_hot_item, container, false);
+            View itemView = LayoutInflater
+                    .from(mContext)
+                    .inflate(R.layout.view_hot_item, container, false);
 
 //            init
-            ImageView imageIcon = item_view.findViewById(R.id.img_hot_item_view);
-            ImageView imageFavorite = item_view.findViewById(R.id.img_hot_item_view_favorite);
-            TextView title = item_view.findViewById(R.id.txt_hot_item_view_title);
-            TextView price = item_view.findViewById(R.id.txt_hot_item_view_price);
+            ImageView imageIcon = itemView.findViewById(R.id.img_hot_item_view);
+            final ImageView imageFavorite = itemView.findViewById(R.id.img_hot_item_view_favorite);
+            TextView title = itemView.findViewById(R.id.txt_hot_item_view_title);
+            TextView price = itemView.findViewById(R.id.txt_hot_item_view_price);
 //            load image from firebase, and set fields
             Glide.with(mContext).
                     load(currentItem.getPhotoUrls().get(0))
                     .into(imageIcon);
             title.setText(currentItem.getItemTitle());
             price.setText(String.valueOf(currentItem.getStartPrice()));
-
-            container.addView(item_view);
-
-            setListeners(item_view, position);
-
-            return item_view;
-        }
-
-        private void follow(Item pItem, ImageView pFavoriteView) {
-            if (!FollowAndUnfollow.isFollowed(pItem)) {
-                FollowAndUnfollow.addToFavorite(pItem);
-                pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
+            if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+                imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
             } else {
-                FollowAndUnfollow.removeFromFavorite(pItem);
-                pFavoriteView.setImageResource(R.drawable.favorite_star_border_48dp);
+                if (FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
+                    imageFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                } else {
+                    imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
+                }
             }
-        }
 
-        private void setListeners(View pView, final int position) {
-            pView.setOnClickListener(new View.OnClickListener() {
+            container.addView(itemView);
+
+//            on click listeners
+            itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View pView) {
-                    ImageView mFavorite = pView.findViewById(R.id.img_hot_item_view_favorite);
-                    switch (pView.getId()) {
-                        case R.id.img_hot_item_view_favorite: {
-                            Log.d(TAG, "onClick: favorite");
-                            if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
-                                Intent intent = new Intent(getActivity(), LoginActivity.class);
-                                startActivity(intent);
-                            } else {
-                                follow(mHotItems.get(position), mFavorite);
-                            }
-                            break;
-                        }
-                        default: {
-                            Log.d(TAG, "onClick: default");
-                            Intent intent = new Intent(getActivity(), ShowItemActivity.class);
-                            intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT, mHotItems.get(position));
-                            getActivity().startActivity(intent);
-                            Log.d(TAG, "onClick: default");
-                            break;
+                    Intent intent = new Intent(getActivity(), ShowItemActivity.class);
+                    intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT, mHotItemData.get(position));
+                    getActivity().startActivity(intent);
+                }
+            });
+
+            imageFavorite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View pView) {
+                    if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+                        Intent intent = new Intent(getActivity(), LoginActivity.class);
+                        startActivity(intent);
+                    } else {
+                        if (!FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
+                            FollowAndUnfollow.addToFavorite(mHotItemData.get(position));
+                            imageFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                        } else {
+                            FollowAndUnfollow.removeFromFavorite(mHotItemData.get(position));
+                            imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
                         }
                     }
                 }
             });
+
+            return itemView;
         }
     }
 
@@ -383,7 +359,7 @@ public class HomeListFragment extends Fragment {
         private int maxTranslateOffsetX;
 
         ZoomViewPager(Context context) {
-            this.maxTranslateOffsetX = dp2px(context, 180);
+            this.maxTranslateOffsetX = dp2px(context);
         }
 
         @Override
@@ -406,9 +382,9 @@ public class HomeListFragment extends Fragment {
             ViewCompat.setElevation(page, scaleFactor);
         }
 
-        private int dp2px(Context context, float dipValue) {
+        private int dp2px(Context context) {
             float m = context.getResources().getDisplayMetrics().density;
-            return (int) (dipValue * m + 0.5f);
+            return (int) ((float) 180 * m + 0.5f);
         }
     }
 
@@ -448,12 +424,9 @@ public class HomeListFragment extends Fragment {
         @NonNull
         @Override
         public AllListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            AllListViewHolder allListViewHolder = new AllListViewHolder(LayoutInflater.from(parent.getContext())
-                    .inflate(R.layout.view_recycler_item, parent, false));
-
-            setListener(allListViewHolder);
-
-            return allListViewHolder;
+            View view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.view_recycler_item, parent, false);
+            return new AllListViewHolder(view);
         }
 
         @Override
@@ -476,7 +449,7 @@ public class HomeListFragment extends Fragment {
                         holder.getTxtAuctionStartDate().setText("finished");
                         holder.getTxtAuctionStartDate().setTextColor(Color.BLACK);
                         handler.removeCallbacksAndMessages(null);
-                        // TODO auction finished
+                        // TODO auction finished (item status)
                     } else {
                         holder.getTxtAuctionStartDate().setText(new SimpleDateFormat("MM/dd - HH:mm")
                                 .format(item.getStartDate()));
@@ -491,8 +464,9 @@ public class HomeListFragment extends Fragment {
 
             runnable.run();
 
-//            set item fields into holder
+//            set item fields, and listeners
             setFields(holder, item);
+            setListener(holder);
         }
 
         @Override
@@ -500,7 +474,7 @@ public class HomeListFragment extends Fragment {
             return mAllItemData.size();
         }
 
-        public void clearTimers() {
+        void clearTimers() {
             for (int i = 0; i < mTimers.size(); i++) {
                 mTimers.get(i).removeCallbacksAndMessages(null);
             }
@@ -540,7 +514,7 @@ public class HomeListFragment extends Fragment {
 
         private AllListViewHolder.OnAllItemClickListener mClickListener;
 
-        public AllListViewHolder(View itemView) {
+        AllListViewHolder(View itemView) {
             super(itemView);
 
             //        initialize fields

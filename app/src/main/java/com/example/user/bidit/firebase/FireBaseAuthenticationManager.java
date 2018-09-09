@@ -12,6 +12,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
 public class FireBaseAuthenticationManager {
     private static FireBaseAuthenticationManager fireBaseAuthenticationManagerInstance;
     public FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -96,7 +98,7 @@ public class FireBaseAuthenticationManager {
             @Override
 
             public void onDataChange(DataSnapshot pDataSnapshot) {
-                mCurrentUser = User.fromDataSnapshot(pDataSnapshot, mAuth.getCurrentUser().getUid());
+                mCurrentUser = User.fromDataSnapshot(pDataSnapshot, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
             }
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {

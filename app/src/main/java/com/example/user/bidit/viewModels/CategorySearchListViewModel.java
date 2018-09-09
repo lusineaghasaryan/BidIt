@@ -22,11 +22,15 @@ public class CategorySearchListViewModel extends ViewModel {
         mItem = pItem;
     }
 
-    public void updateData(String pTypeValue, final String pSearchCategoryId, int pPageNumber) {
+    public void updateData(String pTypeValue, int pPageNumber, final String pSearchCategoryId) {
         FirebaseHelper.getItemsSpecificList(SEARCH_BY_TYPE, pTypeValue, pPageNumber, new FirebaseHelper.Callback<Item>() {
             @Override
             public void callback(boolean pIsSuccess, Item pValue) {
-                if (pValue.getCategoryId().equals(pSearchCategoryId)) {
+                if (pSearchCategoryId != null) {
+                    if (pValue.getCategoryId().equals(pSearchCategoryId)) {
+                        mItem.setValue(pValue);
+                    }
+                } else {
                     mItem.setValue(pValue);
                 }
             }
