@@ -119,6 +119,7 @@ public class FirebaseHelper {
 
     public static void getItemsSpecificList(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue);
+//        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override

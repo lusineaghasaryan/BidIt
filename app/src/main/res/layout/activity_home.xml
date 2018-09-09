@@ -5,9 +5,10 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
     android:background="#313335"
+    android:fitsSystemWindows="true"
     tools:openDrawer="start">
+
     <include
         layout="@layout/app_bar_main"
         android:layout_width="match_parent"
@@ -29,20 +30,22 @@
             android:padding="@dimen/margin_small">
 
             <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_scrollFlags="scroll">
+                app:layout_scrollFlags="scroll"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
 
                 <com.arlib.floatingsearchview.FloatingSearchView
                     android:id="@+id/search_view_home_activity"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    app:floatingSearch_backgroundColor="@color/color_text_login_light_grey"
                     app:floatingSearch_close_search_on_keyboard_dismiss="true"
                     app:floatingSearch_leftActionMode="showHamburger"
                     app:floatingSearch_searchHint="Search..."
                     app:floatingSearch_showSearchKey="false"
-                    app:floatingSearch_suggestionsListAnimDuration="250"
-                    app:floatingSearch_backgroundColor="@color/color_text_login_light_grey"/>
+                    app:floatingSearch_suggestionsListAnimDuration="250" />
 
             </android.support.v7.widget.Toolbar>
 
@@ -57,20 +60,10 @@
                     android:id="@+id/recycler_view_home_activity_categories"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toTopOf="@id/view_pager_home_activity_hot_list"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <android.support.v4.view.ViewPager
-                    android:id="@+id/view_pager_home_activity_hot_list"
-                    android:layout_width="match_parent"
-                    android:layout_height="250dp"
-                    android:foregroundGravity="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/recycler_view_home_activity_categories" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
             </android.support.constraint.ConstraintLayout>
 
@@ -81,12 +74,10 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <android.support.v7.widget.RecyclerView
-                android:background="@drawable/shape_gradient_background"
-                android:id="@+id/recycler_view_home_activity_list"
+            <FrameLayout
+                android:id="@+id/home_fragment_container"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="@dimen/padding_small" />
+                android:layout_height="match_parent" />
 
         </android.support.v4.widget.NestedScrollView>
 
@@ -98,11 +89,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:background="@color/item_price_color_dark_grey"
+        android:fitsSystemWindows="true"
         app:itemIconTint="@color/light_blue"
         app:itemTextColor="@color/color_text_login_light_grey"
-        android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
-
 
 </android.support.v4.widget.DrawerLayout>

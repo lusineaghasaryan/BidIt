@@ -1,94 +1,151 @@
-<?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/item_height"
     android:layout_margin="@dimen/margin_small"
-    android:clickable="true"
-    android:focusable="true"
-    android:foreground="?android:attr/selectableItemBackground"
-    app:cardElevation="@dimen/activity_vertical_margin">
+    app:cardBackgroundColor="@color/color_hint_login_dark_grey"
+    app:cardCornerRadius="@dimen/item_corner_radius"
+    app:cardElevation="@dimen/cardview_default_elevation">
 
-    <android.support.constraint.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:padding="@dimen/margin_small"
+        android:weightSum="10">
 
-        <ImageView
-            android:id="@+id/img_view_holder_auction_image"
+        <LinearLayout
             android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_margin="@dimen/recycler_view_item_margin_small"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="H,1:1"
-            app:layout_constraintEnd_toStartOf="@+id/guideline1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent"
+            android:layout_weight="2.5"
+            android:gravity="center"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/txt_view_holder_auction_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/recycler_view_item_margin_small"
-            android:textSize="@dimen/recycler_view_item_text_size_large"
-            app:layout_constraintBottom_toTopOf="@id/txt_view_holder_auction_date"
-            app:layout_constraintStart_toEndOf="@id/guideline1"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/img_recycler_item_auction_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@mipmap/ic_launcher" />
 
-        <TextView
-            android:id="@+id/txt_view_holder_auction_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/recycler_view_item_margin_small"
-            android:textSize="@dimen/recycler_view_item_text_size_normal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@id/guideline1"
-            app:layout_constraintTop_toBottomOf="@id/txt_view_holder_auction_title" />
+        </LinearLayout>
 
-        <ImageView
-            android:id="@+id/img_btn_view_holder_favorite_btn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/favorite_star_border_24dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/guideline_recycler_item_view"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/txt_view_holder_auction_current_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/recycler_view_item_margin_small"
-            android:textSize="@dimen/recycler_view_item_text_size_normal"
-            app:layout_constraintBottom_toBottomOf="@id/txt_view_holder_auction_date"
-            app:layout_constraintEnd_toStartOf="@id/guideline_recycler_item_view"
-            app:layout_constraintTop_toTopOf="@id/txt_view_holder_auction_date" />
-
-        <ImageView
-            android:id="@+id/img_view_holder_auction_status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:contentDescription="TODO"
-            android:src="@drawable/status_point_inactive_12dp"
-            app:layout_constraintBottom_toBottomOf="@id/txt_view_holder_auction_current_price"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/guideline_recycler_item_view"
-            app:layout_constraintTop_toTopOf="@+id/txt_view_holder_auction_current_price" />
-
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="5.5"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.20" />
+            android:weightSum="10">
 
-        <android.support.constraint.Guideline
-            android:id="@+id/guideline_recycler_item_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_margin="@dimen/margin_small"
+                android:layout_weight="3"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txt_recycler_item_auction_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/color_text_login_light_grey"
+                    android:textSize="@dimen/text_size_normal" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="6"
+                android:orientation="horizontal"
+                android:weightSum="10">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:orientation="vertical"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/txt_recycler_item_auction_start_price"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:gravity="center"
+                        android:textColor="@color/item_price_color_dark_grey"
+                        android:textSize="@dimen/text_size_normal" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:gravity="center"
+                        android:text="@string/item_price_text"
+                        android:textColor="@color/color_text_login_light_grey_transparent" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/color_text_login_light_grey_transparent" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:orientation="vertical"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:id="@+id/txt_recycler_item_auction_start_date"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:gravity="center"
+                        android:textColor="@color/item_price_color_dark_grey"
+                        android:textSize="@dimen/text_size_normal" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="5"
+                        android:gravity="center"
+                        android:text="@string/item_start_date_text"
+                        android:textColor="@color/color_text_login_light_grey_transparent" />
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="1dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginTop="5dp"
+                    android:background="@color/color_text_login_light_grey_transparent" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.90" />
+            android:padding="@dimen/padding_small"
+            android:weightSum="10">
 
-    </android.support.constraint.ConstraintLayout>
+            <ImageView
+                android:id="@+id/img_recycler_item_auction_follow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:src="@drawable/ic_nav_favorite" />
+        </LinearLayout>
 
+    </LinearLayout>
 
 </android.support.v7.widget.CardView>

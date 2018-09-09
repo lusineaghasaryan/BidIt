@@ -39,12 +39,13 @@ import java.util.ArrayList;
 public class ShowItemActivity extends AppCompatActivity {
     public static final String TAG = "tag";
 
-    public static final String PUT_EXTRA_KEY_MODE_MY_ITEM = "my_item";
+    public static final String PUT_EXTRA_KEY_MODE_MY_ITEM = "my item";
     public static final String PUT_EXTRA_KEY_MODE_HISTORY = "history";
     public static final String PUT_EXTRA_KEY_MODE_DEFAULT = "default";
 
     //    field to now how show this activity
     private static String mMode;
+    private static boolean mIsLoggedInMode;
 
     //    field to set scroll
     private AppBarLayout mAppBarLayout;
@@ -100,8 +101,10 @@ public class ShowItemActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         init();
+        setLoggedInMode();
         startTimer();
         setFields();
+        setLoggedInOptions();
         checkMode();
         setListeners();
     }
@@ -159,9 +162,6 @@ public class ShowItemActivity extends AppCompatActivity {
                 mTimer.postDelayed(this, 1000);
             }
         };
-
-//        check for logged in, to disable buttons
-        checkForLoggedIn();
     }
 
     //    load item from intent
@@ -169,15 +169,13 @@ public class ShowItemActivity extends AppCompatActivity {
         Bundle extra = getIntent().getExtras();
         if (extra != null) {
             if (extra.containsKey(PUT_EXTRA_KEY_MODE_DEFAULT)) {
-                mItem = (Item) extra.getSerializable(PUT_EXTRA_KEY_MODE_DEFAULT);
                 mMode = PUT_EXTRA_KEY_MODE_DEFAULT;
             } else if (extra.containsKey(PUT_EXTRA_KEY_MODE_MY_ITEM)) {
-                mItem = (Item) extra.getSerializable(PUT_EXTRA_KEY_MODE_MY_ITEM);
                 mMode = PUT_EXTRA_KEY_MODE_MY_ITEM;
             } else if (extra.containsKey(PUT_EXTRA_KEY_MODE_HISTORY)) {
-                mItem = (Item) extra.getSerializable(PUT_EXTRA_KEY_MODE_HISTORY);
                 mMode = PUT_EXTRA_KEY_MODE_HISTORY;
             }
+            mItem = (Item) extra.getSerializable(mMode);
         }
     }
 
@@ -196,13 +194,27 @@ public class ShowItemActivity extends AppCompatActivity {
         mTxtAuctionStartPrice.setText(String.valueOf(mItem.getStartPrice()));
         mTxtAuctionCurrentPrice.setText(String.valueOf(mItem.getCurrentPrice()));
 
-        if (FollowAndUnfollow.isFollowed(mItem)) {
-            mImgFavorite.setImageResource(R.drawable.favorite_star_48dp);
-        } else {
-            mImgFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
+        if (mIsLoggedInMode) {
+            if (FollowAndUnfollow.isFollowed(mItem)) {
+                mImgFavorite.setImageResource(R.drawable.favorite_star_48dp);
+            } else {
+                mImgFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
+            }
         }
 
         if (mItem.getStartDate() > System.currentTimeMillis()) {
+            mInputMessage.setEnabled(false);
+            mBtnEnterMessage.setEnabled(false);
+        }
+    }
+
+    private void setLoggedInOptions() {
+        if (mIsLoggedInMode) {
+            mImgFavorite.setEnabled(true);
+            mInputMessage.setEnabled(true);
+            mBtnEnterMessage.setEnabled(true);
+        } else {
+            mImgFavorite.setEnabled(false);
             mInputMessage.setEnabled(false);
             mBtnEnterMessage.setEnabled(false);
         }
@@ -219,6 +231,7 @@ public class ShowItemActivity extends AppCompatActivity {
         mImgFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Log.d(TAG, "onClick: ");
                 if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                     if (!FollowAndUnfollow.isFollowed(mItem)) {
                         FollowAndUnfollow.addToFavorite(mItem);
@@ -313,16 +326,8 @@ public class ShowItemActivity extends AppCompatActivity {
     }
 
     //    check for user logged in
-    private void checkForLoggedIn() {
-        if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
-            mImgFavorite.setEnabled(true);
-            mInputMessage.setEnabled(true);
-            mBtnEnterMessage.setEnabled(true);
-        } else {
-            mImgFavorite.setClickable(false);
-            mInputMessage.setEnabled(false);
-            mBtnEnterMessage.setEnabled(false);
-        }
+    private void setLoggedInMode() {
+        mIsLoggedInMode = FireBaseAuthenticationManager.getInstance().isLoggedIn();
     }
 
     //    check show item showing mode
@@ -332,13 +337,15 @@ public class ShowItemActivity extends AppCompatActivity {
                 mImgFavorite.setVisibility(View.VISIBLE);
                 mLinearLayout.setVisibility(View.VISIBLE);
                 mLinearLayout.setEnabled(true);
-                mLinearLayout.setClickable(true);
+                mInputMessage.setEnabled(true);
+                mBtnEnterMessage.setEnabled(true);
                 break;
             }
             case PUT_EXTRA_KEY_MODE_MY_ITEM: {
                 mImgFavorite.setVisibility(View.GONE);
                 mLinearLayout.setEnabled(false);
-                mLinearLayout.setClickable(false);
+                mInputMessage.setEnabled(false);
+                mBtnEnterMessage.setEnabled(false);
                 break;
             }
             case PUT_EXTRA_KEY_MODE_HISTORY: {
