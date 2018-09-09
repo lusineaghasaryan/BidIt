@@ -28,13 +28,22 @@ import android.widget.TextView;
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.ImageViewPagerAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
+import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.FollowAndUnfollow;
 import com.example.user.bidit.utils.ItemStatus;
 import com.example.user.bidit.widgets.ImageDialog;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.FirebaseFunctionsException;
+import com.google.firebase.functions.HttpsCallableResult;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ShowItemActivity extends AppCompatActivity {
     public static final String TAG = "tag";
@@ -51,6 +60,8 @@ public class ShowItemActivity extends AppCompatActivity {
 
     //    show item images
     private ViewPager mViewPager;
+
+    private FirebaseFunctions mFunctions = FirebaseFunctions.getInstance();
 
     //    zoom viewpager images
     private ImageViewPagerAdapter.OnImageClickListener mOnImageClickListener =
@@ -300,16 +311,31 @@ public class ShowItemActivity extends AppCompatActivity {
     //    check valid bid price and send to fb
     private void enterMessageIntoChat() {
 
-        String currentMessage = mInputMessage.getText().toString();
-        int currentNumber = Integer.parseInt(currentMessage);
-        if (!currentMessage.isEmpty() && currentNumber > mItem.getCurrentPrice() + mBidStep) {
-            mMessages.add(currentMessage);
-            mInputMessage.setText("");
-            mMessageAdapter.notifyDataSetChanged();
-            mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
-            mRecyclerView.scrollToPosition(mMessages.size() - 1);
-            // TODO add change mCurrentPrice method on firebase, and add check for correct number logic
-        }
+        final String currentMessage = mInputMessage.getText().toString();
+        final int currentNumber = Integer.parseInt(currentMessage);
+        makeBid(mItem.getItemId(), currentNumber, FireBaseAuthenticationManager.getInstance()
+                .mAuth.getUid())
+                .addOnCompleteListener(new OnCompleteListener<String>() {
+                    @Override
+                    public void onComplete(@NonNull Task<String> pTask) {
+                        if (pTask.isSuccessful()) {
+                            mMessages.add(currentMessage);
+                            mInputMessage.setText("");
+                            mMessageAdapter.notifyDataSetChanged();
+                            mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
+                            mRecyclerView.scrollToPosition(mMessages.size() - 1);
+                        } else {
+                            Log.v(TAG, "Failed: ");
+                            Exception e = pTask.getException();
+                            if (e instanceof FirebaseFunctionsException) {
+                                FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+                                FirebaseFunctionsException.Code code = ffe.getCode();
+                                Object details = ffe.getDetails();
+                                Log.v(TAG, "Failed: " + details);
+                            }
+                        }
+                    }
+                });
     }
 
     //    check for user logged in
@@ -407,4 +433,27 @@ public class ShowItemActivity extends AppCompatActivity {
             return mTxtBidItMessage;
         }
     }
+
+
+    public Task<String> makeBid(String itemId, int amount, String userId) {
+        // Create the arguments to the callable function.
+        Map<String, Object> data = new HashMap<>();
+        data.put("itemId", itemId);
+        data.put("amount", amount);
+
+        return mFunctions
+                .getHttpsCallable("makeBid")
+                .call(data)
+                .continueWith(new Continuation<HttpsCallableResult, String>() {
+                    @Override
+                    public String then(@NonNull Task<HttpsCallableResult> task) throws Exception {
+                        // This continuation runs on either success or failure, but if the task
+                        // has failed then getResult() will throw an Exception which will be
+                        // propagated down.
+                        String result = (String) task.getResult().getData();
+                        return result;
+                    }
+                });
+    }
+
 }

@@ -709,11 +709,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             super(itemView);
 
             //        initialize fields
-            mTxtAuctionTitle = itemView.findViewById(R.id.txt_view_holder_auction_title);
-            mTxtAuctionDate = itemView.findViewById(R.id.txt_view_holder_auction_date);
-            mTxtAuctionCurrentPrice = itemView.findViewById(R.id.txt_view_holder_auction_current_price);
-            mImgAuctionImage = itemView.findViewById(R.id.img_view_holder_auction_image);
-            mImgFavorite = itemView.findViewById(R.id.img_btn_view_holder_favorite_btn);
+            mTxtAuctionTitle = itemView.findViewById(R.id.text_view_title_item_view);
+            mTxtAuctionDate = itemView.findViewById(R.id.text_view_start_date_item_view);
+            mTxtAuctionCurrentPrice = itemView.findViewById(R.id.text_view_start_price_item_view);
+            mImgAuctionImage = itemView.findViewById(R.id.image_item_image_item_view);
+            mImgFavorite = itemView.findViewById(R.id.image_view_follow_item_view);
 
             setListeners(itemView);
         }

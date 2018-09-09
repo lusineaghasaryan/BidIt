@@ -129,7 +129,7 @@ public class AddItemActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Get a URL to the uploaded content
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            Uri downloadUrl = taskSnapshot.getUploadSessionUri();
                             mItemImagesListStorage.add(downloadUrl.toString());
                         }
                     })

@@ -10,8 +10,10 @@ import android.util.Log;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,6 +21,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.functions.FirebaseFunctions;
+import com.google.firebase.functions.HttpsCallableResult;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -40,7 +44,6 @@ public class FirebaseHelper {
     StorageReference mItemImages = storageRef.child("itemImages");
     StorageReference mUserAvatar = storageRef.child("avatars");
 
-
     public static final int TOTAL_ITEMS_TO_LOAD = 5;
 
     public ArrayList<Category> mCategoryList = new ArrayList<>();
@@ -48,7 +51,8 @@ public class FirebaseHelper {
 
     public CategoryListViewModel categoryListViewModel;
 
-    public FirebaseHelper() {}
+    public FirebaseHelper() {
+    }
 
     public void setCategoryToDatabase(String categoryTitle){
         Category category = new Category();
@@ -184,7 +188,7 @@ public class FirebaseHelper {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // Get a URL to the uploaded content
-                        Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                        Uri downloadUrl = taskSnapshot.getUploadSessionUri();//.getDownloadUrl();
                         FireBaseAuthenticationManager.getInstance().setUserPhotoUrl(downloadUrl.toString());
 
                     }
@@ -197,7 +201,6 @@ public class FirebaseHelper {
                     }
                 });
     }
-
 
     public interface Callback<T> {
         void callback(boolean pIsSuccess, T pValue);
