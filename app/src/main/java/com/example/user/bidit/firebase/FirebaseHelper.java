@@ -1,10 +1,7 @@
 package com.example.user.bidit.firebase;
 
-import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.example.user.bidit.models.Category;
@@ -12,7 +9,6 @@ import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -25,8 +21,6 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class FirebaseHelper {
@@ -120,6 +114,25 @@ public class FirebaseHelper {
     public static void getItemsSpecificList(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue);
 //        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot pDataSnapshot) {
+
+                for (DataSnapshot single : pDataSnapshot.getChildren()) {
+                    Item item = single.getValue(Item.class);
+                    pCallback.callback(true, item);
+                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError pDatabaseError) {
+            }
+        });
+    }
+
+    public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
+        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override

@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -315,7 +316,7 @@ public class HomeListFragment extends Fragment {
                 imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
             } else {
                 if (FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
-                    imageFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                    imageFavorite.setImageResource(R.drawable.star_filled);
                 } else {
                     imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
                 }
@@ -342,7 +343,7 @@ public class HomeListFragment extends Fragment {
                     } else {
                         if (!FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
                             FollowAndUnfollow.addToFavorite(mHotItemData.get(position));
-                            imageFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                            imageFavorite.setImageResource(R.drawable.star_filled);
                         } else {
                             FollowAndUnfollow.removeFromFavorite(mHotItemData.get(position));
                             imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
@@ -412,7 +413,7 @@ public class HomeListFragment extends Fragment {
                         } else {
                             if (!FollowAndUnfollow.isFollowed(mAllItemData.get(pAdapterPosition))) {
                                 FollowAndUnfollow.addToFavorite(mAllItemData.get(pAdapterPosition));
-                                pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
+                                pFavoriteView.setImageResource(R.drawable.star_filled);
                             } else {
                                 FollowAndUnfollow.removeFromFavorite(mAllItemData.get(pAdapterPosition));
                                 pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
@@ -492,7 +493,7 @@ public class HomeListFragment extends Fragment {
                     .into(pHolder.getImgAuctionImage());
             if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                 if (FollowAndUnfollow.isFollowed(pItem)) {
-                    pHolder.getImgFavorite().setImageResource(R.drawable.favorite_star_48dp);
+                    pHolder.getImgFavorite().setImageResource(R.drawable.star_filled);
                 } else {
                     pHolder.getImgFavorite().setImageResource(R.drawable.ic_nav_favorite);
                 }
