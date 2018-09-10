@@ -2,10 +2,11 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:id="@+id/my_items_layout"
     android:background="@drawable/shape_gradient_background"
-    tools:context="com.example.user.bidit.activities.MyItemsActivity">
+    tools:context="com.example.user.bidit.activities.MyItemsActivity"
+    android:paddingTop="@dimen/padding_normal">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_my_items"

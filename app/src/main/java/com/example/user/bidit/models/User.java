@@ -6,13 +6,14 @@ import android.util.Log;
 import com.google.firebase.database.DataSnapshot;
 
 public class User {
-    private String name, surname, phoneNumber, id, email, passportSeries, photoUrl;
+    private String name, surname, phoneNumber, id, email, passportSeries, photoUrl, balance;
 
     public User() {
     }
 
-    public User(String pName, String pSurname, String pPhoneNumber, String pId, String pEmail, String pPassportSeries, String pPhotoUrl) {
+    public User(String pName, String balance, String pSurname, String pPhoneNumber, String pId, String pEmail, String pPassportSeries, String pPhotoUrl) {
         this.name = pName;
+        this.balance = balance;
         this.surname = pSurname;
         this.phoneNumber = pPhoneNumber;
         this.id = pId;
@@ -28,6 +29,14 @@ public class User {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBallance() {
+        return balance;
+    }
+
+    public void setBallance(String balance) {
+        this.balance = balance;
     }
 
     public String getSurname() {
@@ -80,6 +89,7 @@ public class User {
 
     private User(final Builder builder) {
         name = builder.name;
+        balance = builder.balance;
         surname = builder.surname;
         phoneNumber = builder.phoneNumber;
         id = builder.id;
@@ -89,7 +99,7 @@ public class User {
     }
 
     public static class Builder {
-        private String name, surname, phoneNumber, id, email, passportSeria, photoUrl;
+        private String name, surname, phoneNumber, id, email, passportSeria, photoUrl, balance;
 
         public Builder setName(String name) {
             this.name = name;
@@ -98,6 +108,11 @@ public class User {
 
         public Builder setSurname(String surname) {
             this.surname = surname;
+            return this;
+        }
+
+        public Builder setBalance(String balance) {
+            this.balance = balance;
             return this;
         }
 
@@ -142,6 +157,7 @@ public class User {
         user.setPassportSeries((String) pDataSnapshot.child(pCurrentUId).child("passportSeries").getValue());
         user.setPhoneNumber((String) pDataSnapshot.child(pCurrentUId).child("phoneNumber").getValue());
         user.setPhotoUrl((String) pDataSnapshot.child(pCurrentUId).child("photoUrl").getValue());
+        user.setBallance("0");
         return user;
     }
 }

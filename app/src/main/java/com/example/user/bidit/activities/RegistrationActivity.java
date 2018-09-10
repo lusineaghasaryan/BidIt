@@ -1,16 +1,11 @@
 package com.example.user.bidit.activities;
 
-import android.os.AsyncTask;
-import android.os.Build;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.ekalips.fancybuttonproj.FancyButton;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.User;
@@ -58,6 +53,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 .setEmail(mEmail)
                 .setPhoneNumber(mPhone)
                 .setPassportSeries(mPassportSeries)
+                .setBalance("0")
                 .create();
     }
 

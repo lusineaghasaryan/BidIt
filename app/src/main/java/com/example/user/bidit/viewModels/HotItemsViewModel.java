@@ -1,22 +1,25 @@
 package com.example.user.bidit.viewModels;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
-import android.util.Log;
 
 import com.example.user.bidit.firebase.FirebaseHelper;
-import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class HotItemsViewModel extends ViewModel {
-    private final MutableLiveData<ArrayList<Item>> mHotItemsList = new MutableLiveData<>();
+    private MutableLiveData<ArrayList<Item>> mHotItemsList = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<Item>> getHotItemsList() {
+        if (mHotItemsList == null){
+            mHotItemsList = new MutableLiveData<>();
+        }
         return mHotItemsList;
+    }
+
+    public void setHotItemsList(MutableLiveData<ArrayList<Item>> pHotItemsList){
+        mHotItemsList = pHotItemsList;
     }
 
     public void updateData() {

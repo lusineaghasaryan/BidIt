@@ -131,6 +131,25 @@ public class FirebaseHelper {
         });
     }
 
+    public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
+        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot pDataSnapshot) {
+
+                for (DataSnapshot single : pDataSnapshot.getChildren()) {
+                    Item item = single.getValue(Item.class);
+                    pCallback.callback(true, item);
+                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError pDatabaseError) {
+            }
+        });
+    }
+
     public static void getItemsSpecific(String pType, String pTypeValue, int pPageNumber, final Callback<ArrayList<Item>> pCallback){
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue).limitToFirst(TOTAL_ITEMS_TO_LOAD * pPageNumber);
 

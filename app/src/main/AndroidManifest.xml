@@ -65,7 +65,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.AddItemActivity" />
-        <activity android:name=".activities.Main2Activity" />
         <activity
             android:name=".activities.LoginActivity" />
         <activity android:name=".activities.RegistrationActivity" />

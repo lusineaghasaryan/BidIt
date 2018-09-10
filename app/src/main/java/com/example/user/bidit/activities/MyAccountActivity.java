@@ -89,7 +89,6 @@ public class MyAccountActivity extends AppCompatActivity {
                 Uri selectedImage = data.getData();
                 try {
                     mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-//                    FirebaseHelper.sendAvatarToStorage(selectedImage);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -108,7 +107,6 @@ public class MyAccountActivity extends AppCompatActivity {
 
     private void acceptChanges() {
         if (!ValidateForm.setErrorIfEmpty(createEditTextsArray())) {
-            Log.d("MYTAG", "onClick: empty");
             return;
         }
         setUserOptions();
@@ -116,7 +114,6 @@ public class MyAccountActivity extends AppCompatActivity {
     }
 
     private void setUserOptions() {
-        Log.d("MYTAG", "onClick:not empty");
         mUser.setName(mEditTextName.getText().toString());
         mUser.setSurname(mEditTextSurname.getText().toString());
         mUser.setPhoneNumber(mEditTextPhone.getText().toString());
@@ -133,7 +130,6 @@ public class MyAccountActivity extends AppCompatActivity {
                     .load(mUser.getPhotoUrl())
                     .into(mAccountImage);
         }
-
     }
 
     private void init() {

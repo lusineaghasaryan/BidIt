@@ -72,10 +72,7 @@ public class HomeListFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         init(view);
         setListeners();
-        tempLoad();
-        //getHotList();
-
-        Log.d(TAG, "onViewCreated: ");
+        loadHomePage();
     }
 
     private void init(View pView) {
@@ -123,54 +120,30 @@ public class HomeListFragment extends Fragment {
         mViewPagerHotList.setVisibility(View.VISIBLE);
     }
 
-    private void setHotListGone() {
+    private void clearAndSetGoneHotList() {
         mViewPagerHotList.animate().alpha(0.0f).setDuration(700);
         mViewPagerHotList.setVisibility(View.GONE);
+
+        mHotItemData.clear();
+        mHotListAdapter.notifyDataSetChanged();
     }
 
-    public void tempLoad() {
-//        setHotListVisible();
-//        //        clear list and timers(handlers)
-//        ItemsListViewModel itemsListViewModel = ViewModelProviders.of(this).get(ItemsListViewModel.class);
-//        itemsListViewModel.getItem().removeObservers(this);
-//        itemsListViewModel.setItem(null);
-//        mAllListAdapter.clearTimers();
-//        mAllItemData.clear();
-//        Log.d(TAG, "tempLoad: " + mAllItemData.size());
-////        mHotItemData.clear();
-////        mHotListAdapter.notifyDataSetChanged();
-//
-////        load list
-//        itemsListViewModel.getItem().observe(this, new Observer<Item>() {
-//            @Override
-//            public void onChanged(@Nullable Item pItem) {
-//                if (pItem != null) {
-//                    mAllItemData.add(pItem);
-//                    mAllListAdapter.notifyDataSetChanged();
-//
-////                    mHotItemData.add(pItem);
-////                    mHotListAdapter.notifyDataSetChanged();
-//                    mViewPagerHotList.setCurrentItem(0);
-//                }
-//            }
-//        });
-//        itemsListViewModel.updateData();
+    public void notifyRecyclerAndViewPager() {
+        mAllListAdapter.clearTimers();
+        mAllListAdapter.notifyDataSetChanged();
+        mHotListAdapter.notifyDataSetChanged();
+    }
 
-
-
-
-
+    private void loadHomeList() {
         ItemsListViewModel itemsListViewModel = ViewModelProviders
                 .of(this).get(ItemsListViewModel.class);
 
         // clear last version of list, and load new list, by category
+        itemsListViewModel.getItemsList().removeObservers(this);
         itemsListViewModel.setItemsList(null);
-        itemsListViewModel.getItemsList().removeObservers(this);;
         mAllListAdapter.clearTimers();
         mAllItemData.clear();
-        mHotItemData.clear();
         mAllListAdapter.notifyDataSetChanged();
-        mHotListAdapter.notifyDataSetChanged();
 
         // observe on ViewModel
         itemsListViewModel.getItemsList().observe(this,
@@ -180,20 +153,36 @@ public class HomeListFragment extends Fragment {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
                         Log.d(TAG, "onChanged: " + mAllItemData.size());
-
-                        mHotItemData.addAll(pItems);
-                        mHotListAdapter.notifyDataSetChanged();
-                        mViewPagerHotList.setCurrentItem(0);
-
-                        //mCurrentListSize = mAllItemData.size();
                     }
                 });
         itemsListViewModel.setItems();
+    }
 
+    private void loadHotList(){
+        setHotListVisible();
+        mHotItemData.clear();
+        mHotListAdapter.notifyDataSetChanged();
+        HotItemsViewModel hotItemsViewModel = ViewModelProviders.of(this).get(HotItemsViewModel.class);
+        hotItemsViewModel.getHotItemsList().removeObservers(this);
+        hotItemsViewModel.setHotItemsList(null);
+        hotItemsViewModel.getHotItemsList().observe(this, new Observer<ArrayList<Item>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<Item> pItems) {
+                mHotItemData.addAll(pItems);
+                mHotListAdapter.notifyDataSetChanged();
+                Log.d(TAG, "onChangedesiminch: " + pItems.size());
+            }
+        });
+        hotItemsViewModel.updateData();
+    }
+
+    public void loadHomePage(){
+        loadHomeList();
+        loadHotList();
     }
 
     public void loadSearchList(String pQuery, final String pCategoryId) {
-        setHotListGone();
+        clearAndSetGoneHotList();
         CategorySearchListViewModel categorySearchListViewModel = ViewModelProviders
                 .of(getActivity())
                 .get(CategorySearchListViewModel.class);
@@ -215,8 +204,8 @@ public class HomeListFragment extends Fragment {
         mAllListAdapter.notifyDataSetChanged();
     }
 
-    public void loadNext10ItemsByCategoryFromFirebase(String pCategoryName) {
-        setHotListGone();
+    public void loadNext10ItemsByCategoryFromFirebase(String pCategoryId) {
+        clearAndSetGoneHotList();
         ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
                 .of(this).get(ItemsSpecificListVViewModel.class);
 
@@ -227,73 +216,7 @@ public class HomeListFragment extends Fragment {
         mAllItemData.clear();
 
         itemsSpecificListVViewModel.setItems("categoryId",
-                pCategoryName, mAllItemData.size() + 1);
-
-        // observe on ViewModel
-        itemsSpecificListVViewModel.getItemsList().observe(this,
-                new Observer<ArrayList<Item>>() {
-                    @Override
-                    public void onChanged(@Nullable ArrayList<Item> pItems) {
-                        mAllItemData = pItems;
-                        mAllListAdapter.notifyDataSetChanged();
-                    }
-                });
-    }
-
-    public void getHotList(){
-        mHotItemData.clear();
-        mHotListAdapter.notifyDataSetChanged();
-        HotItemsViewModel hotItemsViewModel = ViewModelProviders.of(this).get(HotItemsViewModel.class);
-        hotItemsViewModel.getHotItemsList().observe(this, new Observer<ArrayList<Item>>() {
-            @Override
-            public void onChanged(@Nullable ArrayList<Item> pItems) {
-                mHotItemData.addAll(pItems);
-                mHotListAdapter.notifyDataSetChanged();
-                Log.d(TAG, "onChangedesiminch: " + pItems.size());
-            }
-        });
-        hotItemsViewModel.updateData();
-    }
-
-    public void loadNext10AllItemsFromFirebase() {
-////        clear list and timers(handlers)
-//        ItemsListViewModel itemsListViewModel = ViewModelProviders.of(this).get(ItemsListViewModel.class);
-//        itemsListViewModel.getItem().removeObservers(this);
-//        itemsListViewModel.setItem(null);
-//        mAllListAdapter.clearTimers();
-//        mAllItemData.clear();
-//        mHotItemData.clear();
-//        mAllListAdapter.notifyDataSetChanged();
-//        mHotListAdapter.notifyDataSetChanged();
-//
-////        load list
-//        itemsListViewModel.getItem().observe(this, new Observer<Item>() {
-//            @Override
-//            public void onChanged(@Nullable Item pItem) {
-//                if (pItem != null) {
-//                    mAllItemData.add(pItem);
-//                    mAllListAdapter.notifyDataSetChanged();
-//
-//                    mHotItemData.add(pItem);
-//                    mHotListAdapter.notifyDataSetChanged();
-//                    mViewPagerHotList.setCurrentItem(0);
-//                }
-//            }
-//        });
-//        itemsListViewModel.updateData();
-
-
-        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
-                .of(this).get(ItemsSpecificListVViewModel.class);
-
-        // clear last version of list, and load new list, by category
-        itemsSpecificListVViewModel.setItemsList(null);
-        itemsSpecificListVViewModel.getItemsList().removeObservers(this);;
-        mAllListAdapter.clearTimers();
-        mAllItemData.clear();
-        mHotItemData.clear();
-        mAllListAdapter.notifyDataSetChanged();
-        mHotListAdapter.notifyDataSetChanged();
+                pCategoryId, mAllItemData.size() + 1);
 
         // observe on ViewModel
         itemsSpecificListVViewModel.getItemsList().observe(this,
@@ -302,24 +225,11 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "onChanged: " + mAllItemData.size());
-
-                        mHotItemData.addAll(pItems);
-                        mHotListAdapter.notifyDataSetChanged();
-                        mViewPagerHotList.setCurrentItem(0);
-
-                        //mCurrentListSize = mAllItemData.size();
                     }
                 });
-        itemsSpecificListVViewModel.setItems("approved",
-                "false", mAllItemData.size() + 1);
     }
 
-    public void notifyRecyclerAndViewPager() {
-        mAllListAdapter.clearTimers();
-        mAllListAdapter.notifyDataSetChanged();
-        mHotListAdapter.notifyDataSetChanged();
-    }
+
 
 
     //    hot mHotItems list viewPager adapter
@@ -371,7 +281,7 @@ public class HomeListFragment extends Fragment {
                 imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
             } else {
                 if (FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
-                    imageFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                    imageFavorite.setImageResource(R.drawable.star_filled);
                 } else {
                     imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
                 }
@@ -398,7 +308,7 @@ public class HomeListFragment extends Fragment {
                     } else {
                         if (!FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
                             FollowAndUnfollow.addToFavorite(mHotItemData.get(position));
-                            imageFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                            imageFavorite.setImageResource(R.drawable.star_filled);
                         } else {
                             FollowAndUnfollow.removeFromFavorite(mHotItemData.get(position));
                             imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
@@ -458,6 +368,7 @@ public class HomeListFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), ShowItemActivity.class);
                         intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT, mAllItemData.get(pAdapterPosition));
                         getActivity().startActivity(intent);
+                        Log.d(TAG, "onAllItemClick: ");
                     }
 
                     @Override
@@ -469,10 +380,10 @@ public class HomeListFragment extends Fragment {
                             if (!FollowAndUnfollow.isFollowed(mAllItemData.get(pAdapterPosition))) {
                                 FollowAndUnfollow.addToFavorite(mAllItemData.get(pAdapterPosition));
                                 Log.d(TAG, "onAllFavoriteClick: " + mAllItemData.size());
-                                //pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
+                                pFavoriteView.setImageResource(R.drawable.star_filled);
                             } else {
                                 FollowAndUnfollow.removeFromFavorite(mAllItemData.get(pAdapterPosition));
-                                //pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
+                                pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
                             }
                         }
                     }
@@ -483,12 +394,14 @@ public class HomeListFragment extends Fragment {
         public AllListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.view_recycler_item, parent, false);
+            Log.d(TAG, "onCreateViewHolder: ");
             return new AllListViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull final AllListViewHolder holder, final int position) {
 //            get current item
+            Log.d(TAG, "onBindViewHolder: ");
             final Item item = mAllItemData.get(position);
 
 //            timer
@@ -543,13 +456,12 @@ public class HomeListFragment extends Fragment {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
             pHolder.getTxtAuctionStartPrice().setText(String.valueOf((int) pItem.getStartPrice()) + "$");
             pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
-
             Glide.with(getActivity())
                     .load(pItem.getPhotoUrls().get(0))
                     .into(pHolder.getImgAuctionImage());
             if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                 if (FollowAndUnfollow.isFollowed(pItem)) {
-                    pHolder.getImgFavorite().setImageResource(R.drawable.favorite_star_48dp);
+                    pHolder.getImgFavorite().setImageResource(R.drawable.star_filled);
                 } else {
                     pHolder.getImgFavorite().setImageResource(R.drawable.ic_nav_favorite);
                 }

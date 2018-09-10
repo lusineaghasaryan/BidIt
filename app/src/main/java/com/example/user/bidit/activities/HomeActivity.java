@@ -23,13 +23,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.fragments.HomeListFragment;
 import com.example.user.bidit.models.Category;
+import com.example.user.bidit.models.User;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 
 import java.util.ArrayList;
@@ -37,6 +40,8 @@ import java.util.List;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String TAG = "asd";
+
+    private User mUser;
 
     //    recyclers, viewPager and adapters
     private RecyclerView mRecyclerViewCategories;
@@ -54,6 +59,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     private DrawerLayout mDrawer;
     private Toolbar mToolbar;
     private ActionBarDrawerToggle mToggle;
+
+    private View mHeaderView;
+    private TextView mHeaderUserName;
+    private ImageView mHeaderAvatar;
 
     private boolean isInHome = true;
 
@@ -78,13 +87,24 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected void onStart() {
         super.onStart();
         if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
-            FireBaseAuthenticationManager.getInstance().initCurrentUser();
+            FireBaseAuthenticationManager.getInstance().initCurrentUser(new FireBaseAuthenticationManager.LoginListener() {
+                @Override
+                public void onResponse(boolean pSuccess, User pUser) {
+                    mUser = FireBaseAuthenticationManager.getInstance().getCurrentUser();
+                    mHeaderUserName.setText(mUser.getName());
+                    if (mUser.getPhotoUrl() != null) {
+                        Glide.with(HomeActivity.this)
+                                .load(mUser.getPhotoUrl())
+                                .into(mHeaderAvatar);
+                    }
+                }
+            });
         }
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    protected void onResume() {
+        super.onResume();
         if (mHomeListFragment != null) {
             mHomeListFragment.notifyRecyclerAndViewPager();
         }
@@ -97,7 +117,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         if (!isInHome) {
             mSearchView.setLeftMenuOpen(false);
-            mHomeListFragment.tempLoad();
+            mHomeListFragment.loadHomePage();
             Log.v(TAG, "mtav = ");
             isInHome = true;
         } else {
@@ -119,6 +139,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mToolbar = findViewById(R.id.toolbar);
         mDrawer = findViewById(R.id.drawer_layout);
         mNavigationView = findViewById(R.id.nav_view);
+        mHeaderView = mNavigationView.getHeaderView(0);
+        mHeaderUserName = mHeaderView.findViewById(R.id.text_view_name_nav_header);
+        mHeaderAvatar = mHeaderView.findViewById(R.id.circle_image_avatar_nav_header);
+
 
         mSearchView.attachNavigationDrawerToMenuButton(mDrawer);
 
@@ -150,12 +174,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onMenuClosed() {
-//                if (!mDrawer.isDrawerOpen(mNavigationView)) {
-//                    if (!isInHome) {
-//                        mHomeListFragment.tempLoad();
-//                        isInHome = true;
-//                    }
-//                }
+                if (!mDrawer.isDrawerOpen(mNavigationView)){
+                    if (!isInHome) {
+                        mHomeListFragment.loadHomePage();
+                        isInHome = true;
+                    }
+                }
             }
         });
     }
@@ -244,7 +268,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    //    category mHotItems list recyclerView adapter and ViewHolder
+    //    category list recyclerView adapter and ViewHolder
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
         private List<Category> mCategories;
@@ -260,6 +284,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         mCurrentCategoryId = mCategories.get(pAdapterPosition).getCategoryId();
                         isInHome = false;
                         mSearchView.setLeftMenuOpen(true);
+//                        mSearchView.clearQuery();
                     }
                 };
 
