@@ -2,9 +2,18 @@ package com.example.user.bidit.models;
 
 
 public class Bid {
+    private String bidId;
     private long bidDate;
     private int amount;
     private String userId;
+
+    public String getBidId() {
+        return bidId;
+    }
+
+    public void setBidId(String pBidId) {
+        bidId = pBidId;
+    }
 
     public long getBidDate() {
         return bidDate;

@@ -103,8 +103,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
+    protected void onResume() {
+        super.onResume();
         if (mHomeListFragment != null) {
             mHomeListFragment.notifyRecyclerAndViewPager();
         }
@@ -117,8 +117,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         if (!isInHome) {
             mSearchView.setLeftMenuOpen(false);
-            mHomeListFragment.tempLoad();
-            mCurrentCategoryId = null;
+            mHomeListFragment.loadHomePage();
+            Log.v(TAG, "mtav = ");
             isInHome = true;
         } else {
             finish();
@@ -174,12 +174,12 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onMenuClosed() {
-//                if (!mDrawer.isDrawerOpen(mNavigationView)) {
-//                    if (!isInHome) {
-//                        mHomeListFragment.tempLoad();
-//                        isInHome = true;
-//                    }
-//                }
+                if (!mDrawer.isDrawerOpen(mNavigationView)){
+                    if (!isInHome) {
+                        mHomeListFragment.loadHomePage();
+                        isInHome = true;
+                    }
+                }
             }
         });
     }
@@ -268,7 +268,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
 
-    //    category mHotItems list recyclerView adapter and ViewHolder
+    //    category list recyclerView adapter and ViewHolder
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
         private List<Category> mCategories;
@@ -284,7 +284,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                         mCurrentCategoryId = mCategories.get(pAdapterPosition).getCategoryId();
                         isInHome = false;
                         mSearchView.setLeftMenuOpen(true);
-                        mSearchView.clearQuery();
+//                        mSearchView.clearQuery();
                     }
                 };
 

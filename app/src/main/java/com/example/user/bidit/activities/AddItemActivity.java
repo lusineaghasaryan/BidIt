@@ -127,7 +127,7 @@ public class AddItemActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Get a URL to the uploaded content
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            Uri downloadUrl = taskSnapshot.getUploadSessionUri();
                             mItemImagesListStorage.add(downloadUrl.toString());
                         }
                     })
@@ -227,8 +227,7 @@ public class AddItemActivity extends AppCompatActivity {
         /*itemsSpecificListVViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
-                //TODO get one item & use it
-                Log.v(TAG, "item = " + pItem.getItemTitle());
+
             }
         });
         itemsSpecificListVViewModel.updateData("categoryId", "-LJVutjHBpRf_pfv0pa1");
@@ -247,10 +246,10 @@ public class AddItemActivity extends AppCompatActivity {
         itemsListViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
-               // Log.v(TAG, "All items = " + pItem.getItemTitle());
+
             }
         });
-        itemsListViewModel.updateData();
+        itemsListViewModel.setItems();
 
 
         ///      Spinner
@@ -469,8 +468,8 @@ public class AddItemActivity extends AppCompatActivity {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
             mItemSelectedImagesList.add(PhotoUtil.saveImage(AddItemActivity.this, thumbnail));
             mPhotosRV.smoothScrollToPosition(mItemSelectedImagesList.size() - 1);
-            mAdapter.notifyItemChanged(mItemSelectedImagesList.size() - 1);
-            //TODO save image to internal memory & send Firebase storage
+            //mAdapter.notifyItemChanged(mItemSelectedImagesList.size() - 1);
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -485,13 +484,9 @@ public class AddItemActivity extends AppCompatActivity {
     }
     public String selectCategory(String pCategoryId){
         String categoryTitle = "";
-        int position = 0;
-        Log.v(TAG, "OOOOO = 1111111" + mCategoryList.size());
         for (Category category : mCategoryList) {
             if (category.getCategoryId().equals(pCategoryId)) {
                 categoryTitle = category.getCategoryTitle();
-                position = mSpinnerAdapter.getPosition(categoryTitle);
-                Log.v(TAG, "OOOOO = " + categoryTitle);
             }
         }
         return categoryTitle;
