@@ -122,26 +122,6 @@ public class FirebaseHelper {
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
                     pCallback.callback(true, item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError pDatabaseError) {
-            }
-        });
-    }
-
-    public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
-        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot pDataSnapshot) {
-
-                for (DataSnapshot single : pDataSnapshot.getChildren()) {
-                    Item item = single.getValue(Item.class);
-                    pCallback.callback(true, item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
             }
             @Override
@@ -200,7 +180,6 @@ public class FirebaseHelper {
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
                     pCallback.callback(true, item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
             }
             @Override
@@ -262,8 +241,6 @@ public class FirebaseHelper {
                     if(item.getFollowersIds().contains(pUserId)){
                         temp.add(item);
                     }
-
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
                 pCallback.callback(true, temp);
             }

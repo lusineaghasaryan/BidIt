@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
+import com.example.user.bidit.activities.HomeActivity;
 import com.example.user.bidit.activities.LoginActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
@@ -135,7 +136,7 @@ public class HomeListFragment extends Fragment {
     }
 
     private void loadHomeList() {
-        ItemsListViewModel itemsListViewModel = ViewModelProviders
+        final ItemsListViewModel itemsListViewModel = ViewModelProviders
                 .of(this).get(ItemsListViewModel.class);
 
         // clear last version of list, and load new list, by category
@@ -152,6 +153,7 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
+                        itemsListViewModel.getItemsList().removeObservers(HomeListFragment.this);
                         Log.d(TAG, "onChanged: " + mAllItemData.size());
                     }
                 });
@@ -162,7 +164,7 @@ public class HomeListFragment extends Fragment {
         setHotListVisible();
         mHotItemData.clear();
         mHotListAdapter.notifyDataSetChanged();
-        HotItemsViewModel hotItemsViewModel = ViewModelProviders.of(this).get(HotItemsViewModel.class);
+        final HotItemsViewModel hotItemsViewModel = ViewModelProviders.of(this).get(HotItemsViewModel.class);
         hotItemsViewModel.getHotItemsList().removeObservers(this);
         hotItemsViewModel.setHotItemsList(null);
         hotItemsViewModel.getHotItemsList().observe(this, new Observer<ArrayList<Item>>() {
@@ -170,9 +172,11 @@ public class HomeListFragment extends Fragment {
             public void onChanged(@Nullable ArrayList<Item> pItems) {
                 mHotItemData.addAll(pItems);
                 mHotListAdapter.notifyDataSetChanged();
+                hotItemsViewModel.getHotItemsList().removeObservers(HomeListFragment.this);
                 Log.d(TAG, "onChangedesiminch: " + pItems.size());
             }
         });
+
         hotItemsViewModel.updateData();
     }
 
@@ -183,7 +187,7 @@ public class HomeListFragment extends Fragment {
 
     public void loadSearchList(String pQuery, final String pCategoryId) {
         clearAndSetGoneHotList();
-        CategorySearchListViewModel categorySearchListViewModel = ViewModelProviders
+        final CategorySearchListViewModel categorySearchListViewModel = ViewModelProviders
                 .of(getActivity())
                 .get(CategorySearchListViewModel.class);
 
@@ -198,6 +202,7 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable Item pItem) {
                         mAllItemData.add(pItem);
                         mAllListAdapter.notifyDataSetChanged();
+                        categorySearchListViewModel.getItem().removeObservers(HomeListFragment.this);
                     }
                 });
         categorySearchListViewModel.updateData(pQuery, 1, pCategoryId);
@@ -206,7 +211,7 @@ public class HomeListFragment extends Fragment {
 
     public void loadNext10ItemsByCategoryFromFirebase(String pCategoryId) {
         clearAndSetGoneHotList();
-        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
+        final ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
                 .of(this).get(ItemsSpecificListVViewModel.class);
 
         // clear last version of list, and load new list, by category
@@ -225,6 +230,7 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
+                        itemsSpecificListVViewModel.getItemsList().removeObservers(HomeListFragment.this);
                     }
                 });
     }
