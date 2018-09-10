@@ -16,6 +16,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -71,6 +72,7 @@ public class HomeListFragment extends Fragment {
         init(view);
         setListeners();
         tempLoad();
+        Log.d(TAG, "onViewCreated: ");
     }
 
     private void init(View pView) {
@@ -86,9 +88,11 @@ public class HomeListFragment extends Fragment {
         mHotListAdapter = new HotItemsVPAdapter(getActivity());
 
         setRecyclerAndVPSittings();
+        Log.d(TAG, "init: ");
     }
 
     private void setRecyclerAndVPSittings() {
+        Log.d(TAG, "setRecyclerAndVPSittings: ");
         mRecyclerViewAllList.setHasFixedSize(true);
         mRecyclerViewAllList.setLayoutManager(mLayoutManager);
         mRecyclerViewAllList.setAdapter(mAllListAdapter);
@@ -111,9 +115,11 @@ public class HomeListFragment extends Fragment {
 //                }
             }
         });
+        Log.d(TAG, "setListeners: ");
     }
 
     private void setHotListVisible() {
+        Log.d(TAG, "setHotListVisible: ");
         mViewPagerHotList.animate().alpha(1.0f).setDuration(700);
         mViewPagerHotList.setVisibility(View.VISIBLE);
     }
@@ -121,9 +127,11 @@ public class HomeListFragment extends Fragment {
     private void setHotListGone() {
         mViewPagerHotList.animate().alpha(0.0f).setDuration(700);
         mViewPagerHotList.setVisibility(View.GONE);
+        Log.d(TAG, "setHotListGone: ");
     }
 
     public void tempLoad() {
+        Log.d(TAG, "tempLoad: ");
         setHotListVisible();
         //        clear list and timers(handlers)
         ItemsListViewModel itemsListViewModel = ViewModelProviders.of(this).get(ItemsListViewModel.class);
@@ -152,6 +160,7 @@ public class HomeListFragment extends Fragment {
     }
 
     public void loadSearchList(String pQuery, final String pCategoryId) {
+        Log.d(TAG, "loadSearchList: ");
         setHotListGone();
         CategorySearchListViewModel categorySearchListViewModel = ViewModelProviders
                 .of(getActivity())
@@ -174,8 +183,9 @@ public class HomeListFragment extends Fragment {
         mAllListAdapter.notifyDataSetChanged();
     }
 
-    public void loadNext10ItemsByCategoryFromFirebase(String pCategoryName) {
-        setHotListGone();
+    public void loadNext10ItemsByCategoryFromFirebase(String pCategoryId) {
+        Log.d(TAG, "loadNext10ItemsByCategoryFromFirebase: ");
+//        setHotListGone();
         ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
                 .of(this).get(ItemsSpecificListVViewModel.class);
 
@@ -184,9 +194,11 @@ public class HomeListFragment extends Fragment {
         itemsSpecificListVViewModel.getItemsList().removeObservers(this);
         mAllListAdapter.clearTimers();
         mAllItemData.clear();
+        mHotItemData.clear();
+        mHotListAdapter.notifyDataSetChanged();
 
         itemsSpecificListVViewModel.setItems("categoryId",
-                pCategoryName, mAllItemData.size() + 1);
+                pCategoryId, mAllItemData.size() + 1);
 
         // observe on ViewModel
         itemsSpecificListVViewModel.getItemsList().observe(this,
@@ -200,6 +212,7 @@ public class HomeListFragment extends Fragment {
     }
 
     public void loadNext10AllItemsFromFirebase() {
+        Log.d(TAG, "loadNext10AllItemsFromFirebase: ");
 ////        clear list and timers(handlers)
 //        ItemsListViewModel itemsListViewModel = ViewModelProviders.of(this).get(ItemsListViewModel.class);
 //        itemsListViewModel.getItem().removeObservers(this);
@@ -260,6 +273,7 @@ public class HomeListFragment extends Fragment {
     }
 
     public void notifyRecyclerAndViewPager() {
+        Log.d(TAG, "notifyRecyclerAndViewPager: ");
         mAllListAdapter.clearTimers();
         mAllListAdapter.notifyDataSetChanged();
         mHotListAdapter.notifyDataSetChanged();
@@ -402,6 +416,7 @@ public class HomeListFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), ShowItemActivity.class);
                         intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT, mAllItemData.get(pAdapterPosition));
                         getActivity().startActivity(intent);
+                        Log.d(TAG, "onAllItemClick: ");
                     }
 
                     @Override
@@ -410,6 +425,7 @@ public class HomeListFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             startActivity(intent);
                         } else {
+                            Log.d(TAG, "onAllFavoriteClick: ");
                             if (!FollowAndUnfollow.isFollowed(mAllItemData.get(pAdapterPosition))) {
                                 FollowAndUnfollow.addToFavorite(mAllItemData.get(pAdapterPosition));
                                 pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
@@ -426,12 +442,14 @@ public class HomeListFragment extends Fragment {
         public AllListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.view_recycler_item, parent, false);
+            Log.d(TAG, "onCreateViewHolder: ");
             return new AllListViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull final AllListViewHolder holder, final int position) {
 //            get current item
+            Log.d(TAG, "onBindViewHolder: ");
             final Item item = mAllItemData.get(position);
 
 //            timer
@@ -486,7 +504,6 @@ public class HomeListFragment extends Fragment {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
             pHolder.getTxtAuctionStartPrice().setText(String.valueOf((int) pItem.getStartPrice()) + "$");
             pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
-
             Glide.with(getActivity())
                     .load(pItem.getPhotoUrls().get(0))
                     .into(pHolder.getImgAuctionImage());
