@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -96,8 +97,8 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         }
         if (!isInHome) {
             mSearchView.setLeftMenuOpen(false);
-            mHomeListFragment.tempLoad();
-
+            mHomeListFragment.loadHomePage();
+            Log.v(TAG, "mtav = ");
             isInHome = true;
         } else {
             finish();
@@ -151,7 +152,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             public void onMenuClosed() {
                 if (!mDrawer.isDrawerOpen(mNavigationView)){
                     if (!isInHome) {
-                        mHomeListFragment.tempLoad();
+                        mHomeListFragment.loadHomePage();
                         isInHome = true;
                     }
                 }
@@ -218,7 +219,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 Intent addItemIntent = new Intent(HomeActivity.this, AddItemActivity.class);
                 startActivity(addItemIntent);
         }
-
         mDrawer.closeDrawer(GravityCompat.START);
         return true;
     }

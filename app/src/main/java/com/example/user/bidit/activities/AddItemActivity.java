@@ -45,6 +45,7 @@ import com.example.user.bidit.fragments.MultiSelectImageFragment;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.DateUtil;
+import com.example.user.bidit.utils.PhotoUtil;
 import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
 import com.example.user.bidit.utils.DateUtil;
@@ -69,7 +70,6 @@ import java.util.Random;
 
 public class AddItemActivity extends AppCompatActivity {
 
-    private static final String IMAGE_DIRECTORY = "/bidit";
     private int REQUEST_IMAGE_GALLERY = 1, REQUEST_IMAGE_CAPTURE = 2;
     public static String mMode;
     public static final String KEY_SAVE_ITEM = "Save";
@@ -77,7 +77,7 @@ public class AddItemActivity extends AppCompatActivity {
 
     public static final String TAG = "AddItemFragment";
 
-    public Button mSaveItemBtn, mBtnAddFavorite;
+    public Button mSaveItemBtn;
     public EditText mItemTitle, mItemDescription, mStartPrice, mBuyNowPrice;
     public Spinner mCategorySpinner;
     public TextView mDateTextView, mEndDateTextView;
@@ -114,8 +114,6 @@ public class AddItemActivity extends AppCompatActivity {
     AddItemPhotosRVAdapter.IOnAddPhotoListener mIOnAddPhotoListener = new AddItemPhotosRVAdapter.IOnAddPhotoListener() {
         @Override
         public void addPhoto(String pImageUrl) {
-
-
             mStorageRef = FirebaseStorage.getInstance().getReference();
             Uri file = Uri.fromFile(new File(pImageUrl));
             Random generator = new Random();
@@ -129,7 +127,7 @@ public class AddItemActivity extends AppCompatActivity {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Get a URL to the uploaded content
-                            Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                            Uri downloadUrl = taskSnapshot.getUploadSessionUri();
                             mItemImagesListStorage.add(downloadUrl.toString());
                         }
                     })
@@ -168,7 +166,7 @@ public class AddItemActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_item);
+        setContentView(R.layout.trial);
 
         mCategoryList = new ArrayList<>();
         mItemSelectedImagesList = new ArrayList<>();
@@ -206,11 +204,9 @@ public class AddItemActivity extends AppCompatActivity {
         mPhotosRV.smoothScrollToPosition(mAdapter.getItemCount());
         mPhotosRV.setAdapter(mAdapter);
 
-        mBtnAddFavorite = findViewById(R.id.add_favorite);
-        mBtnAddFavorite.setVisibility(View.GONE);
 
-        updateDateLabel();
-        updateDateEndLabel();
+//        updateDateLabel();
+//        updateDateEndLabel();
 
         mDateTextView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -231,8 +227,7 @@ public class AddItemActivity extends AppCompatActivity {
         /*itemsSpecificListVViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
-                //TODO get one item & use it
-                Log.v(TAG, "item = " + pItem.getItemTitle());
+
             }
         });
         itemsSpecificListVViewModel.updateData("categoryId", "-LJVutjHBpRf_pfv0pa1");
@@ -251,10 +246,10 @@ public class AddItemActivity extends AppCompatActivity {
         itemsListViewModel.getItem().observe(this, new Observer<Item>() {
             @Override
             public void onChanged(@Nullable Item pItem) {
-               // Log.v(TAG, "All items = " + pItem.getItemTitle());
+
             }
         });
-        itemsListViewModel.updateData();
+        itemsListViewModel.setItems();
 
 
         ///      Spinner
@@ -269,7 +264,6 @@ public class AddItemActivity extends AppCompatActivity {
                     mSpinnerAdapter.add(mCategoryList.get(i).getCategoryTitle());
                 }
                 if (mMode == KEY_EDIT_ITEM)
-                    setFieldToEdit(mItemEdit);
                     setFieldToEdit(mItemEdit);
             }
         });
@@ -355,51 +349,51 @@ public class AddItemActivity extends AppCompatActivity {
     //*********************************************************************************************
 
 
-public void addRemoveFavorite(Item pItem){
-    Item item = pItem;
-    String currentUserId = FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid();
-    ArrayList<String> str;
+//public void addRemoveFavorite(Item pItem){
+//    Item item = pItem;
+//    String currentUserId = FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid();
+//    ArrayList<String> str;
+//
+//    if(pItem.getFollowersIds() != null)
+//        str = pItem.getFollowersIds();
+//    else
+//        str = new ArrayList<>();
+//    ///////     add ////////
+//    if (!str.contains(currentUserId)) {
+//        str.add(currentUserId);
+//        item.setFollowersIds(str);
+//        item.setFollowersCount(item.getFollowersCount() + 1);
+//        FirebaseHelper.addFavoriteItem(item);
+//    }///////// remove /////////
+//    else {
+//        str.remove(currentUserId);
+//        item.setFollowersIds(str);
+//        item.setFollowersCount(item.getFollowersCount() - 1);
+//        FirebaseHelper.removeFavoriteItem(item);
+//    }
+//
+//}
 
-    if(pItem.getFollowersIds() != null)
-        str = pItem.getFollowersIds();
-    else
-        str = new ArrayList<>();
-    ///////     add ////////
-    if (!str.contains(currentUserId)) {
-        str.add(currentUserId);
-        item.setFollowersIds(str);
-        item.setFollowersCount(item.getFollowersCount() + 1);
-        FirebaseHelper.addFavoriteItem(item);
-    }///////// remove /////////
-    else {
-        str.remove(currentUserId);
-        item.setFollowersIds(str);
-        item.setFollowersCount(item.getFollowersCount() - 1);
-        FirebaseHelper.removeFavoriteItem(item);
-    }
-
-}
 
 
-
-    public void removeFavorite(final Item pItem){
-        Item item = pItem;
-        String currentUserId = FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid();
-        ArrayList<String> str;
-
-        if(pItem.getFollowersIds() != null)
-            str = pItem.getFollowersIds();
-        else
-            str = new ArrayList<>();
-
-        if (str.contains(currentUserId)) {
-            str.remove(currentUserId);
-            item.setFollowersIds(str);
-            item.setFollowersCount(item.getFollowersCount() - 1);
-            FirebaseHelper.removeFavoriteItem(item);
-        }
-        else Log.v("KKKK", "Parunakvuma e");
-    }
+//    public void removeFavorite(final Item pItem){
+//        Item item = pItem;
+//        String currentUserId = FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid();
+//        ArrayList<String> str;
+//
+//        if(pItem.getFollowersIds() != null)
+//            str = pItem.getFollowersIds();
+//        else
+//            str = new ArrayList<>();
+//
+//        if (str.contains(currentUserId)) {
+//            str.remove(currentUserId);
+//            item.setFollowersIds(str);
+//            item.setFollowersCount(item.getFollowersCount() - 1);
+//            FirebaseHelper.removeFavoriteItem(item);
+//        }
+//        else Log.v("KKKK", "Parunakvuma e");
+//    }
 
 // ***********************************************************************************************************
 
@@ -472,11 +466,10 @@ public void addRemoveFavorite(Item pItem){
             }
         } else if (requestCode == REQUEST_IMAGE_CAPTURE) {
             Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
-            String url = saveImage(thumbnail);
-            Log.v("PPPPP", "URL = " + url);
-            mItemSelectedImagesList.add(url);
+            mItemSelectedImagesList.add(PhotoUtil.saveImage(AddItemActivity.this, thumbnail));
+            mPhotosRV.smoothScrollToPosition(mItemSelectedImagesList.size() - 1);
+            //mAdapter.notifyItemChanged(mItemSelectedImagesList.size() - 1);
             mAdapter.notifyDataSetChanged();
-            //TODO save image to internal memory & send Firebase storage
         }
     }
 
@@ -491,48 +484,12 @@ public void addRemoveFavorite(Item pItem){
     }
     public String selectCategory(String pCategoryId){
         String categoryTitle = "";
-        int position = 0;
-        Log.v(TAG, "OOOOO = 1111111" + mCategoryList.size());
         for (Category category : mCategoryList) {
             if (category.getCategoryId().equals(pCategoryId)) {
                 categoryTitle = category.getCategoryTitle();
-                position = mSpinnerAdapter.getPosition(categoryTitle);
-                Log.v(TAG, "OOOOO = " + categoryTitle);
             }
         }
         return categoryTitle;
-    }
-
-
-    public String saveImage(Bitmap myBitmap) {
-        Log.d("MYTAG", "saveImage: " + myBitmap);
-        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        myBitmap.compress(Bitmap.CompressFormat.JPEG, 90, bytes);
-        File wallpaperDirectory = new File(
-                Environment.getExternalStorageDirectory() + IMAGE_DIRECTORY);
-        // have the object build the directory structure, if needed.
-        if (!wallpaperDirectory.exists()) {
-            wallpaperDirectory.mkdirs();
-        }
-
-        try {
-            File f = new File(wallpaperDirectory, Calendar.getInstance()
-                    .getTimeInMillis() + ".jpg");
-            f.createNewFile();
-            FileOutputStream fo = new FileOutputStream(f);
-            fo.write(bytes.toByteArray());
-            MediaScannerConnection.scanFile(this,
-                    new String[]{f.getPath()},
-                    new String[]{"image/jpeg"}, null);
-            fo.close();
-            Log.d("TAG", "File Saved::--->" + f.getAbsolutePath());
-
-            return f.getAbsolutePath();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-        return "";
-
     }
 
 

@@ -36,10 +36,35 @@ public class ItemsSpecificListVViewModel extends ViewModel {
 
 
 
+    /* for my favorite list */
+    private MutableLiveData<ArrayList<Item>> mMyFavoriteItemsList = new MutableLiveData<>();
+
+    public MutableLiveData<ArrayList<Item>> getMyFavoriteItemsList() {
+        if (mItemsList == null) {
+            mItemsList = new MutableLiveData<>();
+            //setItems();
+        }
+        return mItemsList;
+    }
+
+    public void setMyFavoriteItemsList(MutableLiveData<ArrayList<Item>> pItemsList) {
+        mMyFavoriteItemsList = pItemsList;
+    }
+
+    public void setMyFavoriteItems(String pUserId, String pTypeValue, int pPageNumber){
+        FirebaseHelper.getMyFavoriteList(pUserId, new FirebaseHelper.Callback<ArrayList<Item>>() {
+            @Override
+            public void callback(boolean pIsSuccess, ArrayList<Item> pValue) {
+                mMyFavoriteItemsList.setValue(pValue);
+            }
+        });
+    }
 
 
 
 
+
+    /* set & get only one item */
     private final MutableLiveData<Item> mItem =
             new MutableLiveData<>();
 

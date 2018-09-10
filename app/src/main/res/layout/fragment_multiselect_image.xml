@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_marginTop="?attr/actionBarSize">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_fragment_multiselect"
@@ -13,11 +13,15 @@
         tools:listitem="@layout/row_multiphoto_item"/>
 
     <Button
+        android:background="@drawable/shape_blue_gradient_90_degree"
         android:id="@+id/btn_fragment_multiselect_image"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="btnChoosePhotosClick"
-        android:layout_gravity="bottom"
-        android:text="Select Photos" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Select Photos"
+        android:layout_marginBottom="@dimen/margin_normal"/>
 
 </android.support.constraint.ConstraintLayout>

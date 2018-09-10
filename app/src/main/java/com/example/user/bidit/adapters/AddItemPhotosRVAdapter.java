@@ -46,7 +46,7 @@ public class AddItemPhotosRVAdapter extends RecyclerView.Adapter<AddItemPhotosVi
                     .load(imageUrl)
                     .centerCrop()
                     .placeholder(R.drawable.ic_launcher_background)
-                    .error(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.pic_trans)
                     .into(holder.mPotoImageView);
         }
         else {
@@ -54,7 +54,7 @@ public class AddItemPhotosRVAdapter extends RecyclerView.Adapter<AddItemPhotosVi
                     .load("file://" + imageUrl)
                     .centerCrop()
                     .placeholder(R.drawable.ic_launcher_background)
-                    .error(R.drawable.ic_launcher_foreground)
+                    .error(R.drawable.pic_trans)
                     .into(holder.mPotoImageView);
 
             mIOnAddPhotoListener.addPhoto(imageUrl);
