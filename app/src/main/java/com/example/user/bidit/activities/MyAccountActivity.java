@@ -89,6 +89,7 @@ public class MyAccountActivity extends AppCompatActivity {
                 Uri selectedImage = data.getData();
                 try {
                     mBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+//                    FirebaseHelper.sendAvatarToStorage(selectedImage);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -241,7 +241,7 @@ public class AddItemFragment extends Fragment {
 
             }
         });
-        itemsListViewModel.updateData();
+        itemsListViewModel.setItems();
 
 
 

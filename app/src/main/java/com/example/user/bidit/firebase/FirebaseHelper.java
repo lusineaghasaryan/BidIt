@@ -102,16 +102,18 @@ public class FirebaseHelper {
     }
 
 
-    public static void getItemsListFromDatabase(final Callback<Item> pCallback) {
+    public static void getItemsListFromDatabase(final Callback<ArrayList<Item>> pCallback) {
 
         mItemsRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
+                ArrayList<Item> temp = new ArrayList<>();
                 for (DataSnapshot single : dataSnapshot.getChildren()) {
-                   Item item = single.getValue(Item.class);
-                    pCallback.callback(true, item);
+                    Item item = single.getValue(Item.class);
+                    temp.add(item);
                 }
+                pCallback.callback(true, temp);
             }
 
             @Override
@@ -123,6 +125,7 @@ public class FirebaseHelper {
 
     public static void getItemsSpecificList(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue);
+//        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -150,7 +153,6 @@ public class FirebaseHelper {
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
                     temp.add(item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
                 pCallback.callback(true, temp);
             }
@@ -161,14 +163,51 @@ public class FirebaseHelper {
     }
 
 
+    public static void getHotItemsList(String pType, final Callback<ArrayList<Item>> pCallback){
+        Query query = mItemsRef.orderByChild(pType);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot pDataSnapshot) {
+                ArrayList<Item> temp = new ArrayList<>();
+                for (DataSnapshot single : pDataSnapshot.getChildren()) {
+                    Item item = single.getValue(Item.class);
+                    temp.add(item);
+                }
+                pCallback.callback(true, temp);
+            }
+            @Override
+            public void onCancelled(DatabaseError pDatabaseError) {
+            }
+        });
+    }
+
+
+    public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
+        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot pDataSnapshot) {
+
+                for (DataSnapshot single : pDataSnapshot.getChildren()) {
+                    Item item = single.getValue(Item.class);
+                    pCallback.callback(true, item);
+                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError pDatabaseError) {
+            }
+        });
+    }
+
     public static void addFavoriteItem(Item pItem){
         mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
-        //mItemsRef.child(pItem.getItemId()).setValue(pItem);
      }
 
      public static void removeFavoriteItem(Item pItem){
          mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
-        //mItemsRef.child(pItem.getItemId()).setValue(pItem);
     }
 
     public static void removeItem(Item pItem){
@@ -200,6 +239,31 @@ public class FirebaseHelper {
                         // ...
                     }
                 });
+    }
+
+    public static void getMyFavoriteList(final String pUserId, final Callback<ArrayList<Item>> pCallback){
+        Query query = mItemsRef.orderByChild("followersIds").equalTo(pUserId);
+
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot pDataSnapshot) {
+                ArrayList<Item> temp = new ArrayList<>();
+                for (DataSnapshot single : pDataSnapshot.getChildren()) {
+                    Item item = single.getValue(Item.class);
+                    if(item.getFollowersIds().contains(pUserId)){
+                        temp.add(item);
+                    }
+
+                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
+                }
+                pCallback.callback(true, temp);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError pDatabaseError) {
+
+            }
+        });
     }
 
     public interface Callback<T> {
