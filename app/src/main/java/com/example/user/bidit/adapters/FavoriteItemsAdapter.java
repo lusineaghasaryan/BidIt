@@ -18,12 +18,11 @@ import java.util.List;
 
 public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsViewHolder> {
 
-    private List<Item> mFavoriteItemsList;
+    private List<Item> mFavoriteItemsList = new ArrayList<>();
     private Context mContext;
-    private List<Item> mUnFollowedItemsList = new ArrayList<>();
+//    private List<Item> mUnFollowedItemsList = new ArrayList<>();
 
-    public FavoriteItemsAdapter(List<Item> favoriteItemsList, Context context) {
-        mFavoriteItemsList = favoriteItemsList;
+    public FavoriteItemsAdapter(Context context) {
         mContext = context;
     }
 
@@ -73,5 +72,10 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
     @Override
     public int getItemCount() {
         return mFavoriteItemsList.size();
+    }
+
+    public void setFavoriteItemsList(List<Item> favoriteItemsList) {
+        mFavoriteItemsList.clear();
+        mFavoriteItemsList.addAll(favoriteItemsList);
     }
 }

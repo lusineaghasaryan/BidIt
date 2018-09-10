@@ -44,7 +44,7 @@ public class FirebaseHelper {
     public FirebaseHelper() {
     }
 
-    public void setCategoryToDatabase(String categoryTitle){
+    public void setCategoryToDatabase(String categoryTitle) {
         Category category = new Category();
         String key = mCategoryRef.push().getKey();
         category.setCategoryId(key);
@@ -56,13 +56,13 @@ public class FirebaseHelper {
         mCategoryRef.child("category" + n).setValue(category);
     }
 
-    public static void getCategoryListFromDatabase(final Callback<ArrayList<Category>> pCallback){
+    public static void getCategoryListFromDatabase(final Callback<ArrayList<Category>> pCallback) {
 
         mCategoryRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 ArrayList<Category> tempList = new ArrayList<>();
-                for (DataSnapshot messageSnapshot: dataSnapshot.getChildren()) {
+                for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
                     Category category = messageSnapshot.getValue(Category.class);
                     tempList.add(category);
                 }
@@ -76,7 +76,7 @@ public class FirebaseHelper {
         });
     }
 
-    public void setItemToDatabase(Item item){
+    public void setItemToDatabase(Item item) {
         String key = mItemsRef.push().getKey();
         item.setItemId(key);
 
@@ -86,7 +86,7 @@ public class FirebaseHelper {
         mItemsRef.child(item.getItemId()).setValue(item);//"item" + n
     }
 
-    public static void updateItemInDatabase(Item pItem, String pItemId){
+    public static void updateItemInDatabase(Item pItem, String pItemId) {
         Log.v("LLLLL", "pItemId = " + pItemId);
         mItemsRef.child(pItemId).setValue(pItem);
     }
@@ -113,7 +113,7 @@ public class FirebaseHelper {
         });
     }
 
-    public static void getItemsSpecificList(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
+    public static void getItemsSpecificList(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback) {
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue);
 //        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
 
@@ -127,32 +127,14 @@ public class FirebaseHelper {
                     Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {
             }
         });
     }
 
-    public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
-        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
-
-        query.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot pDataSnapshot) {
-
-                for (DataSnapshot single : pDataSnapshot.getChildren()) {
-                    Item item = single.getValue(Item.class);
-                    pCallback.callback(true, item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
-                }
-            }
-            @Override
-            public void onCancelled(DatabaseError pDatabaseError) {
-            }
-        });
-    }
-
-    public static void getItemsSpecific(String pType, String pTypeValue, int pPageNumber, final Callback<ArrayList<Item>> pCallback){
+    public static void getItemsSpecific(String pType, String pTypeValue, int pPageNumber, final Callback<ArrayList<Item>> pCallback) {
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue).limitToFirst(TOTAL_ITEMS_TO_LOAD * pPageNumber);
 
         query.addValueEventListener(new ValueEventListener() {
@@ -165,6 +147,7 @@ public class FirebaseHelper {
                 }
                 pCallback.callback(true, temp);
             }
+
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {
             }
@@ -172,7 +155,7 @@ public class FirebaseHelper {
     }
 
 
-    public static void getHotItemsList(String pType, final Callback<ArrayList<Item>> pCallback){
+    public static void getHotItemsList(String pType, final Callback<ArrayList<Item>> pCallback) {
         Query query = mItemsRef.orderByChild(pType);
 
         query.addValueEventListener(new ValueEventListener() {
@@ -185,6 +168,7 @@ public class FirebaseHelper {
                 }
                 pCallback.callback(true, temp);
             }
+
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {
             }
@@ -192,7 +176,7 @@ public class FirebaseHelper {
     }
 
 
-    public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback){
+    public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback) {
         Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
 
         query.addValueEventListener(new ValueEventListener() {
@@ -205,25 +189,26 @@ public class FirebaseHelper {
                     Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {
             }
         });
     }
 
-    public static void addFavoriteItem(Item pItem){
+    public static void addFavoriteItem(Item pItem) {
         mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
-     }
-
-     public static void removeFavoriteItem(Item pItem){
-         mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
     }
 
-    public static void removeItem(Item pItem){
+    public static void removeFavoriteItem(Item pItem) {
+        mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
+    }
+
+    public static void removeItem(Item pItem) {
         mItemsRef.child(pItem.getItemId()).removeValue();
     }
 
-    public static void sendAvatarToStorage(String pImageUrl){
+    public static void sendAvatarToStorage(String pImageUrl) {
         storageRef = FirebaseStorage.getInstance().getReference();
         Uri file = Uri.fromFile(new File(pImageUrl));
         Random generator = new Random();
@@ -250,8 +235,8 @@ public class FirebaseHelper {
                 });
     }
 
-    public static void getMyFavoriteList(final String pUserId, final Callback<ArrayList<Item>> pCallback){
-        Query query = mItemsRef.orderByChild("followersIds").equalTo(pUserId);
+    public static void getMyFavoriteList(final String pUserId, final Callback<ArrayList<Item>> pCallback) {
+        Query query = mItemsRef.orderByChild("followersCount");
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -259,11 +244,16 @@ public class FirebaseHelper {
                 ArrayList<Item> temp = new ArrayList<>();
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
-                    if(item.getFollowersIds().contains(pUserId)){
-                        temp.add(item);
-                    }
+                    if (item.getFollowersCount() > 0) {
+                        if (item.getFollowersIds().contains(pUserId)) {
+                            Log.d("MYTAG", "FireBase onDataChange: ");
+                            temp.add(item);
+                        }
 
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
+                        Log.d("MYTAG", "PPPPPP = " + item.getItemTitle());
+                    } else {
+                        Log.d("MYTAG", "onDataChange: verj");
+                    }
                 }
                 pCallback.callback(true, temp);
             }

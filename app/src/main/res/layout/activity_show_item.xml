@@ -12,14 +12,14 @@
         android:id="@+id/app_bar_show_item_activity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:fitsSystemWindows="true">
+        android:background="@drawable/shape_gradient_background"
+        android:fitsSystemWindows="true"
+        android:padding="@dimen/padding_small">
 
         <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true"
-            app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <android.support.constraint.ConstraintLayout
@@ -34,7 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.5" />
+                    app:layout_constraintGuide_percent="0.4" />
 
                 <android.support.constraint.Guideline
                     android:id="@+id/guideline_show_item_activity_vertical"
@@ -53,13 +53,22 @@
 
                     <android.support.v4.view.ViewPager
                         android:id="@+id/view_pager_show_item_activity"
-                        style="@style/show_item_margins"
                         android:layout_width="0dp"
                         android:layout_height="0dp"
                         app:layout_constraintBottom_toTopOf="@id/linear_show_item_activity_dots"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/img_show_item_activity_favorite_btn"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:layout_margin="@dimen/margin_extra_large"
+                        android:src="@drawable/ic_nav_favorite"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
+
 
                     <LinearLayout
                         android:id="@+id/linear_show_item_activity_dots"
@@ -75,116 +84,109 @@
 
                 <TextView
                     android:id="@+id/txt_show_item_activity_auction_title"
-                    style="@style/show_item_margins"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:maxLength="14"
-                    android:text="@string/temp_string"
-                    android:textSize="@dimen/text_size_large"
+                    android:background="@drawable/shape_grey_edit_text_stroke"
+                    android:hint="title"
+                    android:padding="10dp"
+                    android:textColor="@color/color_text_login_light_grey"
+                    android:textColorHint="@color/color_text_login_light_grey_transparent"
+                    android:textSize="@dimen/text_size_normal"
                     app:layout_constraintBottom_toTopOf="@id/txt_show_item_activity_auction_description"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/guideline_show_item_activity_horizontal_1" />
 
-                <ImageView
-                    android:id="@+id/img_show_item_activity_favorite_btn"
-                    style="@style/show_item_margins"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/favorite_star_border_48dp"
-                    app:layout_constraintBottom_toBottomOf="@id/txt_show_item_activity_auction_title"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@id/guideline_show_item_activity_vertical"
-                    app:layout_constraintTop_toTopOf="@id/txt_show_item_activity_auction_title" />
 
                 <TextView
                     android:id="@+id/txt_show_item_activity_auction_description"
-                    style="@style/show_item_margins"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:background="@drawable/shape_grey_edit_text_stroke"
+                    android:gravity="top"
+                    android:hint="@string/edit_text_hint_description"
+                    android:padding="10dp"
+                    android:textColor="@color/color_text_login_light_grey"
+                    android:textColorHint="@color/color_text_login_light_grey_transparent"
+                    android:textSize="@dimen/text_size_normal"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_show_item_activity_auction_title" />
+
+                <LinearLayout
+                    android:id="@+id/prices_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:ellipsize="marquee"
-                    android:lines="3"
-                    android:maxLines="3"
-                    android:text="@string/temp_string"
-                    android:textSize="@dimen/text_size_normal"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_auction_title" />
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:layout_weight="10"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_auction_description">
 
-                <TextView
-                    android:id="@+id/txt_show_item_activity_start_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:text="@string/txt_auction_start_date"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_auction_description" />
+                    <EditText
+                        android:id="@+id/txt_show_item_activity_auction_start_price"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        android:layout_weight="5"
+                        android:background="@drawable/shape_grey_edit_text_stroke"
+                        android:hint="start price"
+                        android:inputType="numberDecimal"
+                        android:padding="10dp"
+                        android:textColor="@color/color_text_login_light_grey"
+                        android:textColorHint="@color/color_text_login_light_grey_transparent"
+                        android:textSize="@dimen/text_size_normal" />
 
-                <TextView
-                    android:id="@+id/txt_show_item_activity_auction_start_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:text="@string/temp_string"
-                    android:textSize="@dimen/text_size_normal"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_start_date" />
+                    <EditText
+                        android:id="@+id/txt_show_item_activity_auction_current_price"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:background="@drawable/shape_grey_edit_text_stroke"
+                        android:hint="buy now price"
+                        android:inputType="numberDecimal"
+                        android:padding="10dp"
+                        android:textColor="@color/color_text_login_light_grey"
+                        android:textColorHint="@color/color_text_login_light_grey_transparent"
+                        android:textSize="@dimen/text_size_normal" />
 
-                <TextView
-                    android:id="@+id/txt_show_item_activity_start_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:text="@string/txt_auction_start_price"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_auction_start_date" />
 
-                <TextView
-                    android:id="@+id/txt_show_item_activity_auction_start_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:text="@string/temp_string"
-                    android:textSize="@dimen/text_size_normal"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_start_price" />
+                </LinearLayout>
 
-                <TextView
-                    android:id="@+id/txt_show_item_activity_duration"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:text="@string/txt_auction_duration"
-                    app:layout_constraintStart_toEndOf="@id/guideline_show_item_activity_vertical"
-                    app:layout_constraintTop_toTopOf="@id/txt_show_item_activity_start_date" />
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="@dimen/margin_small"
+                    android:layout_weight="10"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@+id/prices_layout">
 
-                <TextView
-                    android:id="@+id/txt_show_item_activity_auction_duration"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:text="@string/temp_string"
-                    android:textSize="@dimen/text_size_normal"
-                    app:layout_constraintStart_toEndOf="@id/guideline_show_item_activity_vertical"
-                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_duration" />
+                    <TextView
+                        android:id="@+id/txt_show_item_activity_auction_start_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        android:layout_weight="5"
+                        android:background="@drawable/shape_grey_edit_text_stroke"
+                        android:hint="start date"
+                        android:padding="10dp"
+                        android:textColor="@color/color_text_login_light_grey"
+                        android:textColorHint="@color/color_text_login_light_grey_transparent"
+                        android:textSize="@dimen/text_size_normal" />
 
-                <TextView
-                    android:id="@+id/txt_show_item_activity_current_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:text="@string/txt_auction_current_price"
-                    app:layout_constraintStart_toEndOf="@id/guideline_show_item_activity_vertical"
-                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_auction_duration" />
+                    <TextView
+                        android:id="@+id/txt_show_item_activity_auction_duration"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="5"
+                        android:background="@drawable/shape_grey_edit_text_stroke"
+                        android:hint="end date"
+                        android:padding="10dp"
+                        android:textColor="@color/color_text_login_light_grey"
+                        android:textColorHint="@color/color_text_login_light_grey_transparent"
+                        android:textSize="@dimen/text_size_normal" />
 
-                <TextView
-                    android:id="@+id/txt_show_item_activity_auction_current_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/margin_large"
-                    android:text="@string/temp_string"
-                    android:textSize="@dimen/text_size_normal"
-                    app:layout_constraintStart_toEndOf="@id/guideline_show_item_activity_vertical"
-                    app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_current_price" />
+                </LinearLayout>
+
             </android.support.constraint.ConstraintLayout>
 
         </android.support.design.widget.CollapsingToolbarLayout>
@@ -222,6 +224,7 @@
         <Button
             android:id="@+id/btn_show_item_activity_enter_message"
             style="@style/show_item_margins"
+
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />

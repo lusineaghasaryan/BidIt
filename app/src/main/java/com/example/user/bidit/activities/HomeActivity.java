@@ -175,10 +175,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             @Override
             public void onMenuClosed() {
                 if (!mDrawer.isDrawerOpen(mNavigationView)){
-                    if (!isInHome) {
-                        mHomeListFragment.loadHomePage();
-                        isInHome = true;
-                    }
+//                    if (!isInHome) {
+//                        mHomeListFragment.loadHomePage();
+//                        isInHome = true;
+//                    }
                 }
             }
         });

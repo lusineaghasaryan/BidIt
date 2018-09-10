@@ -194,7 +194,7 @@ public class ShowItemActivity extends AppCompatActivity {
     private void setFields() {
         mTxtAuctionTitle.setText(mItem.getItemTitle());
         mTxtAuctionDescription.setText(mItem.getItemDescription());
-        mTxtAuctionStartDate.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
+        mTxtAuctionStartDate.setText(new SimpleDateFormat("MM/dd HH:mm")
                 .format(mItem.getStartDate()));
         if (!ItemStatus.isItemInProgress(mItem)) {
             mTxtAuctionDuration.setText(new SimpleDateFormat("dd 'day' HH:mm")

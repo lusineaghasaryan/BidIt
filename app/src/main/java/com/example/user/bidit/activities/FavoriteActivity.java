@@ -7,12 +7,14 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.FavoriteItemsAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
+import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
 
@@ -36,21 +38,22 @@ public class FavoriteActivity extends AppCompatActivity {
     private void init() {
         RecyclerView recyclerView = findViewById(R.id.recycler_view_favorites);
         mFavoritesList = new ArrayList<>();
-        mFavoriteItemsAdapter = new FavoriteItemsAdapter(mFavoritesList, FavoriteActivity.this);
+        mFavoriteItemsAdapter = new FavoriteItemsAdapter(FavoriteActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(mFavoriteItemsAdapter);
     }
 
     private void getItemsListByFavoriteFromServer() {
-        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(FavoriteActivity.this).get(ItemsSpecificListVViewModel.class);
-        itemsSpecificListVViewModel.updateData("userId", FireBaseAuthenticationManager.getInstance().mAuth.getUid());
-
-        itemsSpecificListVViewModel.getItem().observe(FavoriteActivity.this, new Observer<Item>() {
-            @Override
-            public void onChanged(@Nullable Item pItem) {
-                mFavoritesList.add(pItem);
-                mFavoriteItemsAdapter.notifyDataSetChanged();
-            }
-        });
+     ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(FavoriteActivity.this).get(ItemsSpecificListVViewModel.class);
+     itemsSpecificListVViewModel.getMyFavoriteItemsList().observe(this, new Observer<ArrayList<Item>>() {
+         @Override
+         public void onChanged(@Nullable ArrayList<Item> items) {
+//             mFavoritesList.addAll(items);
+             mFavoriteItemsAdapter.setFavoriteItemsList(items);
+             mFavoriteItemsAdapter.notifyDataSetChanged();
+             Log.d("MYTAG", "onChangeddddd: " + mFavoritesList.size());
+         }
+     });
+     itemsSpecificListVViewModel.setMyFavoriteItems(FireBaseAuthenticationManager.getInstance().mAuth.getUid());
     }
 }

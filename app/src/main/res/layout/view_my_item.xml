@@ -8,10 +8,11 @@
     app:cardElevation="@dimen/cardview_default_elevation">
 
     <Button
+        android:layout_margin="@dimen/margin_small"
         android:id="@+id/btn_remove_my_item_view"
         android:background="@drawable/delete"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
         android:layout_gravity="right"/>
 
     <LinearLayout
