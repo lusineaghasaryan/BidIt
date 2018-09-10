@@ -152,7 +152,7 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "onChanged: " + mAllItemData.size());
+                        Log.d(TAG, "onChanged: home " + mAllItemData.size() + " " + mHotItemData.size());
                     }
                 });
         itemsListViewModel.setItems();
@@ -170,7 +170,7 @@ public class HomeListFragment extends Fragment {
             public void onChanged(@Nullable ArrayList<Item> pItems) {
                 mHotItemData.addAll(pItems);
                 mHotListAdapter.notifyDataSetChanged();
-                Log.d(TAG, "onChangedesiminch: " + pItems.size());
+                Log.d(TAG, "onChanged: Hot " + pItems.size() + " " + mHotItemData.size());
             }
         });
         hotItemsViewModel.updateData();
@@ -225,6 +225,7 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
+                        Log.d(TAG, "onChanged: 10 " + mAllItemData.size() + " " + mHotItemData.size());
                     }
                 });
     }
@@ -394,14 +395,12 @@ public class HomeListFragment extends Fragment {
         public AllListViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.view_recycler_item, parent, false);
-            Log.d(TAG, "onCreateViewHolder: ");
             return new AllListViewHolder(view);
         }
 
         @Override
         public void onBindViewHolder(@NonNull final AllListViewHolder holder, final int position) {
 //            get current item
-            Log.d(TAG, "onBindViewHolder: ");
             final Item item = mAllItemData.get(position);
 
 //            timer
