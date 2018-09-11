@@ -3,7 +3,6 @@ package com.example.user.bidit.firebase;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
@@ -18,7 +17,6 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
@@ -124,7 +122,6 @@ public class FirebaseHelper {
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
                     pCallback.callback(true, item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
             }
             @Override
@@ -183,7 +180,6 @@ public class FirebaseHelper {
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
                     pCallback.callback(true, item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
             }
             @Override
@@ -194,10 +190,12 @@ public class FirebaseHelper {
 
     public static void addFavoriteItem(Item pItem){
         mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
+        mItemsRef.child(pItem.getItemId()).child("followersCount").setValue(pItem.getFollowersCount());
      }
 
      public static void removeFavoriteItem(Item pItem){
          mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
+         mItemsRef.child(pItem.getItemId()).child("followersCount").setValue(pItem.getFollowersCount());
     }
 
     public static void removeItem(Item pItem){
@@ -243,8 +241,6 @@ public class FirebaseHelper {
                     if(item.getFollowersIds().contains(pUserId)){
                         temp.add(item);
                     }
-
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
                 pCallback.callback(true, temp);
             }

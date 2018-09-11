@@ -10,7 +10,7 @@ import com.example.user.bidit.R;
 
 public class FavoriteItemsViewHolder extends RecyclerView.ViewHolder {
     private ImageView imageView, follow;
-    private TextView title, date, duration, startPrice;
+    private TextView title, date, startPrice;
 
     public FavoriteItemsViewHolder(View itemView) {
         super(itemView);
@@ -18,12 +18,11 @@ public class FavoriteItemsViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void init(){
-        imageView = itemView.findViewById(R.id.img_recycler_item_auction_image);
-        title = itemView.findViewById(R.id.txt_recycler_item_auction_title);
-        date = itemView.findViewById(R.id.txt_recycler_item_auction_start_date);
-//        duration = itemView.findViewById(R.id.text_view_end_date_favorite_view);
-        startPrice = itemView.findViewById(R.id.txt_recycler_item_auction_start_price);
-        follow = itemView.findViewById(R.id.img_recycler_item_auction_follow);
+        imageView = itemView.findViewById(R.id.image_item_image_item_view);
+        title = itemView.findViewById(R.id.text_view_title_item_view);
+        date = itemView.findViewById(R.id.text_view_start_date_item_view);
+        startPrice = itemView.findViewById(R.id.text_view_start_price_item_view);
+        follow = itemView.findViewById(R.id.image_view_follow_item_view);
 
     }
 
@@ -37,10 +36,6 @@ public class FavoriteItemsViewHolder extends RecyclerView.ViewHolder {
 
     public TextView getDate() {
         return date;
-    }
-
-    public TextView getDuration() {
-        return duration;
     }
 
     public TextView getStartPrice() {

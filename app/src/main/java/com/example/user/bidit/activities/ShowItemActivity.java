@@ -167,9 +167,13 @@ public class ShowItemActivity extends AppCompatActivity {
         mRunnable = new Runnable() {
             @Override
             public void run() {
-                if (ItemStatus.isItemInProgress(mItem))
+                if (ItemStatus.isItemInProgress(mItem)) {
+                    mLinearLayout.setVisibility(View.VISIBLE);
                     mTxtAuctionDuration.setText(new SimpleDateFormat("HHH:mm:ss")
                             .format(mItem.getEndDate() - System.currentTimeMillis()));
+                } else {
+                    mLinearLayout.setVisibility(View.GONE);
+                }
                 mTimer.postDelayed(this, 1000);
             }
         };
@@ -207,9 +211,9 @@ public class ShowItemActivity extends AppCompatActivity {
 
         if (mIsLoggedInMode) {
             if (FollowAndUnfollow.isFollowed(mItem)) {
-                mImgFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                mImgFavorite.setImageResource(R.drawable.star_filled);
             } else {
-                mImgFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
+                mImgFavorite.setImageResource(R.drawable.star_stroke);
             }
         }
 
@@ -246,10 +250,10 @@ public class ShowItemActivity extends AppCompatActivity {
                 if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                     if (!FollowAndUnfollow.isFollowed(mItem)) {
                         FollowAndUnfollow.addToFavorite(mItem);
-                        mImgFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                        mImgFavorite.setImageResource(R.drawable.star_filled);
                     } else {
                         FollowAndUnfollow.removeFromFavorite(mItem);
-                        mImgFavorite.setImageResource(R.drawable.favorite_star_border_48dp);
+                        mImgFavorite.setImageResource(R.drawable.star_stroke);
                     }
                 } else {
                     Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
@@ -304,9 +308,9 @@ public class ShowItemActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 for (int i = 0; i < mDotsCount; i++) {
-                    mImgDots[i].setImageResource(R.drawable.view_pager_dot);
+                    mImgDots[i].setImageResource(R.drawable.stroke_point);
                 }
-                mImgDots[position].setImageResource(R.drawable.view_pager_dot_selected);
+                mImgDots[position].setImageResource(R.drawable.fill_point);
             }
 
             @Override
@@ -388,10 +392,10 @@ public class ShowItemActivity extends AppCompatActivity {
     private void createViewPagerDots() {
         for (int i = 0; i < mDotsCount; i++) {
             mImgDots[i] = new ImageView(this);
-            mImgDots[i].setImageResource(R.drawable.view_pager_dot);
+            mImgDots[i].setImageResource(R.drawable.stroke_point);
             mLinearLayoutDots.addView(mImgDots[i]);
         }
-        mImgDots[0].setImageResource(R.drawable.view_pager_dot_selected);
+        mImgDots[0].setImageResource(R.drawable.fill_point);
     }
 
     private void startTimer() {

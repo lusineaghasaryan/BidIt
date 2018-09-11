@@ -39,11 +39,11 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
         final Item currentItem = mFavoriteItemsList.get(position);
 
-        if (mUnFollowedItemsList.contains(currentItem)) {
-            holder.getFollow().setImageResource(R.drawable.favorite_star_24dp);
-        }else {
-            holder.getFollow().setImageResource(R.drawable.favorite_star_border_24dp);
-        }
+//        if (mUnFollowedItemsList.contains(currentItem)) {
+//            holder.getFollow().setImageResource(R.drawable.ic_nav_favorite);
+//        }else {
+//            holder.getFollow().setImageResource(R.drawable.ic_nav_favorite);
+//        }
 
         Glide.with(mContext)
                 .load(currentItem.getPhotoUrls().get(0))

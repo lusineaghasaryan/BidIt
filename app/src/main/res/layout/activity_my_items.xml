@@ -1,17 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     android:id="@+id/my_items_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@drawable/shape_gradient_background"
+    android:padding="@dimen/padding_small"
     tools:context="com.example.user.bidit.activities.MyItemsActivity">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar_my_items_activity"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/recycler_view_my_items"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <com.arlib.floatingsearchview.FloatingSearchView
+            android:id="@+id/search_view_my_items_activity"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:floatingSearch_backgroundColor="@color/color_text_login_light_grey"
+            app:floatingSearch_close_search_on_keyboard_dismiss="true"
+            app:floatingSearch_leftActionMode="showHamburger"
+            app:floatingSearch_searchHint="Search..."
+            app:floatingSearch_showSearchKey="false"
+            app:floatingSearch_suggestionsListAnimDuration="250" />
+
+    </android.support.v7.widget.Toolbar>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_my_items"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    </android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_my_items_activity" />
 
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
 

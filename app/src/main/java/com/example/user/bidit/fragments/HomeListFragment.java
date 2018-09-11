@@ -30,7 +30,7 @@ import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.FollowAndUnfollow;
-import com.example.user.bidit.viewModels.CategorySearchListViewModel;
+import com.example.user.bidit.viewModels.SearchListViewModel;
 import com.example.user.bidit.viewModels.HotItemsViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
@@ -43,7 +43,6 @@ import static com.example.user.bidit.utils.ItemStatus.isItemHaveBeenFinished;
 import static com.example.user.bidit.utils.ItemStatus.isItemInProgress;
 
 public class HomeListFragment extends Fragment {
-
     public static final String TAG = "asd";
 
     private RecyclerView mRecyclerViewAllList;
@@ -54,8 +53,6 @@ public class HomeListFragment extends Fragment {
 
     private List<Item> mHotItemData;
     private List<Item> mAllItemData;
-
-    private boolean isLoggedInMode;
 
     public HomeListFragment() {
         // Required empty public constructor
@@ -103,6 +100,7 @@ public class HomeListFragment extends Fragment {
     }
 
     private void setListeners() {
+//        pagination
         mRecyclerViewAllList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -135,7 +133,7 @@ public class HomeListFragment extends Fragment {
     }
 
     private void loadHomeList() {
-        ItemsListViewModel itemsListViewModel = ViewModelProviders
+        final ItemsListViewModel itemsListViewModel = ViewModelProviders
                 .of(this).get(ItemsListViewModel.class);
 
         // clear last version of list, and load new list, by category
@@ -152,7 +150,7 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "onChanged: home " + mAllItemData.size() + " " + mHotItemData.size());
+                        itemsListViewModel.getItemsList().removeObservers(HomeListFragment.this);
                     }
                 });
         itemsListViewModel.setItems();
@@ -162,7 +160,7 @@ public class HomeListFragment extends Fragment {
         setHotListVisible();
         mHotItemData.clear();
         mHotListAdapter.notifyDataSetChanged();
-        HotItemsViewModel hotItemsViewModel = ViewModelProviders.of(this).get(HotItemsViewModel.class);
+        final HotItemsViewModel hotItemsViewModel = ViewModelProviders.of(this).get(HotItemsViewModel.class);
         hotItemsViewModel.getHotItemsList().removeObservers(this);
         hotItemsViewModel.setHotItemsList(null);
         hotItemsViewModel.getHotItemsList().observe(this, new Observer<ArrayList<Item>>() {
@@ -170,7 +168,7 @@ public class HomeListFragment extends Fragment {
             public void onChanged(@Nullable ArrayList<Item> pItems) {
                 mHotItemData.addAll(pItems);
                 mHotListAdapter.notifyDataSetChanged();
-                Log.d(TAG, "onChanged: Hot " + pItems.size() + " " + mHotItemData.size());
+                hotItemsViewModel.getHotItemsList().removeObservers(HomeListFragment.this);
             }
         });
         hotItemsViewModel.updateData();
@@ -183,30 +181,31 @@ public class HomeListFragment extends Fragment {
 
     public void loadSearchList(String pQuery, final String pCategoryId) {
         clearAndSetGoneHotList();
-        CategorySearchListViewModel categorySearchListViewModel = ViewModelProviders
+        final SearchListViewModel searchListViewModel = ViewModelProviders
                 .of(getActivity())
-                .get(CategorySearchListViewModel.class);
+                .get(SearchListViewModel.class);
 
         mAllItemData.clear();
         mAllListAdapter.clearTimers();
 
-        categorySearchListViewModel.getItem().removeObservers(this);
-        categorySearchListViewModel.setItem(null);
-        categorySearchListViewModel.getItem()
+        searchListViewModel.getItem().removeObservers(this);
+        searchListViewModel.setItem(null);
+        searchListViewModel.getItem()
                 .observe(getActivity(), new Observer<Item>() {
                     @Override
                     public void onChanged(@Nullable Item pItem) {
                         mAllItemData.add(pItem);
                         mAllListAdapter.notifyDataSetChanged();
+                        searchListViewModel.getItem().removeObservers(HomeListFragment.this);
                     }
                 });
-        categorySearchListViewModel.updateData(pQuery, 1, pCategoryId);
+        searchListViewModel.updateData(pQuery, 1, pCategoryId);
         mAllListAdapter.notifyDataSetChanged();
     }
 
     public void loadNext10ItemsByCategoryFromFirebase(String pCategoryId) {
         clearAndSetGoneHotList();
-        ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
+        final ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
                 .of(this).get(ItemsSpecificListVViewModel.class);
 
         // clear last version of list, and load new list, by category
@@ -225,11 +224,10 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
-                        Log.d(TAG, "onChanged: 10 " + mAllItemData.size() + " " + mHotItemData.size());
+                        itemsSpecificListVViewModel.getItemsList().removeObservers(HomeListFragment.this);
                     }
                 });
     }
-
 
 
 
@@ -282,7 +280,7 @@ public class HomeListFragment extends Fragment {
                 imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
             } else {
                 if (FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
-                    imageFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                    imageFavorite.setImageResource(R.drawable.star_filled);
                 } else {
                     imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
                 }
@@ -309,7 +307,7 @@ public class HomeListFragment extends Fragment {
                     } else {
                         if (!FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
                             FollowAndUnfollow.addToFavorite(mHotItemData.get(position));
-                            imageFavorite.setImageResource(R.drawable.favorite_star_48dp);
+                            imageFavorite.setImageResource(R.drawable.star_filled);
                         } else {
                             FollowAndUnfollow.removeFromFavorite(mHotItemData.get(position));
                             imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
@@ -381,7 +379,7 @@ public class HomeListFragment extends Fragment {
                             if (!FollowAndUnfollow.isFollowed(mAllItemData.get(pAdapterPosition))) {
                                 FollowAndUnfollow.addToFavorite(mAllItemData.get(pAdapterPosition));
                                 Log.d(TAG, "onAllFavoriteClick: " + mAllItemData.size());
-                                pFavoriteView.setImageResource(R.drawable.favorite_star_48dp);
+                                pFavoriteView.setImageResource(R.drawable.star_filled);
                             } else {
                                 FollowAndUnfollow.removeFromFavorite(mAllItemData.get(pAdapterPosition));
                                 pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
@@ -460,7 +458,7 @@ public class HomeListFragment extends Fragment {
                     .into(pHolder.getImgAuctionImage());
             if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                 if (FollowAndUnfollow.isFollowed(pItem)) {
-                    pHolder.getImgFavorite().setImageResource(R.drawable.favorite_star_48dp);
+                    pHolder.getImgFavorite().setImageResource(R.drawable.star_filled);
                 } else {
                     pHolder.getImgFavorite().setImageResource(R.drawable.ic_nav_favorite);
                 }

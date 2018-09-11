@@ -38,7 +38,6 @@ public class FireBaseAuthenticationManager {
                             FirebaseHelper.mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Log.d("MYTAG", "onDataChange: signIn" + mAuth.getCurrentUser().getUid());
                                     mCurrentUser = User.fromDataSnapshot(dataSnapshot, mAuth.getCurrentUser().getUid());
                                     pLoginListener.onResponse(true, mCurrentUser);
                                 }
@@ -72,11 +71,10 @@ public class FireBaseAuthenticationManager {
         FirebaseHelper.mUsersRef.child(currentAuthUserID).setValue(pUser);
     }
 
-    public void setUserPhotoUrl(final String pPhotoUrl) {
+    void setUserPhotoUrl(final String pPhotoUrl) {
         String currentAuthUserID = mAuth.getCurrentUser().getUid();
         FirebaseHelper.mUsersRef.child(currentAuthUserID).child("photoUrl").setValue(pPhotoUrl);
     }
-
 
     public void signOut() {
         mCurrentUser = null;
@@ -88,20 +86,20 @@ public class FireBaseAuthenticationManager {
     }
 
     public boolean isLoggedIn() {
-        Log.d("MYTAG", "isLoggedIn: ");
         return mAuth.getCurrentUser() != null;
 
     }
 
-    public void initCurrentUser() {
+    public void initCurrentUser(final LoginListener pLoginListener) {
         FirebaseHelper.mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-
             public void onDataChange(DataSnapshot pDataSnapshot) {
-                mCurrentUser = User.fromDataSnapshot(pDataSnapshot, Objects.requireNonNull(mAuth.getCurrentUser()).getUid());
+                mCurrentUser = User.fromDataSnapshot(pDataSnapshot, mAuth.getCurrentUser().getUid());
+                pLoginListener.onResponse(true, mCurrentUser);
             }
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {
+                pLoginListener.onResponse(false, null);
             }
         });
     }

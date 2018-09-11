@@ -6,7 +6,7 @@ import android.arch.lifecycle.ViewModel;
 import com.example.user.bidit.firebase.FirebaseHelper;
 import com.example.user.bidit.models.Item;
 
-public class CategorySearchListViewModel extends ViewModel {
+public class SearchListViewModel extends ViewModel {
     private static final String SEARCH_BY_TYPE = "itemTitle";
 
     private MutableLiveData<Item> mItem = new MutableLiveData<>();
