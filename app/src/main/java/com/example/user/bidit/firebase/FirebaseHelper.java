@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.user.bidit.models.Bid;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
@@ -21,6 +22,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class FirebaseHelper {
@@ -113,6 +115,26 @@ public class FirebaseHelper {
         });
     }
 
+    public static void getBidListFromServer(String pItemId, final Callback<ArrayList<Bid>> pCallback) {
+        Query query = mItemsRef.child(pItemId).child("Bids");
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArrayList<Bid> tempList = new ArrayList<>();
+                for (DataSnapshot single : dataSnapshot.getChildren()) {
+                    Bid bid = single.getValue(Bid.class);
+                    tempList.add(bid);
+                    pCallback.callback(true, tempList);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
     public static void getItemsSpecificList(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback) {
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue);
 //        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
@@ -192,6 +214,31 @@ public class FirebaseHelper {
             public void onCancelled(DatabaseError pDatabaseError) {
             }
         });
+    }
+
+    public static void loadCurrentItemPrice(String pItemId, final Callback<Integer> pCallback) {
+        Query query = mItemsRef.child(pItemId).child("currentPrice");
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot single : dataSnapshot.getChildren()) {
+                    int currentPrice = single.getValue(Integer.class);
+                    pCallback.callback(true, currentPrice);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
+    public static void addBid(Item pItem, Bid pBid) {
+        mItemsRef.child(pItem.getItemId()).child("Bids").child(pBid.getBidId()).setValue(pBid);
+        mItemsRef.child(pItem.getItemId()).child("currentPrice").setValue(pBid.getAmount());
     }
 
     public static void addFavoriteItem(Item pItem) {

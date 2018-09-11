@@ -1,17 +1,23 @@
 package com.example.user.bidit.activities;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModel;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,13 +31,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.ImageViewPagerAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.firebase.FirebaseHelper;
+import com.example.user.bidit.models.Bid;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.FollowAndUnfollow;
 import com.example.user.bidit.utils.ItemStatus;
+import com.example.user.bidit.viewModels.BidsListViewModel;
+import com.example.user.bidit.viewModels.CurrentPriceViewModel;
 import com.example.user.bidit.widgets.ImageDialog;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -43,10 +53,11 @@ import com.google.firebase.functions.HttpsCallableResult;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ShowItemActivity extends AppCompatActivity {
-    public static final String TAG = "tag";
+    public static final String TAG = "asd";
 
     public static final String PUT_EXTRA_KEY_MODE_MY_ITEM = "my item";
     public static final String PUT_EXTRA_KEY_MODE_HISTORY = "history";
@@ -55,6 +66,8 @@ public class ShowItemActivity extends AppCompatActivity {
     //    field to now how show this activity
     private static String mMode;
     private static boolean mIsLoggedInMode;
+
+    private List<Bid> mBidsList;
 
     //    field to set scroll
     private AppBarLayout mAppBarLayout;
@@ -87,7 +100,6 @@ public class ShowItemActivity extends AppCompatActivity {
     //    show chat, messages
     private RecyclerView mRecyclerView;
     private RecyclerViewMessageAdapter mMessageAdapter;
-    private ArrayList<String> mMessages;
 
     //    bid  allowing step
     private int mBidStep;
@@ -112,6 +124,8 @@ public class ShowItemActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         init();
+        loadBidsList();
+        loadCurrentPrice();
         setLoggedInMode();
         startTimer();
         setFields();
@@ -125,7 +139,9 @@ public class ShowItemActivity extends AppCompatActivity {
 //        load item from intent
         loadExtra();
 
-//        find parent layout
+        mBidStep = (int)mItem.getStartPrice()*10/100;
+        Log.d(TAG, "init: " + String.valueOf(mBidStep));
+//        find parent layout/
         mAppBarLayout = findViewById(R.id.app_bar_show_item_activity);
 
 //        find and set viewPager
@@ -142,9 +158,7 @@ public class ShowItemActivity extends AppCompatActivity {
 
 //        find and set recyclerView and components
         mRecyclerView = findViewById(R.id.recycler_view_show_item_activity_messages);
-        mMessages = new ArrayList<>();
-        mMessages.add(String.valueOf(mItem.getCurrentPrice()));
-        mMessageAdapter = new RecyclerViewMessageAdapter(mMessages);
+        mMessageAdapter = new RecyclerViewMessageAdapter();
         setRecyclerSittings();
 
 //        enter message layout and buttons
@@ -161,18 +175,53 @@ public class ShowItemActivity extends AppCompatActivity {
         mTxtAuctionCurrentPrice = findViewById(R.id.txt_show_item_activity_auction_current_price);
         mImgFavorite = findViewById(R.id.img_show_item_activity_favorite_btn);
 
-        mBidStep = (int) mItem.getStartPrice() + (int) mItem.getStartPrice() / 10;
 
         mTimer = new Handler();
         mRunnable = new Runnable() {
             @Override
             public void run() {
-                if (ItemStatus.isItemInProgress(mItem))
+                if (ItemStatus.isItemInProgress(mItem)) {
+                    mLinearLayout.setVisibility(View.VISIBLE);
                     mTxtAuctionDuration.setText(new SimpleDateFormat("HHH:mm:ss")
                             .format(mItem.getEndDate() - System.currentTimeMillis()));
+                } else {
+                    mLinearLayout.setVisibility(View.GONE);
+                }
                 mTimer.postDelayed(this, 1000);
             }
         };
+    }
+
+    private void loadCurrentPrice() {
+        CurrentPriceViewModel currentPriceViewModel = ViewModelProviders.of(ShowItemActivity.this)
+                .get(CurrentPriceViewModel.class);
+        currentPriceViewModel.getCurrentPrice().observe(ShowItemActivity.this, new Observer<Integer>() {
+            @Override
+            public void onChanged(@Nullable Integer integer) {
+                mItem.setCurrentPrice((float)integer);
+            }
+        });
+    }
+
+    private void loadBidsList() {
+        mBidsList = new ArrayList<>();
+        BidsListViewModel bidsListViewModel = ViewModelProviders.of(ShowItemActivity.this)
+                .get(BidsListViewModel.class);
+
+        bidsListViewModel.getBidsList().observe(ShowItemActivity.this, new Observer<ArrayList<Bid>>() {
+            @Override
+            public void onChanged(@Nullable ArrayList<Bid> bids) {
+                mBidsList.clear();
+                mBidsList.addAll(bids);
+                if (mBidsList.size() > 0) {
+                    mItem.setCurrentPrice(mBidsList.get(mBidsList.size() - 1).getAmount());
+//                    mTxtAuctionCurrentPrice.setText(mBidsList.get(mBidsList.size() - 1).getAmount());
+                    mRecyclerView.smoothScrollToPosition(mBidsList.size() - 1);
+                }
+                mMessageAdapter.notifyDataSetChanged();
+            }
+        });
+        bidsListViewModel.updateList(mItem.getItemId());
     }
 
     //    load item from intent
@@ -233,7 +282,8 @@ public class ShowItemActivity extends AppCompatActivity {
 
     private void setRecyclerSittings() {
         mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, true)
+        );
         mRecyclerView.setAdapter(mMessageAdapter);
     }
 
@@ -323,32 +373,52 @@ public class ShowItemActivity extends AppCompatActivity {
 
     //    check valid bid price and send to fb
     private void enterMessageIntoChat() {
+        Log.d(TAG, "enterMessageIntoChat: ");
 
         final String currentMessage = mInputMessage.getText().toString();
-        final int currentNumber = Integer.parseInt(currentMessage);
-        makeBid(mItem.getItemId(), currentNumber, FireBaseAuthenticationManager.getInstance()
-                .mAuth.getUid())
-                .addOnCompleteListener(new OnCompleteListener<String>() {
-                    @Override
-                    public void onComplete(@NonNull Task<String> pTask) {
-                        if (pTask.isSuccessful()) {
-                            mMessages.add(currentMessage);
-                            mInputMessage.setText("");
-                            mMessageAdapter.notifyDataSetChanged();
-                            mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
-                            mRecyclerView.scrollToPosition(mMessages.size() - 1);
-                        } else {
-                            Log.v(TAG, "Failed: ");
-                            Exception e = pTask.getException();
-                            if (e instanceof FirebaseFunctionsException) {
-                                FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
-                                FirebaseFunctionsException.Code code = ffe.getCode();
-                                Object details = ffe.getDetails();
-                                Log.v(TAG, "Failed: " + details);
-                            }
-                        }
-                    }
-                });
+        if (!TextUtils.isEmpty(currentMessage)) {
+            final int currentBid = Integer.parseInt(currentMessage);
+            if (currentBid >= mBidStep + mItem.getCurrentPrice()) {
+                Bid bid = new Bid();
+                bid.setBidId(String.valueOf(System.currentTimeMillis()));
+                bid.setAmount(currentBid);
+                bid.setBidDate(System.currentTimeMillis());
+                bid.setUserId(FireBaseAuthenticationManager.getInstance().mAuth.getUid());
+                FirebaseHelper.addBid(mItem, bid);
+
+            } else {
+                Log.d(TAG, "currentBid: " + currentBid);
+                Log.d(TAG, "currentPrice: " + mItem.getCurrentPrice());
+                Log.d(TAG, "gumar: " + (mBidStep + (int) mItem.getCurrentPrice()));
+            }
+        } else {
+            Log.d(TAG, "enterMessageIntoChat: empty bid");
+        }
+
+
+//        makeBid(mItem.getItemId(), currentBid, FireBaseAuthenticationManager.getInstance()
+//                .mAuth.getUid())
+//                .addOnCompleteListener(new OnCompleteListener<String>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<String> pTask) {
+//                        if (pTask.isSuccessful()) {
+//                            mMessages.add(currentMessage);
+//                            mInputMessage.setText("");
+//                            mMessageAdapter.notifyDataSetChanged();
+//                            mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
+//                            mRecyclerView.scrollToPosition(mMessages.size() - 1);
+//                        } else {
+//                            Log.v(TAG, "Failed: ");
+//                            Exception e = pTask.getException();
+//                            if (e instanceof FirebaseFunctionsException) {
+//                                FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
+//                                FirebaseFunctionsException.Code code = ffe.getCode();
+//                                Object details = ffe.getDetails();
+//                                Log.v(TAG, "Failed: " + details);
+//                            }
+//                        }
+//                    }
+//                });
     }
 
     //    check for user logged in
@@ -400,11 +470,6 @@ public class ShowItemActivity extends AppCompatActivity {
 
     // Recycler view adapter
     private class RecyclerViewMessageAdapter extends RecyclerView.Adapter<MessageViewHolder> {
-        private ArrayList<String> mMessages;
-
-        RecyclerViewMessageAdapter(ArrayList<String> pMessages) {
-            mMessages = pMessages;
-        }
 
         @NonNull
         @Override
@@ -416,28 +481,51 @@ public class ShowItemActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
-            holder.getTxtBidItMessage().setText(mMessages.get(position));
+            Bid currentBid = mBidsList.get(position);
+
+            holder.getTxtBidDate().setText(String.valueOf(currentBid.getBidDate()));
+            holder.getTxtBidAmount().setText(String.valueOf(currentBid.getAmount()));
+            holder.getTxtUserName().setText(String.valueOf(currentBid.getUserId()));
+//            Glide.with(ShowItemActivity.this).load();
+
         }
 
         @Override
         public int getItemCount() {
-            return mMessages.size();
+            return mBidsList.size();
         }
     }
 
     // Message view holder model
     private class MessageViewHolder extends RecyclerView.ViewHolder {
 
-        private TextView mTxtBidItMessage;
+        private TextView mTxtBidAmount, mTxtUserName, mTxtBidDate;
+        private ImageView mUserAvatar;
 
         MessageViewHolder(View itemView) {
             super(itemView);
 
-            mTxtBidItMessage = itemView.findViewById(R.id.txt_message_view);
+            mTxtBidAmount = itemView.findViewById(R.id.txt_bid_amount_message_view);
+            mTxtUserName = itemView.findViewById(R.id.txt_username_message_view);
+            mTxtBidDate = itemView.findViewById(R.id.txt_bid_date_message_view);
+            mUserAvatar = itemView.findViewById(R.id.img_user_avatar_bid_message);
+
         }
 
-        public TextView getTxtBidItMessage() {
-            return mTxtBidItMessage;
+        public TextView getTxtBidAmount() {
+            return mTxtBidAmount;
+        }
+
+        public TextView getTxtUserName() {
+            return mTxtUserName;
+        }
+
+        public TextView getTxtBidDate() {
+            return mTxtBidDate;
+        }
+
+        public ImageView getUserAvatar() {
+            return mUserAvatar;
         }
     }
 

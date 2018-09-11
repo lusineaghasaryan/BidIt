@@ -29,7 +29,7 @@ import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.FollowAndUnfollow;
-import com.example.user.bidit.viewModels.CategorySearchListViewModel;
+import com.example.user.bidit.viewModels.SearchListViewModel;
 import com.example.user.bidit.viewModels.HotItemsViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
@@ -53,8 +53,6 @@ public class HomeListFragment extends Fragment {
 
     private List<Item> mHotItemData;
     private List<Item> mAllItemData;
-
-    private boolean isLoggedInMode;
 
     public HomeListFragment() {
         // Required empty public constructor
@@ -102,6 +100,7 @@ public class HomeListFragment extends Fragment {
     }
 
     private void setListeners() {
+//        pagination
         mRecyclerViewAllList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -184,25 +183,25 @@ public class HomeListFragment extends Fragment {
 
     public void loadSearchList(String pQuery, final String pCategoryId) {
         clearAndSetGoneHotList();
-        final CategorySearchListViewModel categorySearchListViewModel = ViewModelProviders
+        final SearchListViewModel searchListViewModel = ViewModelProviders
                 .of(getActivity())
-                .get(CategorySearchListViewModel.class);
+                .get(SearchListViewModel.class);
 
         mAllItemData.clear();
         mAllListAdapter.clearTimers();
 
-        categorySearchListViewModel.getItem().removeObservers(this);
-        categorySearchListViewModel.setItem(null);
-        categorySearchListViewModel.getItem()
+        searchListViewModel.getItem().removeObservers(this);
+        searchListViewModel.setItem(null);
+        searchListViewModel.getItem()
                 .observe(getActivity(), new Observer<Item>() {
                     @Override
                     public void onChanged(@Nullable Item pItem) {
                         mAllItemData.add(pItem);
                         mAllListAdapter.notifyDataSetChanged();
-                        categorySearchListViewModel.getItem().removeObservers(HomeListFragment.this);
+                        searchListViewModel.getItem().removeObservers(HomeListFragment.this);
                     }
                 });
-        categorySearchListViewModel.updateData(pQuery, 1, pCategoryId);
+        searchListViewModel.updateData(pQuery, 1, pCategoryId);
         mAllListAdapter.notifyDataSetChanged();
     }
 
@@ -314,7 +313,6 @@ public class HomeListFragment extends Fragment {
                             FollowAndUnfollow.removeFromFavorite(mHotItemData.get(position));
                             imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
                         }
-                        loadAllList();
                     }
                 }
             });
@@ -387,7 +385,6 @@ public class HomeListFragment extends Fragment {
                                 FollowAndUnfollow.removeFromFavorite(mAllItemData.get(pAdapterPosition));
                                 pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
                             }
-                            loadHotList();
                         }
                     }
                 };

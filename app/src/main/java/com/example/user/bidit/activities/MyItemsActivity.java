@@ -6,16 +6,19 @@ import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.MyItemsAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.viewModels.SearchListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
 
 import java.util.ArrayList;
@@ -73,6 +76,25 @@ public class MyItemsActivity extends BaseActivity {
             }
         };
         mMyItemsAdapter.setIOnItemClick(mIOnItemClick);
+
+//        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+//            @Override
+//            public void onSearchTextChanged(String oldQuery, String newQuery) {
+//                final SearchListViewModel searchListViewModel = ViewModelProviders
+//                        .of(MyItemsActivity.this)
+//                        .get(SearchListViewModel.class);
+//
+//                searchListViewModel.getItem().removeObservers(MyItemsActivity.this);
+//                searchListViewModel.setItem(null);
+//                searchListViewModel.getItem()
+//                        .observe(MyItemsActivity.this, new Observer<Item>() {
+//                            @Override
+//                            public void onChanged(@Nullable Item pItem) {
+//                                searchListViewModel.getItem().removeObservers(MyItemsActivity.this);
+//                            }
+//                        });
+//            }
+//        });
     }
 
     private void getItemsListByUserFromServer() {
