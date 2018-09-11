@@ -74,7 +74,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
         init();
         setNavigationDrawer();
         loadCategoryListFromFirebase();
@@ -213,6 +212,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 startActivity(new Intent(HomeActivity.this, MyAccountActivity.class));
                 break;
             }
+            case R.id.nav_item_add: {
+                Intent addItemIntent = new Intent(HomeActivity.this, AddItemActivity.class);
+                startActivity(addItemIntent);
+                break;
+            }
             case R.id.nav_item_balance: {
                 break;
             }
@@ -240,8 +244,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 break;
             }
             case R.id.nav_item_about_us:
-                Intent addItemIntent = new Intent(HomeActivity.this, AddItemActivity.class);
-                startActivity(addItemIntent);
+                break;
         }
         mDrawer.closeDrawer(GravityCompat.START);
         return true;

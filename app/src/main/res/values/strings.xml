@@ -25,6 +25,7 @@
     <string name="nav_my_items">My Items</string>
     <string name="nav_log_out">Log Out</string>
     <string name="facebook_app_id">507036556406939</string>
+    <string name="nav_add_item">Add Item</string>
     <string name="fb_login_protocol_scheme">fb507036556406939</string>
 
     <string name="permission_rationale">"Storage permission is needed for fetching images from Gallery."</string>

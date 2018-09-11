@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_height"
     android:layout_margin="@dimen/margin_small"
-    app:cardBackgroundColor="@color/color_hint_login_dark_grey"
+    app:cardBackgroundColor="#344955"
     app:cardCornerRadius="@dimen/item_corner_radius"
     app:cardElevation="@dimen/cardview_default_elevation">
 
@@ -73,7 +73,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:textColor="@color/item_price_color_dark_grey"
+                        android:textColor="#f9aa33"
                         android:textSize="@dimen/text_size_normal" />
 
                     <TextView
@@ -142,6 +142,7 @@
                 android:id="@+id/img_recycler_item_auction_follow"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="5dp"
                 android:gravity="center"
                 android:src="@drawable/ic_nav_favorite" />
         </LinearLayout>

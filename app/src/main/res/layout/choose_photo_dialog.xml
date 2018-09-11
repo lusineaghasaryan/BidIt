@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/shape_light_grey_stroke"
+            android:background="@drawable/shape_yelloy_stroke"
             android:text="@string/text_cancel"
             android:textColor="@color/color_text_login_light_grey" />
     </LinearLayout>

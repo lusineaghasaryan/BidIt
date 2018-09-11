@@ -172,6 +172,7 @@ public class AddItemActivity extends AppCompatActivity {
         mItemSelectedImagesList = new ArrayList<>();
         mItemImagesListStorage = new ArrayList<>();
 
+
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
         }

@@ -5,45 +5,49 @@
 
     <group android:id="@+id/menu_group_signed">
         <item
-            android:icon="@drawable/ic_nav_profile"
             android:id="@+id/nav_item_my_account"
+            android:icon="@drawable/ic_nav_profile"
             android:title="@string/nav_my_account" />
         <item
+            android:id="@+id/nav_item_add"
+            android:icon="@drawable/ic_nav_add"
+            android:title="@string/nav_add_item" />
+        <item
             android:id="@+id/nav_item_balance"
-            android:title="@string/nav_balance"
-            android:icon="@drawable/ic_nav_balance"/>
+            android:icon="@drawable/ic_nav_balance"
+            android:title="@string/nav_balance" />
         <item
             android:id="@+id/nav_item_history"
-            android:title="@string/nav_history"
-            android:icon="@drawable/ic_nav_history"/>
+            android:icon="@drawable/ic_nav_history"
+            android:title="@string/nav_history" />
         <item
             android:id="@+id/nav_item_favorite"
-            android:title="@string/nav_favorites"
-            android:icon="@drawable/ic_nav_favorite"/>
+            android:icon="@drawable/ic_nav_favorite"
+            android:title="@string/nav_favorites" />
         <item
             android:id="@+id/nav_item_my_items"
-            android:title="@string/nav_my_items"
-            android:icon="@drawable/ic_nav_my_items"/>
+            android:icon="@drawable/ic_nav_my_items"
+            android:title="@string/nav_my_items" />
         <item
             android:id="@+id/nav_item_log_out"
-            android:title="@string/nav_log_out"
-            android:icon="@drawable/ic_nav_log_out"/>
+            android:icon="@drawable/ic_nav_log_out"
+            android:title="@string/nav_log_out" />
 
     </group>
 
     <group android:id="@+id/menu_group_seen_always">
         <item
             android:id="@+id/nav_item_log_in"
-            android:title="@string/nav_login"
-            android:icon="@drawable/ic_nav_log_in"/>
+            android:icon="@drawable/ic_nav_log_in"
+            android:title="@string/nav_login" />
         <item
             android:id="@+id/nav_item_help"
-            android:title="@string/nav_help"
-            android:icon="@drawable/ic_nav_help"/>
+            android:icon="@drawable/ic_nav_help"
+            android:title="@string/nav_help" />
         <item
             android:id="@+id/nav_item_about_us"
-            android:title="@string/nav_about_us"
-            android:icon="@drawable/ic_nav_about_us"/>
+            android:icon="@drawable/ic_nav_about_us"
+            android:title="@string/nav_about_us" />
     </group>
 
 

@@ -5,7 +5,7 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#313335"
+    android:background="@color/page_background"
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
@@ -15,9 +15,11 @@
         android:layout_height="match_parent" />
 
     <android.support.design.widget.CoordinatorLayout
+        android:paddingTop="20dp"
         android:id="@+id/coordinator_home_activity"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/page_background"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -25,7 +27,7 @@
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/shape_gradient_background"
+            android:background="@color/page_background"
             android:fitsSystemWindows="true"
             android:padding="@dimen/margin_small">
 
@@ -53,6 +55,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
+                android:background="@color/page_background"
                 app:contentScrim="?attr/colorPrimary"
                 app:layout_scrollFlags="scroll|enterAlways">
 
@@ -60,6 +63,7 @@
                     android:id="@+id/recycler_view_home_activity_categories"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:background="@color/page_background"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -71,12 +75,14 @@
 
         <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
+            android:background="@color/page_background"
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <FrameLayout
                 android:id="@+id/home_fragment_container"
                 android:layout_width="match_parent"
+
                 android:layout_height="match_parent" />
 
         </android.support.v4.widget.NestedScrollView>
@@ -88,11 +94,11 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/item_price_color_dark_grey"
+        android:background="@color/page_background"
         android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
         app:itemIconTint="@color/light_blue"
         app:itemTextColor="@color/color_text_login_light_grey"
-        app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/activity_main_drawer" />
 
 </android.support.v4.widget.DrawerLayout>

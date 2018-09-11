@@ -34,7 +34,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.4" />
+                    app:layout_constraintGuide_percent="0.5" />
 
                 <android.support.constraint.Guideline
                     android:id="@+id/guideline_show_item_activity_vertical"
@@ -88,7 +88,7 @@
                     android:layout_height="wrap_content"
                     android:background="@drawable/shape_grey_edit_text_stroke"
                     android:hint="title"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:textColor="@color/color_text_login_light_grey"
                     android:textColorHint="@color/color_text_login_light_grey_transparent"
                     android:textSize="@dimen/text_size_normal"
@@ -100,12 +100,12 @@
                 <TextView
                     android:id="@+id/txt_show_item_activity_auction_description"
                     android:layout_width="match_parent"
-                    android:layout_height="100dp"
+                    android:layout_height="80dp"
                     android:layout_marginTop="@dimen/margin_small"
                     android:background="@drawable/shape_grey_edit_text_stroke"
                     android:gravity="top"
                     android:hint="@string/edit_text_hint_description"
-                    android:padding="10dp"
+                    android:padding="5dp"
                     android:textColor="@color/color_text_login_light_grey"
                     android:textColorHint="@color/color_text_login_light_grey_transparent"
                     android:textSize="@dimen/text_size_normal"
@@ -116,12 +116,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
-                    android:layout_marginTop="@dimen/margin_small"
+                    android:layout_marginTop="@dimen/margin_normal"
                     android:layout_weight="10"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_auction_description">
 
-                    <EditText
+                    <TextView
                         android:id="@+id/txt_show_item_activity_auction_start_price"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -130,12 +130,12 @@
                         android:background="@drawable/shape_grey_edit_text_stroke"
                         android:hint="start price"
                         android:inputType="numberDecimal"
-                        android:padding="10dp"
+                        android:padding="5dp"
                         android:textColor="@color/color_text_login_light_grey"
                         android:textColorHint="@color/color_text_login_light_grey_transparent"
                         android:textSize="@dimen/text_size_normal" />
 
-                    <EditText
+                    <TextView
                         android:id="@+id/txt_show_item_activity_auction_current_price"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
@@ -143,7 +143,7 @@
                         android:background="@drawable/shape_grey_edit_text_stroke"
                         android:hint="buy now price"
                         android:inputType="numberDecimal"
-                        android:padding="10dp"
+                        android:padding="5dp"
                         android:textColor="@color/color_text_login_light_grey"
                         android:textColorHint="@color/color_text_login_light_grey_transparent"
                         android:textSize="@dimen/text_size_normal" />
@@ -168,7 +168,7 @@
                         android:layout_weight="5"
                         android:background="@drawable/shape_grey_edit_text_stroke"
                         android:hint="start date"
-                        android:padding="10dp"
+                        android:padding="5dp"
                         android:textColor="@color/color_text_login_light_grey"
                         android:textColorHint="@color/color_text_login_light_grey_transparent"
                         android:textSize="@dimen/text_size_normal" />
@@ -180,7 +180,7 @@
                         android:layout_weight="5"
                         android:background="@drawable/shape_grey_edit_text_stroke"
                         android:hint="end date"
-                        android:padding="10dp"
+                        android:padding="5dp"
                         android:textColor="@color/color_text_login_light_grey"
                         android:textColorHint="@color/color_text_login_light_grey_transparent"
                         android:textSize="@dimen/text_size_normal" />
@@ -199,6 +199,7 @@
         android:layout_height="match_parent"
         android:paddingBottom="@dimen/padding_bottom_message_recycler"
         android:paddingEnd="@dimen/padding_normal"
+        android:background="@color/item_background"
         android:paddingStart="@dimen/padding_normal"
         android:paddingTop="@dimen/padding_normal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
@@ -207,7 +208,7 @@
         android:id="@+id/linear_show_item_activity_enter_message_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
+        android:background="@color/item_background"
         android:weightSum="5"
         app:layout_anchor="@id/recycler_view_show_item_activity_messages"
         app:layout_anchorGravity="bottom|right|end">
@@ -224,7 +225,6 @@
         <Button
             android:id="@+id/btn_show_item_activity_enter_message"
             style="@style/show_item_margins"
-
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1" />

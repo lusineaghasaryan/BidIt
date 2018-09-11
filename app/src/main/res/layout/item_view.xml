@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/item_height"
     android:layout_margin="@dimen/margin_small"
-    app:cardBackgroundColor="@color/color_hint_login_dark_grey"
+    app:cardBackgroundColor="@color/item_background"
     app:cardCornerRadius="@dimen/item_corner_radius">
 
     <LinearLayout
@@ -23,6 +23,7 @@
             <ImageView
                 android:id="@+id/image_item_image_item_view"
                 android:layout_width="match_parent"
+                android:layout_margin="@dimen/margin_small"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
                 android:src="@mipmap/ic_launcher" />
@@ -47,6 +48,7 @@
                     android:id="@+id/text_view_title_item_view"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/margin_normal"
                     android:textColor="@color/color_text_login_light_grey"
                     android:textSize="@dimen/text_size_normal" />
 
@@ -72,7 +74,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:textColor="@color/item_price_color_dark_grey"
+                        android:textColor="@color/colorAccent"
                         android:textSize="@dimen/text_size_normal" />
 
                     <TextView
@@ -105,7 +107,7 @@
                         android:layout_height="0dp"
                         android:layout_weight="5"
                         android:gravity="center"
-                        android:textColor="@color/item_price_color_dark_grey"
+                        android:textColor="@color/color_text_login_light_grey"
                         android:textSize="@dimen/text_size_normal" />
 
                     <TextView
@@ -141,6 +143,7 @@
                 android:id="@+id/image_view_follow_item_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="@dimen/margin_small"
                 android:gravity="center"
                 android:src="@drawable/ic_nav_favorite" />
         </LinearLayout>

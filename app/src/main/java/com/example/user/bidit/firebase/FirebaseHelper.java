@@ -124,7 +124,6 @@ public class FirebaseHelper {
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
                     pCallback.callback(true, item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
             }
 
@@ -186,7 +185,6 @@ public class FirebaseHelper {
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
                     pCallback.callback(true, item);
-                    Log.v("LLLL", "PPPPPP = " + item.getItemTitle());
                 }
             }
 
@@ -198,10 +196,13 @@ public class FirebaseHelper {
 
     public static void addFavoriteItem(Item pItem) {
         mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
+        mItemsRef.child(pItem.getItemId()).child("followersCount").setValue(pItem.getFollowersCount());
     }
 
     public static void removeFavoriteItem(Item pItem) {
+
         mItemsRef.child(pItem.getItemId()).child("followersIds").setValue(pItem.getFollowersIds());
+        mItemsRef.child(pItem.getItemId()).child("followersCount").setValue(pItem.getFollowersCount());
     }
 
     public static void removeItem(Item pItem) {
@@ -236,7 +237,7 @@ public class FirebaseHelper {
     }
 
     public static void getMyFavoriteList(final String pUserId, final Callback<ArrayList<Item>> pCallback) {
-        Query query = mItemsRef.orderByChild("followersCount");
+        Query query = mItemsRef.orderByChild("followersIds");
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
@@ -244,15 +245,10 @@ public class FirebaseHelper {
                 ArrayList<Item> temp = new ArrayList<>();
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
-                    if (item.getFollowersCount() > 0) {
+                    if (item.getFollowersIds() != null) {
                         if (item.getFollowersIds().contains(pUserId)) {
-                            Log.d("MYTAG", "FireBase onDataChange: ");
                             temp.add(item);
                         }
-
-                        Log.d("MYTAG", "PPPPPP = " + item.getItemTitle());
-                    } else {
-                        Log.d("MYTAG", "onDataChange: verj");
                     }
                 }
                 pCallback.callback(true, temp);

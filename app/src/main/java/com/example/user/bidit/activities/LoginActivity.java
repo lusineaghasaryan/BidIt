@@ -1,5 +1,7 @@
 package com.example.user.bidit.activities;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -27,6 +30,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 //        Window w = getWindow();
 //        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
@@ -67,6 +72,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 });
     }
 
+    public static void hideKeyboard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+        //Find the currently focused view, so we can grab the correct window token from it.
+        View view = activity.getCurrentFocus();
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = new View(activity);
+        }
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -78,16 +94,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
                 break;
             }
-            case R.id.edit_text_email_login_activity: {
-                mEditTextEmail.setFocusableInTouchMode(true);
-                mEditTextPassword.setFocusableInTouchMode(true);
-                break;
-            }
-            case R.id.edit_text_password_login_activity: {
-                mEditTextPassword.setFocusableInTouchMode(true);
-                mEditTextEmail.setFocusableInTouchMode(true);
-                break;
-            }
+//            case R.id.edit_text_email_login_activity: {
+//                mEditTextEmail.setFocusableInTouchMode(true);
+//                mEditTextPassword.setFocusableInTouchMode(true);
+//                break;
+//            }
+//            case R.id.edit_text_password_login_activity: {
+//                mEditTextPassword.setFocusableInTouchMode(true);
+//                mEditTextEmail.setFocusableInTouchMode(true);
+//                break;
+//            }
         }
     }
 }
