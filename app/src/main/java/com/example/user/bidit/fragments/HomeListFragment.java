@@ -42,7 +42,6 @@ import static com.example.user.bidit.utils.ItemStatus.isItemHaveBeenFinished;
 import static com.example.user.bidit.utils.ItemStatus.isItemInProgress;
 
 public class HomeListFragment extends Fragment {
-
     public static final String TAG = "asd";
 
     private RecyclerView mRecyclerViewAllList;
@@ -150,7 +149,6 @@ public class HomeListFragment extends Fragment {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
                         itemsListViewModel.getItemsList().removeObservers(HomeListFragment.this);
-                        Log.d(TAG, "onChangedall: " + mAllItemData.size());
                     }
                 });
         itemsListViewModel.setItems();
@@ -169,7 +167,6 @@ public class HomeListFragment extends Fragment {
                         mHotItemData.addAll(pItems);
                         mHotListAdapter.notifyDataSetChanged();
                         hotItemsViewModel.getHotItemsList().removeObservers(HomeListFragment.this);
-                        Log.d(TAG, "onChangedesiminch: " + pItems.size());
                     }
                 });
 
@@ -368,7 +365,6 @@ public class HomeListFragment extends Fragment {
                         Intent intent = new Intent(getActivity(), ShowItemActivity.class);
                         intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT, mAllItemData.get(pAdapterPosition));
                         getActivity().startActivity(intent);
-                        Log.d(TAG, "onAllItemClick: ");
                     }
 
                     @Override
@@ -379,7 +375,6 @@ public class HomeListFragment extends Fragment {
                         } else {
                             if (!FollowAndUnfollow.isFollowed(mAllItemData.get(pAdapterPosition))) {
                                 FollowAndUnfollow.addToFavorite(mAllItemData.get(pAdapterPosition));
-                                Log.d(TAG, "onAllFavoriteClick: " + mAllItemData.size());
                                 pFavoriteView.setImageResource(R.drawable.star_filled);
                             } else {
                                 FollowAndUnfollow.removeFromFavorite(mAllItemData.get(pAdapterPosition));
@@ -408,22 +403,17 @@ public class HomeListFragment extends Fragment {
                 @Override
                 public void run() {
                     long time = item.getEndDate() - System.currentTimeMillis();
-
                     if (isItemInProgress(item)) {
                         holder.getTxtAuctionStartDate().setText(new SimpleDateFormat("HH:mm:ss")
                                 .format(time));
-//                        holder.getTxtAuctionStartDate().setTextColor(Color.RED);
                     } else if (isItemHaveBeenFinished(item)) {
                         holder.getTxtAuctionStartDate().setText("finished");
-//                        holder.getTxtAuctionStartDate().setTextColor(Color.BLACK);
                         handler.removeCallbacksAndMessages(null);
                         // TODO auction finished (item status)
                     } else {
                         holder.getTxtAuctionStartDate().setText(new SimpleDateFormat("MM/dd - HH:mm")
                                 .format(item.getStartDate()));
-//                        holder.getTxtAuctionStartDate().setTextColor(Color.GRAY);
                     }
-
                     handler.postDelayed(this, 1000);
                 }
             };

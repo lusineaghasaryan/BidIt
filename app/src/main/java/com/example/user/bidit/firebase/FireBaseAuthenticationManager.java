@@ -14,6 +14,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
+import static com.example.user.bidit.firebase.FirebaseHelper.mUsersRef;
+
 public class FireBaseAuthenticationManager {
     private static FireBaseAuthenticationManager fireBaseAuthenticationManagerInstance;
     public FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -35,7 +37,7 @@ public class FireBaseAuthenticationManager {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            FirebaseHelper.mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     mCurrentUser = User.fromDataSnapshot(dataSnapshot, mAuth.getCurrentUser().getUid());
@@ -68,12 +70,12 @@ public class FireBaseAuthenticationManager {
 
     public void updateUserInServer(final User pUser) {
         String currentAuthUserID = mAuth.getCurrentUser().getUid();
-        FirebaseHelper.mUsersRef.child(currentAuthUserID).setValue(pUser);
+        mUsersRef.child(currentAuthUserID).setValue(pUser);
     }
 
     void setUserPhotoUrl(final String pPhotoUrl) {
         String currentAuthUserID = mAuth.getCurrentUser().getUid();
-        FirebaseHelper.mUsersRef.child(currentAuthUserID).child("photoUrl").setValue(pPhotoUrl);
+        mUsersRef.child(currentAuthUserID).child("photoUrl").setValue(pPhotoUrl);
     }
 
     public void signOut() {
@@ -91,7 +93,7 @@ public class FireBaseAuthenticationManager {
     }
 
     public void initCurrentUser(final LoginListener pLoginListener) {
-        FirebaseHelper.mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot pDataSnapshot) {
                 mCurrentUser = User.fromDataSnapshot(pDataSnapshot, mAuth.getCurrentUser().getUid());
@@ -100,6 +102,22 @@ public class FireBaseAuthenticationManager {
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {
                 pLoginListener.onResponse(false, null);
+            }
+        });
+    }
+
+    public static void getUserById(final String pUId, final LoginListener pLoginListener) {
+        mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot pDataSnapshot) {
+                User user = User.fromDataSnapshot(pDataSnapshot, pUId);
+                Log.d("asd", "onDataChange: " + user.getName());
+                pLoginListener.onResponse(true, user);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError pDatabaseError) {
+
             }
         });
     }
