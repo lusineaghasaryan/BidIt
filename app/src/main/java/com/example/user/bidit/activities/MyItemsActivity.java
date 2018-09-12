@@ -1,14 +1,18 @@
 package com.example.user.bidit.activities;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
@@ -76,30 +80,11 @@ public class MyItemsActivity extends BaseActivity {
             }
         };
         mMyItemsAdapter.setIOnItemClick(mIOnItemClick);
-
-//        mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
-//            @Override
-//            public void onSearchTextChanged(String oldQuery, String newQuery) {
-//                final SearchListViewModel searchListViewModel = ViewModelProviders
-//                        .of(MyItemsActivity.this)
-//                        .get(SearchListViewModel.class);
-//
-//                searchListViewModel.getItem().removeObservers(MyItemsActivity.this);
-//                searchListViewModel.setItem(null);
-//                searchListViewModel.getItem()
-//                        .observe(MyItemsActivity.this, new Observer<Item>() {
-//                            @Override
-//                            public void onChanged(@Nullable Item pItem) {
-//                                searchListViewModel.getItem().removeObservers(MyItemsActivity.this);
-//                            }
-//                        });
-//            }
-//        });
     }
 
     private void getItemsListByUserFromServer() {
         ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders.of(MyItemsActivity.this).get(ItemsSpecificListVViewModel.class);
-        //
+
         itemsSpecificListVViewModel.getItem().removeObservers(MyItemsActivity.this);
         itemsSpecificListVViewModel.updateData("userId", FireBaseAuthenticationManager.getInstance().mAuth.getUid());
 

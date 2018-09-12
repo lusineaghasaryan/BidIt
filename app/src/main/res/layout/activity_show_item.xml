@@ -86,12 +86,12 @@
                     android:id="@+id/txt_show_item_activity_auction_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@drawable/shape_grey_edit_text_stroke"
+                    android:background="@drawable/shape_grey_transparent_stroke"
                     android:hint="title"
-                    android:padding="5dp"
+                    android:padding="@dimen/padding_small"
                     android:textColor="@color/color_text_login_light_grey"
                     android:textColorHint="@color/color_text_login_light_grey_transparent"
-                    android:textSize="@dimen/text_size_normal"
+                    android:textSize="@dimen/text_size_small"
                     app:layout_constraintBottom_toTopOf="@id/txt_show_item_activity_auction_description"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/guideline_show_item_activity_horizontal_1" />
@@ -102,13 +102,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="80dp"
                     android:layout_marginTop="@dimen/margin_small"
-                    android:background="@drawable/shape_grey_edit_text_stroke"
+                    android:background="@drawable/shape_grey_transparent_stroke"
                     android:gravity="top"
                     android:hint="@string/edit_text_hint_description"
-                    android:padding="5dp"
+                    android:padding="@dimen/padding_small"
                     android:textColor="@color/color_text_login_light_grey"
                     android:textColorHint="@color/color_text_login_light_grey_transparent"
-                    android:textSize="@dimen/text_size_normal"
+                    android:textSize="@dimen/text_size_small"
                     app:layout_constraintTop_toBottomOf="@+id/txt_show_item_activity_auction_title" />
 
                 <LinearLayout
@@ -116,7 +116,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
-                    android:layout_marginTop="@dimen/margin_normal"
+                    android:layout_marginTop="@dimen/margin_small"
                     android:layout_weight="10"
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/txt_show_item_activity_auction_description">
@@ -127,26 +127,26 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="15dp"
                         android:layout_weight="5"
-                        android:background="@drawable/shape_grey_edit_text_stroke"
+                        android:background="@drawable/shape_grey_transparent_stroke"
                         android:hint="start price"
                         android:inputType="numberDecimal"
-                        android:padding="5dp"
+                        android:padding="@dimen/padding_small"
                         android:textColor="@color/color_text_login_light_grey"
                         android:textColorHint="@color/color_text_login_light_grey_transparent"
-                        android:textSize="@dimen/text_size_normal" />
+                        android:textSize="@dimen/text_size_small"/>
 
                     <TextView
                         android:id="@+id/txt_show_item_activity_auction_current_price"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="5"
-                        android:background="@drawable/shape_grey_edit_text_stroke"
+                        android:background="@drawable/shape_grey_transparent_stroke"
                         android:hint="buy now price"
                         android:inputType="numberDecimal"
-                        android:padding="5dp"
+                        android:padding="@dimen/padding_small"
                         android:textColor="@color/color_text_login_light_grey"
                         android:textColorHint="@color/color_text_login_light_grey_transparent"
-                        android:textSize="@dimen/text_size_normal" />
+                        android:textSize="@dimen/text_size_small" />
 
 
                 </LinearLayout>
@@ -166,24 +166,24 @@
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="15dp"
                         android:layout_weight="5"
-                        android:background="@drawable/shape_grey_edit_text_stroke"
+                        android:background="@drawable/shape_grey_transparent_stroke"
                         android:hint="start date"
-                        android:padding="5dp"
+                        android:padding="@dimen/padding_small"
                         android:textColor="@color/color_text_login_light_grey"
                         android:textColorHint="@color/color_text_login_light_grey_transparent"
-                        android:textSize="@dimen/text_size_normal" />
+                        android:textSize="@dimen/text_size_small" />
 
                     <TextView
                         android:id="@+id/txt_show_item_activity_auction_duration"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="5"
-                        android:background="@drawable/shape_grey_edit_text_stroke"
+                        android:background="@drawable/shape_grey_transparent_stroke"
                         android:hint="end date"
-                        android:padding="5dp"
+                        android:padding="@dimen/padding_small"
                         android:textColor="@color/color_text_login_light_grey"
                         android:textColorHint="@color/color_text_login_light_grey_transparent"
-                        android:textSize="@dimen/text_size_normal" />
+                        android:textSize="@dimen/text_size_small" />
 
                 </LinearLayout>
 
@@ -197,9 +197,9 @@
         android:id="@+id/recycler_view_show_item_activity_messages"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/item_background"
         android:paddingBottom="@dimen/padding_bottom_message_recycler"
         android:paddingEnd="@dimen/padding_normal"
-        android:background="@color/item_background"
         android:paddingStart="@dimen/padding_normal"
         android:paddingTop="@dimen/padding_normal"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
@@ -210,24 +210,32 @@
         android:layout_height="wrap_content"
         android:background="@color/item_background"
         android:weightSum="5"
+        android:layout_margin="5dp"
         app:layout_anchor="@id/recycler_view_show_item_activity_messages"
         app:layout_anchorGravity="bottom|right|end">
 
-        <android.support.design.widget.TextInputEditText
+        <EditText
             android:id="@+id/input_show_item_activity_message"
             style="@style/show_item_margins"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="4"
+            android:background="@color/item_background"
+            android:textColor="@color/colorAccent"
             android:hint="@string/show_item_activity_bit_hint"
             android:inputType="numberDecimal" />
 
         <Button
             android:id="@+id/btn_show_item_activity_enter_message"
-            style="@style/show_item_margins"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginEnd="@dimen/margin_small"
+            android:layout_marginStart="@dimen/margin_small"
+            android:background="@drawable/shape_yelloy_stroke"
+            android:text="Bid"
+            android:textAllCaps="false"
+            android:textColor="@color/color_text_login_light_grey_transparent" />
     </LinearLayout>
 </android.support.design.widget.CoordinatorLayout>
 

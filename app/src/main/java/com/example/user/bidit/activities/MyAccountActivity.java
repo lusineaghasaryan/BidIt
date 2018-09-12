@@ -138,14 +138,13 @@ public class MyAccountActivity extends AppCompatActivity {
     private void init() {
         mUser = FireBaseAuthenticationManager.getInstance().getCurrentUser();
         mEditTextName = findViewById(R.id.edit_text_account_name);
-        mEditTextName.clearFocus();
         mEditTextSurname = findViewById(R.id.edit_text_account_surname);
         mEditTextPhone = findViewById(R.id.edit_text_account_phone_number);
         mEditTextPassportSeries = findViewById(R.id.edit_text_account_passport_series);
         changeButton = findViewById(R.id.btn_change_info_account_activity);
         mAccountImage = findViewById(R.id.account_image_my_account_activity);
+        changeButton.setEnabled(false);
     }
-
 
     private String firstLetterToUpCase(String pName) {
         return pName.substring(0, 1).toUpperCase() + pName.substring(1).toLowerCase();

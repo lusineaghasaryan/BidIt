@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:cardBackgroundColor="@color/color_hint_login_dark_grey"
+    app:cardBackgroundColor="@color/item_background"
     app:cardCornerRadius="10dp"
     app:cardElevation="@dimen/cardview_default_elevation">
 
@@ -59,6 +59,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
+                    android:textColor="@color/colorAccent"
                     android:maxLines="1"
                     android:textSize="@dimen/text_size_normal" />
 
@@ -75,8 +76,8 @@
 
     <ImageView
         android:id="@+id/img_hot_item_view_favorite"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_gravity="end"
         android:src="@drawable/ic_nav_favorite" />
 

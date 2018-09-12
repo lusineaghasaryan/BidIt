@@ -27,6 +27,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -105,7 +106,7 @@ public class ShowItemActivity extends AppCompatActivity {
     private int mBidStep;
 
     private LinearLayout mLinearLayout;
-    private TextInputEditText mInputMessage;
+    private EditText mInputMessage;
     private Button mBtnEnterMessage;
 
     //    data (temp)
@@ -354,9 +355,9 @@ public class ShowItemActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 for (int i = 0; i < mDotsCount; i++) {
-                    mImgDots[i].setImageResource(R.drawable.stroke_point);
+                    mImgDots[i].setImageResource(R.drawable.point_small);
                 }
-                mImgDots[position].setImageResource(R.drawable.fill_point);
+                    mImgDots[position].setImageResource(R.drawable.point_stroke);
             }
 
             @Override
@@ -458,10 +459,10 @@ public class ShowItemActivity extends AppCompatActivity {
     private void createViewPagerDots() {
         for (int i = 0; i < mDotsCount; i++) {
             mImgDots[i] = new ImageView(this);
-            mImgDots[i].setImageResource(R.drawable.stroke_point);
+            mImgDots[i].setImageResource(R.drawable.point_small);
             mLinearLayoutDots.addView(mImgDots[i]);
         }
-        mImgDots[0].setImageResource(R.drawable.fill_point);
+        mImgDots[0].setImageResource(R.drawable.point_stroke);
     }
 
     private void startTimer() {

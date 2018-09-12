@@ -1,7 +1,9 @@
 package com.example.user.bidit.adapters;
 
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -61,9 +63,8 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
         holder.getRemoveItem().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseHelper.removeItem(currentItem);
-                mMyItemList.remove(currentItem);
-                mMyItemList.clear();
+                AlertDialog delete = deleteAlert(currentItem);
+                delete.show();
             }
         });
 
@@ -84,6 +85,27 @@ public class MyItemsAdapter extends RecyclerView.Adapter<MyItemsViewHolder> {
     public void setIOnItemClick(IOnItemClick pIOnItemClick) {
         mIOnItemClick = pIOnItemClick;
     }
+
+    private AlertDialog deleteAlert(final Item item) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("Delete")
+                .setMessage("Aru You Sure")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        FirebaseHelper.removeItem(item);
+                        mMyItemList.remove(item);
+                        mMyItemList.clear();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        return builder.create();
+    }
+
 
     public interface IOnItemClick{
         void onItemClick(Item pItem, int pPosition);

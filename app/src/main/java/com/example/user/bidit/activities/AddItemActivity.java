@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Bundle;
@@ -236,7 +237,7 @@ public class AddItemActivity extends AppCompatActivity {
         itemsSpecificListVViewModel.getItemsList().observe(this, new Observer<ArrayList<Item>>() {
             @Override
             public void onChanged(@Nullable ArrayList<Item> pItems) {
-               // Log.v(TAG, "ItemsListCount = " + pItems.size() + "   Title = " + pItems.get(0).getItemTitle());
+                // Log.v(TAG, "ItemsListCount = " + pItems.size() + "   Title = " + pItems.get(0).getItemTitle());
             }
         });
         itemsSpecificListVViewModel.setItems("categoryId", "-LJVutjHBpRf_pfv0pa1", 1);
@@ -272,7 +273,7 @@ public class AddItemActivity extends AppCompatActivity {
 
         mSpinnerAdapter.add("Choose Category");
 
-        mSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        mSpinnerAdapter.setDropDownViewResource(R.layout.activity_add_item);
         mCategorySpinner.setAdapter(mSpinnerAdapter);
         mCategorySpinner.setPrompt("Catergory");
         mCategorySpinner.setSelection(0);
@@ -280,6 +281,8 @@ public class AddItemActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
+
+                    ((TextView) mCategorySpinner.getSelectedView()).setTextColor(getResources().getColor(R.color.color_text_login_light_grey_transparent));
                 if (position != 0) {
                     mCategorySelectedItemId = findCategoryId(parent.getItemAtPosition(position).toString());
                     mSpinnerAdapter.remove("Choose Category");
@@ -325,7 +328,7 @@ public class AddItemActivity extends AppCompatActivity {
                         .setPhotoUrls(mItemImagesListStorage)
                         .build();
 
-                switch(mMode) {
+                switch (mMode) {
                     case KEY_SAVE_ITEM:
                         firebaseHelper.setItemToDatabase(item);
                         break;
@@ -374,7 +377,6 @@ public class AddItemActivity extends AppCompatActivity {
 //    }
 //
 //}
-
 
 
 //    public void removeFavorite(final Item pItem){
@@ -483,7 +485,8 @@ public class AddItemActivity extends AppCompatActivity {
         }
         return id;
     }
-    public String selectCategory(String pCategoryId){
+
+    public String selectCategory(String pCategoryId) {
         String categoryTitle = "";
         for (Category category : mCategoryList) {
             if (category.getCategoryId().equals(pCategoryId)) {
@@ -575,8 +578,7 @@ public class AddItemActivity extends AppCompatActivity {
     }
 
 
-
-    private void setFieldToEdit(Item pItem){
+    private void setFieldToEdit(Item pItem) {
         mSaveItemBtn.setText("Edit");
         mItemSelectedImagesList.addAll(0, mItemEdit.getPhotoUrls());
         mItemImagesListStorage.addAll(mItemEdit.getPhotoUrls());
@@ -595,7 +597,6 @@ public class AddItemActivity extends AppCompatActivity {
         ArrayAdapter myAdap = (ArrayAdapter) mCategorySpinner.getAdapter(); //cast to an ArrayAdapter
         int spinnerPosition = myAdap.getPosition(myString);
         mCategorySpinner.setSelection(spinnerPosition);
-
 
 
         mDateTextView.setText(new SimpleDateFormat("MMM/dd 'at' HH:mm")
