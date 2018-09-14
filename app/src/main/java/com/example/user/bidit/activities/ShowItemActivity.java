@@ -461,7 +461,6 @@ public class ShowItemActivity extends AppCompatActivity {
 
     // Recycler view adapter
     private class RecyclerViewMessageAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
         private static final int MESSAGE_TYPE_CURRENT_USER = 1;
         private static final int MESSAGE_TYPE_ANOTHER_USER = 2;
 
@@ -470,11 +469,11 @@ public class ShowItemActivity extends AppCompatActivity {
         public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
             if (viewType == MESSAGE_TYPE_ANOTHER_USER) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.view_message_item, parent, false);
+                        .inflate(R.layout.view_any_user_message_item, parent, false);
                 return new AnotherUserMessageViewHolder(view);
             } else if (viewType == MESSAGE_TYPE_CURRENT_USER) {
                 View view = LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.view_message_item, parent, false);
+                        .inflate(R.layout.view_current_user_message_item, parent, false);
                 return new CurrentUserMessageViewHolder(view);
             }
             return null;
@@ -482,9 +481,10 @@ public class ShowItemActivity extends AppCompatActivity {
 
         @Override
         public void onBindViewHolder(@NonNull final RecyclerView.ViewHolder pHolder, int position) {
+            @SuppressLint("SimpleDateFormat") SimpleDateFormat format = new SimpleDateFormat("HH:MM");
             final Bid currentBid = mBidsList.get(position);
             if (getItemViewType(position) == MESSAGE_TYPE_ANOTHER_USER) {
-                ((AnotherUserMessageViewHolder) pHolder).getTxtBidDate().setText(String.valueOf(currentBid.getBidDate()));
+                ((AnotherUserMessageViewHolder) pHolder).getTxtBidDate().setText(format.format(currentBid.getBidDate()));
                 ((AnotherUserMessageViewHolder) pHolder).getTxtBidAmount().setText(String.valueOf(currentBid.getAmount()));
                 FireBaseAuthenticationManager.getInstance().getUserById(currentBid.getUserId(), new FireBaseAuthenticationManager.LoginListener() {
                     @Override
@@ -496,7 +496,7 @@ public class ShowItemActivity extends AppCompatActivity {
                     }
                 });
             } else if (getItemViewType(position) == MESSAGE_TYPE_CURRENT_USER) {
-                ((CurrentUserMessageViewHolder) pHolder).getTxtBidDate().setText(String.valueOf(currentBid.getBidDate()));
+                ((CurrentUserMessageViewHolder) pHolder).getTxtBidDate().setText(format.format(currentBid.getBidDate()));
                 ((CurrentUserMessageViewHolder) pHolder).getTxtBidAmount().setText(String.valueOf(currentBid.getAmount()));
                 FireBaseAuthenticationManager.getInstance().getUserById(currentBid.getUserId(), new FireBaseAuthenticationManager.LoginListener() {
                     @Override
@@ -508,8 +508,6 @@ public class ShowItemActivity extends AppCompatActivity {
                     }
                 });
             }
-
-
         }
 
         @Override
@@ -529,17 +527,16 @@ public class ShowItemActivity extends AppCompatActivity {
 
     // Message view holder model
     private class AnotherUserMessageViewHolder extends RecyclerView.ViewHolder {
-
         private TextView mTxtBidAmount, mTxtUserName, mTxtBidDate;
         private ImageView mUserAvatar;
 
         AnotherUserMessageViewHolder(View itemView) {
             super(itemView);
 
-            mTxtBidAmount = itemView.findViewById(R.id.txt_bid_amount_message_view);
-            mTxtUserName = itemView.findViewById(R.id.txt_username_message_view);
-            mTxtBidDate = itemView.findViewById(R.id.txt_bid_date_message_view);
-            mUserAvatar = itemView.findViewById(R.id.img_user_avatar_bid_message);
+            mTxtBidAmount = itemView.findViewById(R.id.txt_bid_amount_any_user_message_view);
+            mTxtUserName = itemView.findViewById(R.id.txt_username_any_user_message_view);
+            mTxtBidDate = itemView.findViewById(R.id.txt_bid_date_any_user_message_view);
+            mUserAvatar = itemView.findViewById(R.id.img_any_user_avatar_bid_message);
 
         }
 
@@ -561,17 +558,16 @@ public class ShowItemActivity extends AppCompatActivity {
     }
 
     private class CurrentUserMessageViewHolder extends RecyclerView.ViewHolder {
-
         private TextView mTxtBidAmount, mTxtUserName, mTxtBidDate;
         private ImageView mUserAvatar;
 
         CurrentUserMessageViewHolder(View itemView) {
             super(itemView);
 
-            mTxtBidAmount = itemView.findViewById(R.id.txt_bid_amount_message_view);
-            mTxtUserName = itemView.findViewById(R.id.txt_username_message_view);
-            mTxtBidDate = itemView.findViewById(R.id.txt_bid_date_message_view);
-            mUserAvatar = itemView.findViewById(R.id.img_user_avatar_bid_message);
+            mTxtBidAmount = itemView.findViewById(R.id.txt_bid_amount_current_user_message_view);
+            mTxtUserName = itemView.findViewById(R.id.txt_username_current_user_message_view);
+            mTxtBidDate = itemView.findViewById(R.id.txt_bid_date_current_user_message_view);
+            mUserAvatar = itemView.findViewById(R.id.img_current_user_avatar_bid_message);
 
         }
 
@@ -590,7 +586,6 @@ public class ShowItemActivity extends AppCompatActivity {
         public ImageView getUserAvatar() {
             return mUserAvatar;
         }
-
     }
 
 

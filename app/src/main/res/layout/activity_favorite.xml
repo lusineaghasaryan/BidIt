@@ -1,18 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/shape_gradient_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/shape_gradient_background"
     android:paddingTop="@dimen/padding_normal"
+    android:orientation="vertical"
     tools:context="com.example.user.bidit.activities.FavoriteActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/tool_bar_activity_favorite"
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize"
+        android:title="@string/activity_name_favorites"
+        android:titleTextColor="@color/color_text_login_light_grey" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_favorites"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"/>
 
-    </android.support.v7.widget.RecyclerView>
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
