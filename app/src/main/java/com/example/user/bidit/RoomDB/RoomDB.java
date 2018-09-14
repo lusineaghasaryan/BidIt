@@ -6,9 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 
 import com.example.user.bidit.models.Item;
 
-@Database(entities = {Item.class}, version = 1, exportSchema = false)
-
-public abstract class Room extends RoomDatabase{
-
+@Database(entities = {Item.class}, version = 1)
+public abstract class RoomDB extends RoomDatabase{
     public abstract DaoAccess daoAccess();
 }

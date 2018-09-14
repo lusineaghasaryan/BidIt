@@ -114,7 +114,7 @@ public class MyAccountActivity extends AppCompatActivity {
         }
         setUserOptions();
         FireBaseAuthenticationManager.getInstance().updateUserInServer(mUser);
-    }
+    };
 
     private void setUserOptions() {
         mUser.setName(mEditTextName.getText().toString());

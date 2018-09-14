@@ -1,31 +1,54 @@
 package com.example.user.bidit.models;
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
 @IgnoreExtraProperties
+@Entity
 public class Item implements Serializable{
 
-
     private String userId;
+
+    @PrimaryKey
+    public int id;
+
     private String itemId;
+    @Ignore
     private ArrayList<String> photoUrls;
+
     private String itemTitle;
+    @Ignore
     private String itemDescription;
+    @Ignore
     private float startPrice;
+    @Ignore
     private float buyNowPrice;
+    @Ignore
     private String categoryId;
     private long startDate;
+    @Ignore
     private long endDate;
+    @Ignore
     private float currentPrice;
+    @Ignore
     private boolean isApproved;
+    @Ignore
     private int followersCount;
+    @Ignore
     private ArrayList<String> followersIds;
+    @Ignore
     private String buyerId;
+    @Ignore
     private ArrayList<Bid> bids;
+    @Ignore
     private String status;
+
 
     public Item() {
     }
