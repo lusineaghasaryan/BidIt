@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.user.bidit.models.Bid;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.models.User;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -196,7 +197,6 @@ public class FirebaseHelper {
         });
     }
 
-
     public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback) {
         Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
 
@@ -270,6 +270,7 @@ public class FirebaseHelper {
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                         // Get a URL to the uploaded content
                         Uri downloadUrl = taskSnapshot.getUploadSessionUri();//.getDownloadUrl();
+                        Log.d("asd", "setUserPhotoUrl: " + downloadUrl);
                         FireBaseAuthenticationManager.getInstance().setUserPhotoUrl(downloadUrl.toString());
 
                     }

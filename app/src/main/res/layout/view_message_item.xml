@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal">
@@ -8,28 +9,31 @@
         android:id="@+id/img_user_avatar_bid_message"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_margin="@dimen/margin_normal" />
+        android:layout_margin="@dimen/margin_normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_margin="@dimen/margin_normal"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/img_user_avatar_bid_message"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/txt_username_message_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_small"
-            android:text="@string/temp_string"
-            android:textColor="@color/bid_message_color"
+            android:textColor="@color/color_text_login_light_grey"
             android:textSize="@dimen/text_size_small" />
 
         <TextView
             android:id="@+id/txt_bid_amount_message_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_small"
-            android:text="500$"
             android:textColor="@color/colorAccent"
             android:textSize="@dimen/text_size_normal" />
 
@@ -39,6 +43,10 @@
         android:id="@+id/txt_bid_date_message_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="end"
-        android:text="123" />
-</LinearLayout>
+        android:layout_marginEnd="@dimen/margin_normal"
+        android:text="@string/text_complete"
+        android:textColor="@color/color_text_login_light_grey_transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+</android.support.constraint.ConstraintLayout>

@@ -25,11 +25,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustResize">
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
         </activity>
         <activity
             android:name=".activities.ShowItemActivity"
@@ -72,6 +67,19 @@
         <activity android:name=".activities.MyItemsActivity" />
         <activity android:name=".activities.FavoriteActivity" />
         <activity android:name=".activities.BaseActivity" />
+
+        <service
+            android:name=".widgets.MyKeyboard"
+            android:permission="android.permission.BIND_INPUT_METHOD">
+
+            <intent-filter>
+                <action android:name="android.view.InputMethod" />
+            </intent-filter>
+
+            <meta-data android:name="android.view.im"
+                android:resource="@xml/method"/>
+
+        </service>
     </application>
 
 </manifest>

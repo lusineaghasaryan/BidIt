@@ -50,7 +50,6 @@ public class MyAccountActivity extends AppCompatActivity {
     public static final int CAMERA_REQUEST_CODE = 88;
     public static final int GALLERY_REQUEST_CODE = 77;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,7 +102,8 @@ public class MyAccountActivity extends AppCompatActivity {
         }
         avatarUrl = PhotoUtil.saveImage(MyAccountActivity.this, mBitmap);
         FirebaseHelper.sendAvatarToStorage(avatarUrl);
-        mUser.setPhotoUrl(avatarUrl);
+//        mUser.setPhotoUrl(avatarUrl);
+//        Log.d("asd", "onActivityResult: " + avatarUrl);
         mChoosePhotoDialog.dismiss();
         mAccountImage.setImageBitmap(mBitmap);
     }
@@ -143,7 +143,6 @@ public class MyAccountActivity extends AppCompatActivity {
         mEditTextPassportSeries = findViewById(R.id.edit_text_account_passport_series);
         changeButton = findViewById(R.id.btn_change_info_account_activity);
         mAccountImage = findViewById(R.id.account_image_my_account_activity);
-        changeButton.setEnabled(false);
     }
 
     private String firstLetterToUpCase(String pName) {

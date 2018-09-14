@@ -68,4 +68,7 @@
     <string name="item_follower_text">follower</string>
     <string name="text_cancel">Cancel</string>
 
+    <string name="my_keyboard">MyKeyboard</string>
+    <string name="subtype_en_US">English (US)</string>
+
 </resources>

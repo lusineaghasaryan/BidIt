@@ -129,6 +129,7 @@ public class AddItemActivity extends AppCompatActivity {
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                             // Get a URL to the uploaded content
                             Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+                            Log.d(TAG, "onSuccess: " + downloadUrl.toString());
                             mItemImagesListStorage.add(downloadUrl.toString());
                         }
                     })

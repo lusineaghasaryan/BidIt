@@ -1,40 +1,46 @@
 package com.example.user.bidit.activities;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.example.user.bidit.R;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.User;
 import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
+import com.example.user.bidit.widgets.MyKeyboard;
 import com.example.user.bidit.widgets.ProgressDialog;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+    public static final String TAG = "asd";
+
     private EditText mEditTextEmail, mEditTextPassword;
     private ProgressDialog mProgressDialog;
     private ViewGroup mParentLayout;
+    private Button mBtnSignIn, mBtnReg;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 //        Window w = getWindow();
 //        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
+        setListeners();
     }
 
     private void init() {
@@ -42,10 +48,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         mEditTextPassword = findViewById(R.id.edit_text_password_login_activity);
         mParentLayout = findViewById(R.id.login_layout);
         mProgressDialog = new ProgressDialog(this);
-        findViewById(R.id.btn_log_in_login_activity).setOnClickListener(this);
-        findViewById(R.id.btn_registration_login_activity).setOnClickListener(this);
-        mEditTextEmail.setOnClickListener(this);
-        mEditTextPassword.setOnClickListener(this);
+        mBtnSignIn = findViewById(R.id.btn_log_in_login_activity);
+        mBtnReg = findViewById(R.id.btn_registration_login_activity);
     }
 
     private void signIn() {
@@ -94,17 +98,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(new Intent(LoginActivity.this, RegistrationActivity.class));
                 break;
             }
-//            case R.id.edit_text_email_login_activity: {
-//                mEditTextEmail.setFocusableInTouchMode(true);
-//                mEditTextPassword.setFocusableInTouchMode(true);
-//                break;
-//            }
-//            case R.id.edit_text_password_login_activity: {
-//                mEditTextPassword.setFocusableInTouchMode(true);
-//                mEditTextEmail.setFocusableInTouchMode(true);
-//                break;
-//            }
         }
+    }
+
+    private void setListeners() {
+        mBtnReg.setOnClickListener(this);
+        mBtnSignIn.setOnClickListener(this);
+
+        mEditTextPassword.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView pTextView, int pI, KeyEvent pKeyEvent) {
+                if (pI == EditorInfo.IME_ACTION_DONE) {
+                    signIn();
+                }
+                return false;
+            }
+        });
     }
 }
 

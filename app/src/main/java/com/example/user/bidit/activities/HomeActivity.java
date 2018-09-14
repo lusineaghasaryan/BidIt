@@ -117,7 +117,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (!isInHome) {
             mSearchView.setLeftMenuOpen(false);
             mHomeListFragment.loadHomePage();
-            Log.v(TAG, "mtav = ");
             isInHome = true;
         } else {
             finish();
