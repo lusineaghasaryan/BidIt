@@ -24,10 +24,8 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
-import com.example.user.bidit.RoomDB.RoomDB;
 import com.example.user.bidit.activities.LoginActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
-import com.example.user.bidit.application.Application;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.utils.FollowAndUnfollow;
@@ -52,7 +50,7 @@ public class HomeListFragment extends Fragment {
     private HotItemsVPAdapter mHotListAdapter;
     private LinearLayoutManager mLayoutManager;
 
-    private RoomDB mRoomDb;
+    //private RoomDB mRoomDb;
 
     private List<Item> mHotItemData;
     private List<Item> mAllItemData;
@@ -89,7 +87,7 @@ public class HomeListFragment extends Fragment {
 
         setRecyclerAndVPSittings();
 
-        mRoomDb = Application.getmAppInstrance().getRooomDatebase();
+        //mRoomDb = Application.getmAppInstrance().getRooomDatebase();
     }
 
     private void setRecyclerAndVPSittings() {
@@ -310,13 +308,13 @@ public class HomeListFragment extends Fragment {
                         startActivity(intent);
                     } else {
                         if (!FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
-                            FollowAndUnfollow.addToFavorite(mHotItemData.get(position));
+                                FollowAndUnfollow.addToFavorite(mHotItemData.get(position));
                             imageFavorite.setImageResource(R.drawable.star_filled);
-                            mRoomDb.daoAccess().insertItem(mHotItemData.get(position));
+                            //mRoomDb.daoAccess().insertItem(mHotItemData.get(position));
                         } else {
                             FollowAndUnfollow.removeFromFavorite(mHotItemData.get(position));
                             imageFavorite.setImageResource(R.drawable.ic_nav_favorite);
-                            mRoomDb.daoAccess().deleteItem(mHotItemData.get(position));
+                            //mRoomDb.daoAccess().deleteItem(mHotItemData.get(position));
                         }
                     }
                 }
@@ -384,12 +382,12 @@ public class HomeListFragment extends Fragment {
                             if (!FollowAndUnfollow.isFollowed(mAllItemData.get(pAdapterPosition))) {
                                 FollowAndUnfollow.addToFavorite(mAllItemData.get(pAdapterPosition));
                                 pFavoriteView.setImageResource(R.drawable.star_filled);
-                                mRoomDb.daoAccess().insertItem(mAllItemData.get(pAdapterPosition));
-                                Log.d(TAG, "onAllFavoriteClick: " + mRoomDb.daoAccess().getAllItems().size());
+                                //mRoomDb.daoAccess().insertItem(mAllItemData.get(pAdapterPosition));
+                                //Log.d(TAG, "onAllFavoriteClick: " + mRoomDb.daoAccess().getAllItems().size());
                             } else {
                                 FollowAndUnfollow.removeFromFavorite(mAllItemData.get(pAdapterPosition));
                                 pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
-                                mRoomDb.daoAccess().deleteItem(mAllItemData.get(pAdapterPosition));
+                                //mRoomDb.daoAccess().deleteItem(mAllItemData.get(pAdapterPosition));
                             }
                         }
                     }

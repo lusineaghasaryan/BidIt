@@ -57,7 +57,8 @@ public class AddItemPhotosRVAdapter extends RecyclerView.Adapter<AddItemPhotosVi
                     .error(R.drawable.pic_trans)
                     .into(holder.mPotoImageView);
 
-            mIOnAddPhotoListener.addPhoto(imageUrl);
+            if (!imageUrl.contains("drawable://"))
+                mIOnAddPhotoListener.addPhoto(imageUrl);
         }
 
 

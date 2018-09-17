@@ -53,8 +53,11 @@ import com.example.user.bidit.utils.DateUtil;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -120,28 +123,34 @@ public class AddItemActivity extends AppCompatActivity {
             Random generator = new Random();
             int n = 10000;
             n = generator.nextInt(n);
-            StorageReference riversRef = mStorageRef.child(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid()
+            final StorageReference riversRef = mStorageRef.child(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid()
                     + "/items/image" + n + ".jpg");
 
-            riversRef.putFile(file)
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            // Get a URL to the uploaded content
-                            Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-                            Log.d(TAG, "onSuccess: " + downloadUrl.toString());
-                            mItemImagesListStorage.add(downloadUrl.toString());
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception exception) {
-                            // Handle unsuccessful uploads
-                            // ...
-                            Log.v(TAG, "Storage chkaaaaa");
-                        }
-                    });
-        }
+            UploadTask uploadTask = riversRef.putFile(file);
+
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()) {
+                        throw task.getException();
+                    }
+                    // Continue with the task to get the download URL
+                    return riversRef.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()) {
+                        Uri downloadUri = task.getResult();
+                        Log.v(TAG, "TTTTT = " + downloadUri);
+                        mItemImagesListStorage.add(downloadUri.toString());
+                    } else {
+                        // Handle failures
+                        // ...
+                    }
+                }
+            });
+  }
 
         @Override
         public void removePhoto(int pPosition) {
@@ -283,8 +292,8 @@ public class AddItemActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                    ((TextView) mCategorySpinner.getSelectedView()).setTextColor(getResources().getColor(R.color.color_text_login_light_grey_transparent));
                 if (position != 0) {
+                    //((TextView) mCategorySpinner.getSelectedView()).setTextColor(getResources().getColor(R.color.color_text_login_light_grey_transparent));
                     mCategorySelectedItemId = findCategoryId(parent.getItemAtPosition(position).toString());
                     mSpinnerAdapter.remove("Choose Category");
                 }
@@ -319,12 +328,12 @@ public class AddItemActivity extends AppCompatActivity {
                 }
                 Item item = new Item.ItemBuilder().setItemTitle(mItemTitle.getText().toString())
                         .setItemDescription(mItemDescription.getText().toString())
-                        .setStartPrice(Float.parseFloat(mStartPrice.getText().toString()))
-                        .setBuyNowPrice(Float.parseFloat(mBuyNowPrice.getText().toString()))
+                        .setStartPrice(Integer.parseInt(mStartPrice.getText().toString()))
+                        .setBuyNowPrice(Integer.parseInt(mBuyNowPrice.getText().toString()))
                         .setCategoryId(mCategorySelectedItemId)
                         .setStartDate(mStartDate.getTime().getTime())
                         .setEndDate(mEndDate.getTime().getTime())
-                        .setCurrentPrice(Float.parseFloat(mStartPrice.getText().toString()))
+                        .setCurrentPrice(Integer.parseInt(mStartPrice.getText().toString()))
                         .setUserId(FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().getUid())
                         .setPhotoUrls(mItemImagesListStorage)
                         .build();

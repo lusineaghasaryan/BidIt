@@ -3,6 +3,7 @@ package com.example.user.bidit.models;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.support.annotation.NonNull;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -10,14 +11,14 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 @IgnoreExtraProperties
-@Entity
+@Entity (tableName = "items")
 public class Item implements Serializable{
 
     private String userId;
-
-    @PrimaryKey
     public int id;
 
+    @PrimaryKey
+    @NonNull
     private String itemId;
     @Ignore
     private ArrayList<String> photoUrls;
@@ -26,16 +27,16 @@ public class Item implements Serializable{
     @Ignore
     private String itemDescription;
     @Ignore
-    private float startPrice;
+    private int startPrice;
     @Ignore
-    private float buyNowPrice;
+    private int buyNowPrice;
     @Ignore
     private String categoryId;
     private long startDate;
     @Ignore
     private long endDate;
     @Ignore
-    private float currentPrice;
+    private int currentPrice;
     @Ignore
     private boolean isApproved;
     @Ignore
@@ -54,8 +55,8 @@ public class Item implements Serializable{
     }
 
     private Item(String pUserId, String pItemId, ArrayList<String> pPhotoUrls, String pItemTitle,
-                 String pItemDescription, float pStartPrice, float pBuyNowPrice, String pCategoryId,
-                 long pStartDate, long pEndDate, float pCurrentPrice, boolean pIsAproved, int pFollowersCount,
+                 String pItemDescription, int pStartPrice, int pBuyNowPrice, String pCategoryId,
+                 long pStartDate, long pEndDate, int pCurrentPrice, boolean pIsAproved, int pFollowersCount,
                  ArrayList<String> pFollowersIds, String pBuyerId, ArrayList<Bid> pBids, String pStatus) {
         userId = pUserId;
         itemId = pItemId;
@@ -135,19 +136,19 @@ public class Item implements Serializable{
         itemDescription = pItemDescription;
     }
 
-    public float getStartPrice() {
+    public int getStartPrice() {
         return startPrice;
     }
 
-    public void setStartPrice(float pStartPrice) {
+    public void setStartPrice(int pStartPrice) {
         startPrice = pStartPrice;
     }
 
-    public float getBuyNowPrice() {
+    public int getBuyNowPrice() {
         return buyNowPrice;
     }
 
-    public void setBuyNowPrice(float pBuyNowPrice) {
+    public void setBuyNowPrice(int pBuyNowPrice) {
         buyNowPrice = pBuyNowPrice;
     }
 
@@ -175,11 +176,11 @@ public class Item implements Serializable{
         endDate = pEndDate;
     }
 
-    public float getCurrentPrice() {
+    public int getCurrentPrice() {
         return currentPrice;
     }
 
-    public void setCurrentPrice(float pCurrentPrice) {
+    public void setCurrentPrice(int pCurrentPrice) {
         currentPrice = pCurrentPrice;
     }
 
@@ -237,12 +238,12 @@ public class Item implements Serializable{
         private ArrayList<String> photoUrls;
         private String itemTitle;
         private String itemDescription;
-        private float startPrice;
-        private float buyNowPrice;
+        private int startPrice;
+        private int buyNowPrice;
         private String categoryId;
         private long startDate;
         private long endDate;
-        private float currentPrice;
+        private int currentPrice;
         private boolean isApproved;
         private int followersCount;
         private ArrayList<String> followersIds;
@@ -275,12 +276,12 @@ public class Item implements Serializable{
             return this;
         }
 
-        public ItemBuilder setStartPrice(float pStartPrice) {
+        public ItemBuilder setStartPrice(int pStartPrice) {
             startPrice = pStartPrice;
             return this;
         }
 
-        public ItemBuilder setBuyNowPrice(float pBuyNowPrice) {
+        public ItemBuilder setBuyNowPrice(int pBuyNowPrice) {
             buyNowPrice = pBuyNowPrice;
             return this;
         }
@@ -300,7 +301,7 @@ public class Item implements Serializable{
             return this;
         }
 
-        public ItemBuilder setCurrentPrice(float pCurrentPrice) {
+        public ItemBuilder setCurrentPrice(int pCurrentPrice) {
             currentPrice = pCurrentPrice;
             return this;
         }
