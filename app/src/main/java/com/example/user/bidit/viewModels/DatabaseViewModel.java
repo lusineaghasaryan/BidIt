@@ -1,27 +1,34 @@
 package com.example.user.bidit.viewModels;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModel;
 
+import android.app.Application;
+import android.arch.lifecycle.AndroidViewModel;
+import android.arch.lifecycle.LiveData;
+import android.support.annotation.NonNull;
+
+import com.example.user.bidit.db.ItemRepository;
 import com.example.user.bidit.models.Item;
 
-public class DatabaseViewModel extends ViewModel {
+import java.util.List;
 
-    private MutableLiveData<Item> mRoomDBMutableLiveData;
+public class DatabaseViewModel extends AndroidViewModel {
 
+    private ItemRepository mRepository;
 
-    public MutableLiveData<Item> getRoomDBMutableLiveData() {
-        if (mRoomDBMutableLiveData == null) {
-            mRoomDBMutableLiveData = new MutableLiveData<>();
-        }
-        return mRoomDBMutableLiveData;
+    private LiveData<List<Item>> mAllItems;
+
+    public DatabaseViewModel (@NonNull Application application) {
+        super(application);
+        mRepository = new ItemRepository(application);
+        mAllItems = mRepository.getAllItems();
     }
 
-    public void setRoomDBMutableLiveData(MutableLiveData<Item> roomDBMutableLiveData) {
-        mRoomDBMutableLiveData = roomDBMutableLiveData;
+    public LiveData<List<Item>> getAllItems() { return mAllItems; }
+
+    public void insert(Item item) { mRepository.insert(item); }
+
+    public void delete(Item item){
+        mRepository.delete(item);
     }
 
-    public void setItem(Item pItem){
-        mRoomDBMutableLiveData.setValue(pItem);
-    }
 }

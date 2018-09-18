@@ -45,6 +45,7 @@ import com.example.user.bidit.utils.FollowAndUnfollow;
 import com.example.user.bidit.utils.ItemStatus;
 import com.example.user.bidit.viewModels.BidsListViewModel;
 import com.example.user.bidit.viewModels.CurrentPriceViewModel;
+import com.example.user.bidit.viewModels.DatabaseViewModel;
 import com.example.user.bidit.widgets.CustomKeyboard;
 import com.example.user.bidit.widgets.ImageDialog;
 import com.google.android.gms.common.util.NumberUtils;
@@ -95,7 +96,6 @@ public class ShowItemActivity extends AppCompatActivity {
             };
 
     //    dots below view pager
-    //    dots below view pager
     private LinearLayout mLinearLayoutDots;
     private int mDotsCount;
     private ImageView[] mImgDots;
@@ -126,6 +126,8 @@ public class ShowItemActivity extends AppCompatActivity {
     //    custom Keyboard
     private CustomKeyboard mCustomKeyboard;
 
+    public DatabaseViewModel mDatabaseViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -143,6 +145,7 @@ public class ShowItemActivity extends AppCompatActivity {
         setLoggedInOptions();
         checkMode();
         setListeners();
+        mDatabaseViewModel = ViewModelProviders.of(this).get(DatabaseViewModel.class);
     }
 
     @Override
@@ -226,7 +229,7 @@ public class ShowItemActivity extends AppCompatActivity {
         currentPriceViewModel.getCurrentPrice().observe(ShowItemActivity.this, new Observer<Integer>() {
             @Override
             public void onChanged(@Nullable Integer integer) {
-                mItem.setCurrentPrice((float) integer);
+                mItem.setCurrentPrice(integer);
             }
         });
     }
@@ -302,7 +305,6 @@ public class ShowItemActivity extends AppCompatActivity {
     private void setLoggedInOptions() {
         if (mIsLoggedInMode) {
             mCurrentBalance = Integer.parseInt(FireBaseAuthenticationManager.getInstance().getCurrentUser().getBallance());
-            Log.d(TAG, "setLoggedInOptions: 222333");
             changeCurrentBalanceText(mCurrentBalance);
             mImgFavorite.setEnabled(true);
             mInputMessage.setEnabled(true);
@@ -361,9 +363,16 @@ public class ShowItemActivity extends AppCompatActivity {
                     if (!FollowAndUnfollow.isFollowed(mItem)) {
                         FollowAndUnfollow.addToFavorite(mItem);
                         mImgFavorite.setImageResource(R.drawable.star_filled);
+                        //mDatabaseViewModel.insert(mItem);
                     } else {
                         FollowAndUnfollow.removeFromFavorite(mItem);
                         mImgFavorite.setImageResource(R.drawable.star_stroke);
+//                        mDatabaseViewModel.getAllItems().observe(ShowItemActivity.this, new Observer<List<Item>>() {
+//                            @Override
+//                            public void onChanged(@Nullable List<Item> pItems) {
+//                                Log.v(TAG, "Items count = " + pItems.size());
+//                            }
+//                        });
                     }
                 } else {
                     Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
