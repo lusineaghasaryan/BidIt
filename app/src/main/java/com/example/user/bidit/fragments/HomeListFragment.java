@@ -15,7 +15,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +23,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
-import com.example.user.bidit.RoomDB.RoomDB;
 import com.example.user.bidit.activities.LoginActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.db.ItemRoomDatabase;
@@ -32,11 +30,10 @@ import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.scheduler.NotificationWorkScheduler;
 import com.example.user.bidit.utils.FollowAndUnfollow;
-import com.example.user.bidit.viewModels.SearchListViewModel;
 import com.example.user.bidit.viewModels.HotItemsViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
-import com.google.zxing.common.StringUtils;
+import com.example.user.bidit.viewModels.SearchListViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
