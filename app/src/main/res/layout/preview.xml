@@ -1,9 +1,122 @@
-<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:gravity="center"
-    android:textColor="@color/colorPrimaryDark"
-    android:textSize="30sp"
-    android:background="@android:color/white"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
 
-</TextView>
+    <LinearLayout
+        android:weightSum="10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/page_background">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="2.5"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="1" />
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="4" />
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="7" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="2.5"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="10">
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="2" />
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="5" />
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="8" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="2.5"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="10">
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="3" />
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="6" />
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:text="9" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="2.5"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:weightSum="10">
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:text="6" />
+
+            <Button
+                android:layout_margin="2dp"
+                android:background="@drawable/shape_grey_transparent_stroke"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:text="9" />
+
+        </LinearLayout>
+    </LinearLayout>
+</merge>

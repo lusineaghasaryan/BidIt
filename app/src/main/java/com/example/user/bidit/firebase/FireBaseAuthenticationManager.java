@@ -78,6 +78,11 @@ public class FireBaseAuthenticationManager {
         mUsersRef.child(currentAuthUserID).child("photoUrl").setValue(pPhotoUrl);
     }
 
+    public void updateUserBalance(final String pBalance) {
+        String currentAuthUserID = mAuth.getCurrentUser().getUid();
+        mUsersRef.child(currentAuthUserID).child("ballance").setValue(pBalance);
+    }
+
     public void signOut() {
         mCurrentUser = null;
         mAuth.signOut();
@@ -111,7 +116,6 @@ public class FireBaseAuthenticationManager {
             @Override
             public void onDataChange(@NonNull DataSnapshot pDataSnapshot) {
                 User user = User.fromDataSnapshot(pDataSnapshot, pUId);
-                Log.d("asd", "onDataChange: " + user.getName());
                 pLoginListener.onResponse(true, user);
             }
 

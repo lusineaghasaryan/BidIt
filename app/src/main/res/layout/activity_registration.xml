@@ -186,7 +186,7 @@
             android:background="@drawable/shape_blue_gradient_90_degree"
             android:text="@string/text_complete"
             android:textAllCaps="false"
-            android:textColor="@color/color_text_login_light_grey"
+            android:textColor="@color/page_background"
             android:textSize="@dimen/text_size_normal" />
     </LinearLayout>
 

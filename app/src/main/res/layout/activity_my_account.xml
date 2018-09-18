@@ -27,7 +27,7 @@
             android:layout_width="@dimen/profile_image_size"
             android:layout_height="@dimen/profile_image_size"
             android:clickable="true"
-            android:src="@mipmap/ic_launcher"
+            android:src="@drawable/account_pic"
             fnBtn:border_color="@color/color_hint_login_dark_grey"
             fnBtn:border_width="1dp"
             fnBtn:layout_constraintBottom_toBottomOf="parent"

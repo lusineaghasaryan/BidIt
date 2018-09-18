@@ -11,9 +11,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/tool_bar_activity_favorite"
         android:layout_width="match_parent"
-        android:layout_height="?android:attr/actionBarSize"
-        android:title="@string/activity_name_favorites"
-        android:titleTextColor="@color/color_text_login_light_grey" />
+        android:layout_height="?android:attr/actionBarSize" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_favorites"
