@@ -90,14 +90,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 @Override
                 public void onResponse(boolean pSuccess, User pUser) {
                     mUser = FireBaseAuthenticationManager.getInstance().getCurrentUser();
-                    mHeaderUserName.setText(mUser.getName());
-                    if (mUser.getPhotoUrl() != null) {
-                        Glide.with(HomeActivity.this)
-                                .load(mUser.getPhotoUrl())
-                                .into(mHeaderAvatar);
-                    }
+                    setSettingsInHeader(mUser);
                 }
             });
+        } else {
+            setSettingsInHeader(null);
         }
     }
 
@@ -141,7 +138,6 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         mHeaderUserName = mHeaderView.findViewById(R.id.text_view_name_nav_header);
         mHeaderAvatar = mHeaderView.findViewById(R.id.circle_image_avatar_nav_header);
 
-
         mSearchView.attachNavigationDrawerToMenuButton(mDrawer);
 
         mHomeListFragment = new HomeListFragment();
@@ -172,11 +168,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
             @Override
             public void onMenuClosed() {
-                if (!mDrawer.isDrawerOpen(mNavigationView)){
-//                    if (!isInHome) {
-//                        mHomeListFragment.loadHomePage();
-//                        isInHome = true;
-//                    }
+                if (!mDrawer.isDrawerOpen(mNavigationView)) {
+                    Log.d(TAG, "onMenuClosed: ");
+                    mHomeListFragment.loadHomePage();
+                    isInHome = true;
                 }
             }
         });
@@ -190,13 +185,14 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     }
 
     private void loadCategoryListFromFirebase() {
-        CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
+        final CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
         categoryListViewModel.getCategoryList().removeObservers(this);
         categoryListViewModel.getCategoryList().observe(this, new Observer<ArrayList<Category>>() {
             @Override
             public void onChanged(@Nullable ArrayList<Category> pCategories) {
                 mCategoryData.addAll(pCategories);
                 mCategoryAdapter.notifyDataSetChanged();
+                categoryListViewModel.getCategoryList().removeObservers(HomeActivity.this);
             }
         });
         categoryListViewModel.updateData();
@@ -232,6 +228,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             }
             case R.id.nav_item_log_out: {
                 FireBaseAuthenticationManager.getInstance().signOut();
+                setSettingsInHeader(null);
                 mHomeListFragment.notifyRecyclerAndViewPager();
                 break;
             }
@@ -267,6 +264,23 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
             mNavigationView.getMenu().setGroupVisible(R.id.menu_group_signed, false);
             mNavigationView.getMenu().findItem(R.id.nav_item_log_in).setVisible(true);
         }
+    }
+
+    private void setSettingsInHeader(User pUser) {
+        String name;
+        String photoUrl;
+        if (pUser == null) {
+            name = "";
+            photoUrl = RegistrationActivity.DEFAULT_PHOTO_URL;
+        } else {
+            name = mUser.getName();
+            photoUrl = mUser.getPhotoUrl();
+        }
+        mHeaderUserName.setText(name);
+        Glide.with(HomeActivity.this)
+                .load(photoUrl)
+                .into(mHeaderAvatar);
+
     }
 
 

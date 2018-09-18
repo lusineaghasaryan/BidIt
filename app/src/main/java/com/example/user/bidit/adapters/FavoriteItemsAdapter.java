@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.utils.FollowAndUnfollow;
 import com.example.user.bidit.viewHolders.FavoriteItemsViewHolder;
 
 import java.text.SimpleDateFormat;
@@ -20,7 +21,6 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
 
     private List<Item> mFavoriteItemsList = new ArrayList<>();
     private Context mContext;
-//    private List<Item> mUnFollowedItemsList = new ArrayList<>();
 
     public FavoriteItemsAdapter(Context context) {
         mContext = context;
@@ -38,11 +38,11 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
         final Item currentItem = mFavoriteItemsList.get(position);
 
-//        if (mUnFollowedItemsList.contains(currentItem)) {
-//            holder.getFollow().setImageResource(R.drawable.ic_nav_favorite);
-//        }else {
-//            holder.getFollow().setImageResource(R.drawable.ic_nav_favorite);
-//        }
+        if (FollowAndUnfollow.isFollowed(currentItem)) {
+            holder.getFollow().setImageResource(R.drawable.star_filled);
+        } else {
+            holder.getFollow().setImageResource(R.drawable.ic_nav_favorite);
+        }
 
         Glide.with(mContext)
                 .load(currentItem.getPhotoUrls().get(0))
@@ -52,21 +52,19 @@ public class FavoriteItemsAdapter extends RecyclerView.Adapter<FavoriteItemsView
         holder.getTitle().setText(currentItem.getItemTitle());
         holder.getDate().setText(dateFormat.format(currentItem.getStartDate()));
 
+
         holder.getFollow().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                if (!currentItem.get) {
-//                    holder.getStar().setImageResource(R.drawable.favorite_star_24dp);
-//                    mUnFollowedItemsList.add(currentItem);
-//                } else {
-//                    holder.getStar().setImageResource(R.drawable.favorite_star_border_24dp);
-//                    if (mUnFollowedItemsList.contains(currentItem)) {
-//                        mUnFollowedItemsList.remove(currentItem);
-//                    }
-//                }
+                if (FollowAndUnfollow.isFollowed(currentItem)) {
+                    FollowAndUnfollow.removeFromFavorite(currentItem);
+                    holder.getFollow().setImageResource(R.drawable.ic_nav_favorite);
+                } else {
+                    FollowAndUnfollow.addToFavorite(currentItem);
+                    holder.getFollow().setImageResource(R.drawable.star_filled);
+                }
             }
         });
-
     }
 
     @Override

@@ -135,7 +135,7 @@
                 android:layout_marginTop="15dp"
                 android:background="@drawable/shape_blue_gradient_90_degree"
                 android:text="Complate"
-                android:textColor="@color/item_price_color_dark_grey" />
+                android:textColor="@color/page_background" />
 
         </LinearLayout>
     </ScrollView>

@@ -14,6 +14,8 @@ import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
 
 public class RegistrationActivity extends AppCompatActivity {
+
+    public static final String DEFAULT_PHOTO_URL = "https://firebasestorage.googleapis.com/v0/b/bidit-9f1fd.appspot.com/o/NpYDWad2fDTrAah41O6JC2rgsMs1%2Fuser%2Faccount.png?alt=media&token=e70f57e1-f103-4744-bc0e-30d9bffeb9bd";
     private EditText mEditTextName, mEditTextSurname, mEditTextEmail,
             mEditTextPhone, mEditTextPassportSeries, mEditTextPassword, mEditTextPasswordRetry;
     private Button mBtnAccept;
@@ -57,6 +59,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 .setPhoneNumber(mPhone)
                 .setPassportSeries(mPassportSeries)
                 .setBalance("0")
+                .setPhotoUrl(DEFAULT_PHOTO_URL)
                 .create();
     }
 

@@ -4,12 +4,13 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -20,7 +21,6 @@ import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.User;
 import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
-import com.example.user.bidit.widgets.MyKeyboard;
 import com.example.user.bidit.widgets.ProgressDialog;
 
 public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
@@ -74,17 +74,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                         mProgressDialog.dismiss();
                     }
                 });
-    }
-
-    public static void hideKeyboard(Activity activity) {
-        InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-        //Find the currently focused view, so we can grab the correct window token from it.
-        View view = activity.getCurrentFocus();
-        //If no view currently has focus, create a new one, just so we can grab a window token from it
-        if (view == null) {
-            view = new View(activity);
-        }
-        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
     @Override

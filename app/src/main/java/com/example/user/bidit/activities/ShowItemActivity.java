@@ -10,12 +10,14 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -24,11 +26,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.widget.Button;
+import android.view.inputmethod.InputConnection;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
@@ -43,6 +46,7 @@ import com.example.user.bidit.utils.ItemStatus;
 import com.example.user.bidit.viewModels.BidsListViewModel;
 import com.example.user.bidit.viewModels.CurrentPriceViewModel;
 import com.example.user.bidit.viewModels.DatabaseViewModel;
+import com.example.user.bidit.widgets.CustomKeyboard;
 import com.example.user.bidit.widgets.ImageDialog;
 import com.google.android.gms.common.util.NumberUtils;
 import com.google.android.gms.tasks.Continuation;
@@ -71,6 +75,9 @@ public class ShowItemActivity extends AppCompatActivity {
 
     //    field to set scroll
     private AppBarLayout mAppBarLayout;
+
+    //    bidButtonDelegetion
+    private CustomKeyboard.OnBidButtonListener mOnBidButtonListener;
 
     //    show item images
     private ViewPager mViewPager;
@@ -106,7 +113,8 @@ public class ShowItemActivity extends AppCompatActivity {
 
     private LinearLayout mLinearLayout;
     private EditText mInputMessage;
-    private Button mBtnEnterMessage;
+    private TextView mCurrentBalanceText;
+    private int mCurrentBalance;
 
     //    data (temp)
     private Item mItem;
@@ -114,6 +122,9 @@ public class ShowItemActivity extends AppCompatActivity {
     //    time
     private Handler mTimer;
     private Runnable mRunnable;
+
+    //    custom Keyboard
+    private CustomKeyboard mCustomKeyboard;
 
     public DatabaseViewModel mDatabaseViewModel;
 
@@ -135,6 +146,15 @@ public class ShowItemActivity extends AppCompatActivity {
         checkMode();
         setListeners();
         mDatabaseViewModel = ViewModelProviders.of(this).get(DatabaseViewModel.class);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mCustomKeyboard.getVisibility() == View.VISIBLE) {
+            mCustomKeyboard.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     //    init views and fields
@@ -166,7 +186,8 @@ public class ShowItemActivity extends AppCompatActivity {
 //        enter message layout and buttons
         mLinearLayout = findViewById(R.id.linear_show_item_activity_enter_message_layout);
         mInputMessage = findViewById(R.id.input_show_item_activity_message);
-        mBtnEnterMessage = findViewById(R.id.btn_show_item_activity_enter_message);
+        mCurrentBalanceText = findViewById(R.id.text_view_show_item_activity_current_balance);
+        mCurrentBalance = 0;
 
 //        find views
         mTxtAuctionTitle = findViewById(R.id.txt_show_item_activity_auction_title);
@@ -176,6 +197,14 @@ public class ShowItemActivity extends AppCompatActivity {
         mTxtAuctionStartPrice = findViewById(R.id.txt_show_item_activity_auction_start_price);
         mTxtAuctionCurrentPrice = findViewById(R.id.txt_show_item_activity_auction_current_price);
         mImgFavorite = findViewById(R.id.img_show_item_activity_favorite_btn);
+
+//        find and set custom keyboard
+        mCustomKeyboard = findViewById(R.id.keyboard);
+        mInputMessage.setRawInputType(InputType.TYPE_CLASS_TEXT);
+        mInputMessage.setTextIsSelectable(true);
+        InputConnection ic = mInputMessage.onCreateInputConnection(new EditorInfo());
+        mCustomKeyboard.setInputConnection(ic);
+
 
 
         mTimer = new Handler();
@@ -226,6 +255,10 @@ public class ShowItemActivity extends AppCompatActivity {
         bidsListViewModel.updateList(mItem.getItemId());
     }
 
+    private void changeCurrentBalanceText(int newBalance) {
+        mCurrentBalanceText.setText(String.valueOf(newBalance));
+    }
+
     //    load item from intent
     private void loadExtra() {
         Bundle extra = getIntent().getExtras();
@@ -266,19 +299,18 @@ public class ShowItemActivity extends AppCompatActivity {
 
         if (mItem.getStartDate() > System.currentTimeMillis()) {
             mInputMessage.setEnabled(false);
-            mBtnEnterMessage.setEnabled(false);
         }
     }
 
     private void setLoggedInOptions() {
         if (mIsLoggedInMode) {
+            mCurrentBalance = Integer.parseInt(FireBaseAuthenticationManager.getInstance().getCurrentUser().getBallance());
+            changeCurrentBalanceText(mCurrentBalance);
             mImgFavorite.setEnabled(true);
             mInputMessage.setEnabled(true);
-            mBtnEnterMessage.setEnabled(true);
         } else {
             mImgFavorite.setEnabled(false);
             mInputMessage.setEnabled(false);
-            mBtnEnterMessage.setEnabled(false);
         }
     }
 
@@ -291,6 +323,39 @@ public class ShowItemActivity extends AppCompatActivity {
 
     @SuppressLint("ClickableViewAccessibility")
     private void setListeners() {
+
+        mOnBidButtonListener = new CustomKeyboard.OnBidButtonListener() {
+            @Override
+            public void onBid() {
+                if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
+                    enterMessageIntoChat();
+                } else {
+                    Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
+                    startActivity(intent);
+                }
+            }
+        };
+        CustomKeyboard.setOnBidButtonListener(mOnBidButtonListener);
+
+        mInputMessage.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    changeCurrentBalanceText(mCurrentBalance - Integer.parseInt(s.toString()));
+                } else {
+                    changeCurrentBalanceText(mCurrentBalance);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
         mImgFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -316,18 +381,6 @@ public class ShowItemActivity extends AppCompatActivity {
             }
         });
 
-        mBtnEnterMessage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View pView) {
-                if (FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
-                    enterMessageIntoChat();
-                } else {
-                    Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
-                    startActivity(intent);
-                }
-            }
-        });
-
         mInputMessage.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView pTextView, int pI, KeyEvent pKeyEvent) {
@@ -344,9 +397,23 @@ public class ShowItemActivity extends AppCompatActivity {
                 if (!FireBaseAuthenticationManager.getInstance().isLoggedIn()) {
                     Intent intent = new Intent(ShowItemActivity.this, LoginActivity.class);
                     startActivity(intent);
+                } else {
+                    mCustomKeyboard.setVisibility(View.VISIBLE);
                 }
             }
         });
+
+        mInputMessage.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (hasFocus) {
+                    mCustomKeyboard.setVisibility(View.VISIBLE);
+                } else {
+                    mCustomKeyboard.setVisibility(View.GONE);
+                }
+            }
+        });
+
 
         mInputMessage.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -364,9 +431,9 @@ public class ShowItemActivity extends AppCompatActivity {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 for (int i = 0; i < mDotsCount; i++) {
-                    mImgDots[i].setImageResource(R.drawable.point_small);
+                    mImgDots[i].setImageResource(R.drawable.point_passive);
                 }
-                    mImgDots[position].setImageResource(R.drawable.point_stroke);
+                    mImgDots[position].setImageResource(R.drawable.point_active);
             }
 
             @Override
@@ -396,33 +463,14 @@ public class ShowItemActivity extends AppCompatActivity {
                     mTxtAuctionCurrentPrice.setText(currentMessage);
                     FirebaseHelper.addBid(mItem, bid);
                     mInputMessage.setText("");
+
+                    mCurrentBalance -= bid.getAmount();
+                    changeCurrentBalanceText(mCurrentBalance);
+                    FireBaseAuthenticationManager.getInstance().updateUserBalance(String.valueOf(mCurrentBalance));
+
                 }
             }
         }
-
-//        makeBid(mItem.getItemId(), currentBid, FireBaseAuthenticationManager.getInstance()
-//                .mAuth.getUid())
-//                .addOnCompleteListener(new OnCompleteListener<String>() {
-//                    @Override
-//                    public void onComplete(@NonNull Task<String> pTask) {
-//                        if (pTask.isSuccessful()) {
-//                            mMessages.add(currentMessage);
-//                            mInputMessage.setText("");
-//                            mMessageAdapter.notifyDataSetChanged();
-//                            mRecyclerView.smoothScrollToPosition(mMessages.size() - 1); // ???
-//                            mRecyclerView.scrollToPosition(mMessages.size() - 1);
-//                        } else {
-//                            Log.v(TAG, "Failed: ");
-//                            Exception e = pTask.getException();
-//                            if (e instanceof FirebaseFunctionsException) {
-//                                FirebaseFunctionsException ffe = (FirebaseFunctionsException) e;
-//                                FirebaseFunctionsException.Code code = ffe.getCode();
-//                                Object details = ffe.getDetails();
-//                                Log.v(TAG, "Failed: " + details);
-//                            }
-//                        }
-//                    }
-//                });
     }
 
     //    check for user logged in
@@ -438,14 +486,12 @@ public class ShowItemActivity extends AppCompatActivity {
                 mLinearLayout.setVisibility(View.VISIBLE);
                 mLinearLayout.setEnabled(true);
                 mInputMessage.setEnabled(true);
-                mBtnEnterMessage.setEnabled(true);
                 break;
             }
             case PUT_EXTRA_KEY_MODE_MY_ITEM: {
                 mImgFavorite.setVisibility(View.GONE);
                 mLinearLayout.setEnabled(false);
                 mInputMessage.setEnabled(false);
-                mBtnEnterMessage.setEnabled(false);
                 break;
             }
             case PUT_EXTRA_KEY_MODE_HISTORY: {
@@ -462,10 +508,10 @@ public class ShowItemActivity extends AppCompatActivity {
     private void createViewPagerDots() {
         for (int i = 0; i < mDotsCount; i++) {
             mImgDots[i] = new ImageView(this);
-            mImgDots[i].setImageResource(R.drawable.point_small);
+            mImgDots[i].setImageResource(R.drawable.point_passive);
             mLinearLayoutDots.addView(mImgDots[i]);
         }
-        mImgDots[0].setImageResource(R.drawable.point_stroke);
+        mImgDots[0].setImageResource(R.drawable.point_active);
     }
 
     private void startTimer() {

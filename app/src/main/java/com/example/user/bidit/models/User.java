@@ -150,14 +150,13 @@ public class User {
         Log.d("MYTAG", "fromDataSnapshot: ");
         //TODO use builder
         User user = new User();
-//        user = pDataSnapshot.getValue(User.class);
         user.setName((String) pDataSnapshot.child(pCurrentUId).child("name").getValue());
         user.setSurname((String) pDataSnapshot.child(pCurrentUId).child("surname").getValue());
         user.setEmail((String) pDataSnapshot.child(pCurrentUId).child("email").getValue());
         user.setPassportSeries((String) pDataSnapshot.child(pCurrentUId).child("passportSeries").getValue());
         user.setPhoneNumber((String) pDataSnapshot.child(pCurrentUId).child("phoneNumber").getValue());
         user.setPhotoUrl((String) pDataSnapshot.child(pCurrentUId).child("photoUrl").getValue());
-        user.setBallance("0");
+        user.setBallance((String) pDataSnapshot.child(pCurrentUId).child("ballance").getValue());
         return user;
     }
 }
