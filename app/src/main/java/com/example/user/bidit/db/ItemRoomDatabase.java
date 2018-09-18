@@ -13,7 +13,7 @@ public abstract class ItemRoomDatabase extends RoomDatabase {
 
     private static volatile ItemRoomDatabase INSTANCE;
 
-    static ItemRoomDatabase getDatabase(final Context context) {
+    public static ItemRoomDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (ItemRoomDatabase.class) {
                 if (INSTANCE == null) {
