@@ -15,7 +15,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,17 +25,24 @@ import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.activities.LoginActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
+import com.example.user.bidit.db.ItemRoomDatabase;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
+import com.example.user.bidit.scheduler.NotificationWorkScheduler;
 import com.example.user.bidit.utils.FollowAndUnfollow;
-import com.example.user.bidit.viewModels.SearchListViewModel;
 import com.example.user.bidit.viewModels.HotItemsViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
+import com.example.user.bidit.viewModels.SearchListViewModel;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import androidx.work.Data;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
 
 import static com.example.user.bidit.utils.ItemStatus.isItemHaveBeenFinished;
 import static com.example.user.bidit.utils.ItemStatus.isItemInProgress;
@@ -50,10 +56,11 @@ public class HomeListFragment extends Fragment {
     private HotItemsVPAdapter mHotListAdapter;
     private LinearLayoutManager mLayoutManager;
 
-    //private RoomDB mRoomDb;
-
     private List<Item> mHotItemData;
     private List<Item> mAllItemData;
+
+    private WorkManager mWorkManager;
+    private ItemRoomDatabase mDatabase;
 
     public HomeListFragment() {
         // Required empty public constructor
@@ -87,7 +94,8 @@ public class HomeListFragment extends Fragment {
 
         setRecyclerAndVPSittings();
 
-        //mRoomDb = Application.getmAppInstrance().getRooomDatebase();
+        mWorkManager = WorkManager.getInstance();
+        mDatabase = ItemRoomDatabase.getDatabase(getContext());
     }
 
     private void setRecyclerAndVPSittings() {
@@ -152,7 +160,8 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
-                        itemsListViewModel.getItemsList().removeObservers(HomeListFragment.this);
+                        itemsListViewModel.getItemsList()
+                                .removeObservers(HomeListFragment.this);
                     }
                 });
         itemsListViewModel.setItems();
@@ -162,7 +171,9 @@ public class HomeListFragment extends Fragment {
         setHotListVisible();
         mHotItemData.clear();
         mHotListAdapter.notifyDataSetChanged();
-        final HotItemsViewModel hotItemsViewModel = ViewModelProviders.of(this).get(HotItemsViewModel.class);
+        final HotItemsViewModel hotItemsViewModel = ViewModelProviders
+                .of(this)
+                .get(HotItemsViewModel.class);
         hotItemsViewModel.setHotItemsList(null);
         hotItemsViewModel.getHotItemsList().observe(this,
                 new Observer<ArrayList<Item>>() {
@@ -170,7 +181,8 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mHotItemData.addAll(pItems);
                         mHotListAdapter.notifyDataSetChanged();
-                        hotItemsViewModel.getHotItemsList().removeObservers(HomeListFragment.this);
+                        hotItemsViewModel.getHotItemsList()
+                                .removeObservers(HomeListFragment.this);
                     }
                 });
 
@@ -227,9 +239,30 @@ public class HomeListFragment extends Fragment {
                     public void onChanged(@Nullable ArrayList<Item> pItems) {
                         mAllItemData.addAll(pItems);
                         mAllListAdapter.notifyDataSetChanged();
-                        itemsSpecificListVViewModel.getItemsList().removeObservers(HomeListFragment.this);
+                        itemsSpecificListVViewModel.getItemsList()
+                                .removeObservers(HomeListFragment.this);
                     }
                 });
+    }
+
+    private void addNotification(Item pItem, String pUid) {
+        Data data = new Data.Builder()
+                .putString(NotificationWorkScheduler.DATA_KEY, pUid)
+                .build();
+
+        OneTimeWorkRequest request = new OneTimeWorkRequest
+                .Builder(NotificationWorkScheduler.class)
+                .setInitialDelay((pItem.getStartDate() -
+                                System.currentTimeMillis()) / 60000,
+                        TimeUnit.MINUTES)
+                .setInputData(data)
+                .build();
+
+        mWorkManager.enqueue(request);
+    }
+
+    private void removeNotification() {
+        // TODO
     }
 
 
@@ -369,7 +402,8 @@ public class HomeListFragment extends Fragment {
                     @Override
                     public void onAllItemClick(int pAdapterPosition) {
                         Intent intent = new Intent(getActivity(), ShowItemActivity.class);
-                        intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT, mAllItemData.get(pAdapterPosition));
+                        intent.putExtra(ShowItemActivity.PUT_EXTRA_KEY_MODE_DEFAULT,
+                                mAllItemData.get(pAdapterPosition));
                         getActivity().startActivity(intent);
                     }
 
@@ -379,15 +413,21 @@ public class HomeListFragment extends Fragment {
                             Intent intent = new Intent(getActivity(), LoginActivity.class);
                             startActivity(intent);
                         } else {
-                            if (!FollowAndUnfollow.isFollowed(mAllItemData.get(pAdapterPosition))) {
-                                FollowAndUnfollow.addToFavorite(mAllItemData.get(pAdapterPosition));
+                            Item currentItem = mAllItemData.get(pAdapterPosition);
+                            if (!FollowAndUnfollow.isFollowed(currentItem)) {
+                                FollowAndUnfollow.addToFavorite(currentItem);
                                 pFavoriteView.setImageResource(R.drawable.star_filled);
-                                //mRoomDb.daoAccess().insertItem(mAllItemData.get(pAdapterPosition));
-                                //Log.d(TAG, "onAllFavoriteClick: " + mRoomDb.daoAccess().getAllItems().size());
+
+                                addNotification(currentItem, currentItem.getItemId());
+
+                                mDatabase.itemDao().insert(currentItem);
                             } else {
-                                FollowAndUnfollow.removeFromFavorite(mAllItemData.get(pAdapterPosition));
+                                FollowAndUnfollow.removeFromFavorite(currentItem);
                                 pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
-                                //mRoomDb.daoAccess().deleteItem(mAllItemData.get(pAdapterPosition));
+
+                                removeNotification();
+
+                                mDatabase.itemDao().delete(currentItem);
                             }
                         }
                     }
@@ -413,14 +453,16 @@ public class HomeListFragment extends Fragment {
                 public void run() {
                     long time = item.getEndDate() - System.currentTimeMillis();
                     if (isItemInProgress(item)) {
-                        holder.getTxtAuctionStartDate().setText(new SimpleDateFormat("HH:mm:ss")
+                        holder.getTxtAuctionStartDate()
+                                .setText(new SimpleDateFormat("HH:mm:ss")
                                 .format(time));
                     } else if (isItemHaveBeenFinished(item)) {
                         holder.getTxtAuctionStartDate().setText("finished");
                         handler.removeCallbacksAndMessages(null);
                         // TODO auction finished (item status)
                     } else {
-                        holder.getTxtAuctionStartDate().setText(new SimpleDateFormat("MM/dd - HH:mm")
+                        holder.getTxtAuctionStartDate()
+                                .setText(new SimpleDateFormat("MM/dd - HH:mm")
                                 .format(item.getStartDate()));
                     }
                     handler.postDelayed(this, 1000);
@@ -451,7 +493,8 @@ public class HomeListFragment extends Fragment {
 
         private void setFields(AllListViewHolder pHolder, Item pItem) {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
-            pHolder.getTxtAuctionStartPrice().setText(String.valueOf((int) pItem.getStartPrice()) + "$");
+            pHolder.getTxtAuctionStartPrice()
+                    .setText(String.valueOf((int) pItem.getStartPrice()) + "$");
             pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
             Glide.with(getActivity())
                     .load(pItem.getPhotoUrls().get(0))

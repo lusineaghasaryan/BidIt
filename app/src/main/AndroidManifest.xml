@@ -29,7 +29,11 @@
         <activity
             android:name=".activities.ShowItemActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:windowSoftInputMode="stateHidden" />
+            android:windowSoftInputMode="stateHidden" >
+            <intent-filter>
+                <action android:name="com.example.user.bidit.activities.SHOW_BID_ITEM"/>
+            </intent-filter>
+        </activity>
         <activity android:name=".activities.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
