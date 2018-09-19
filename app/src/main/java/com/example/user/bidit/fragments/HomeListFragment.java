@@ -24,7 +24,6 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
-import com.example.user.bidit.RoomDB.RoomDB;
 import com.example.user.bidit.activities.LoginActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
