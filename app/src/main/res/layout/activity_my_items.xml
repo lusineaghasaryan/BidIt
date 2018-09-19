@@ -13,8 +13,7 @@
         android:id="@+id/tool_bar_activity_my_items"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:title="@string/activity_name_my_items"
-        android:titleTextColor="@color/color_text_login_light_grey" />
+        android:elevation="@dimen/tab_layout_elevation"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view_my_items"

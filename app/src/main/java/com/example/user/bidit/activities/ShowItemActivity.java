@@ -1,15 +1,20 @@
 package com.example.user.bidit.activities;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.v4.app.NotificationCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +23,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -31,7 +35,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
@@ -49,16 +52,11 @@ import com.example.user.bidit.viewModels.DatabaseViewModel;
 import com.example.user.bidit.widgets.CustomKeyboard;
 import com.example.user.bidit.widgets.ImageDialog;
 import com.google.android.gms.common.util.NumberUtils;
-import com.google.android.gms.tasks.Continuation;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.functions.FirebaseFunctions;
-import com.google.firebase.functions.HttpsCallableResult;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ShowItemActivity extends AppCompatActivity {
     public static final String TAG = "asd";
@@ -76,7 +74,7 @@ public class ShowItemActivity extends AppCompatActivity {
     //    field to set scroll
     private AppBarLayout mAppBarLayout;
 
-    //    bidButtonDelegetion
+    //    bidButtonDelegation
     private CustomKeyboard.OnBidButtonListener mOnBidButtonListener;
 
     //    show item images
@@ -162,7 +160,7 @@ public class ShowItemActivity extends AppCompatActivity {
 //        load item from intent
         loadExtra();
 //        init bid step
-        mBidStep = (int) mItem.getStartPrice() * 10 / 100;
+        mBidStep = mItem.getStartPrice() * 10 / 100;
 //        find parent layout/
         mAppBarLayout = findViewById(R.id.app_bar_show_item_activity);
 
@@ -206,17 +204,20 @@ public class ShowItemActivity extends AppCompatActivity {
         mCustomKeyboard.setInputConnection(ic);
 
 
-
         mTimer = new Handler();
         mRunnable = new Runnable() {
             @Override
             public void run() {
                 if (ItemStatus.isItemInProgress(mItem)) {
                     mLinearLayout.setVisibility(View.VISIBLE);
-                    mTxtAuctionDuration.setText(new SimpleDateFormat("HHH:mm:ss")
+                    mTxtAuctionDuration.setText(new SimpleDateFormat("dd 'day' HH:mm:ss")
                             .format(mItem.getEndDate() - System.currentTimeMillis()));
+                    findViewById(R.id.nested_show_item_activity)
+                            .setBackground(getResources().getDrawable(R.color.item_background));
                 } else {
                     mLinearLayout.setVisibility(View.GONE);
+                    findViewById(R.id.nested_show_item_activity)
+                            .setBackground(getResources().getDrawable(R.color.page_background));
                 }
                 mTimer.postDelayed(this, 1000);
             }
@@ -278,13 +279,11 @@ public class ShowItemActivity extends AppCompatActivity {
     private void setFields() {
         mTxtAuctionTitle.setText(mItem.getItemTitle());
         mTxtAuctionDescription.setText(mItem.getItemDescription());
-        mTxtAuctionStartDate.setText(new SimpleDateFormat("MM/dd HH:mm")
+        mTxtAuctionStartDate.setText(new SimpleDateFormat("dd/MMM  HH:mm")
                 .format(mItem.getStartDate()));
         if (!ItemStatus.isItemInProgress(mItem)) {
-            mTxtAuctionDuration.setText(new SimpleDateFormat("dd 'day' HH:mm")
+            mTxtAuctionDuration.setText(new SimpleDateFormat("dd/MMM  HH:mm")
                     .format(mItem.getEndDate() - mItem.getStartDate()));
-        } else {
-            mTxtAuctionDuration.setTextColor(Color.RED);
         }
         mTxtAuctionStartPrice.setText(String.valueOf(mItem.getStartPrice()));
         mTxtAuctionCurrentPrice.setText(String.valueOf(mItem.getCurrentPrice()));
@@ -646,27 +645,4 @@ public class ShowItemActivity extends AppCompatActivity {
             return mUserAvatar;
         }
     }
-
-
-    public Task<String> makeBid(String itemId, int amount, String userId) {
-        // Create the arguments to the callable function.
-        Map<String, Object> data = new HashMap<>();
-        data.put("itemId", itemId);
-        data.put("amount", amount);
-
-        return mFunctions
-                .getHttpsCallable("makeBid")
-                .call(data)
-                .continueWith(new Continuation<HttpsCallableResult, String>() {
-                    @Override
-                    public String then(@NonNull Task<HttpsCallableResult> task) {
-                        // This continuation runs on either success or failure, but if the task
-                        // has failed then getResult() will throw an Exception which will be
-                        // propagated down.
-                        String result = (String) task.getResult().getData();
-                        return result;
-                    }
-                });
-    }
-
 }

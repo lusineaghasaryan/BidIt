@@ -75,7 +75,7 @@ public class ItemsSpecificListVViewModel extends ViewModel {
     }
 
     public void updateData(String pType, String pTypeValue) {
-        FirebaseHelper.getItemsSpecificList(pType, pTypeValue, 3, new FirebaseHelper.Callback<Item>() {
+        FirebaseHelper.getItemsSpecificList(pType, pTypeValue, new FirebaseHelper.Callback<Item>() {
             @Override
             public void callback(boolean pIsSuccess, Item pValue) {
                 if (pIsSuccess) {
