@@ -217,55 +217,56 @@
     </android.support.design.widget.CoordinatorLayout>
 
     <LinearLayout
-    android:id="@+id/linear_show_item_activity_enter_message_layout"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/page_background"
-    android:orientation="horizontal"
-    android:weightSum="5"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintBottom_toTopOf="@+id/keyboard">
+        android:id="@+id/linear_show_item_activity_enter_message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/page_background"
+        android:orientation="horizontal"
+        android:weightSum="5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/keyboard">
 
-    <EditText
-    android:id="@+id/input_show_item_activity_message"
-    style="@style/show_item_margins"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="3"
-    android:textColorHint="@color/color_text_login_light_grey"
-    android:background="@color/page_background"
-    android:hint="@string/show_item_activity_bit_hint"
-    android:inputType="numberDecimal"
-    android:textColor="@color/colorAccent" />
+        <EditText
+            android:id="@+id/input_show_item_activity_message"
+            style="@style/show_item_margins"
+            android:layout_width="0dp"
+            android:maxLength="9"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:background="@color/page_background"
+            android:hint="@string/show_item_activity_bit_hint"
+            android:inputType="numberDecimal"
+            android:textColor="@color/colorAccent"
+            android:textColorHint="@color/color_text_login_light_grey" />
 
-    <android.support.constraint.ConstraintLayout
-    android:layout_width="0dp"
-    android:layout_height="match_parent"
-    android:layout_weight="2"
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
 
-    android:orientation="vertical">
+            android:orientation="vertical">
 
-    <TextView
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="Balance"
-    android:textColor="@color/color_text_login_light_grey_transparent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Balance"
+                android:textColor="@color/color_text_login_light_grey_transparent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-    android:id="@+id/text_view_show_item_activity_current_balance"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="2000"
-    android:textSize="@dimen/text_size_normal"
-    android:textAllCaps="false"
-    android:textColor="@color/color_text_login_light_grey_transparent"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
-    app:layout_constraintStart_toStartOf="parent" />
+            <TextView
+                android:id="@+id/text_view_show_item_activity_current_balance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2000"
+                android:textAllCaps="false"
+                android:textColor="@color/color_text_login_light_grey_transparent"
+                android:textSize="@dimen/text_size_normal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
 
-    </android.support.constraint.ConstraintLayout>
+        </android.support.constraint.ConstraintLayout>
     </LinearLayout>
 
     <com.example.user.bidit.widgets.CustomKeyboard

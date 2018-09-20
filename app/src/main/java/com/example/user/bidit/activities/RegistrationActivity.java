@@ -13,7 +13,7 @@ import com.example.user.bidit.models.User;
 import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
 
-public class RegistrationActivity extends AppCompatActivity {
+public class RegistrationActivity extends BaseActivity {
 
     public static final String DEFAULT_PHOTO_URL = "https://firebasestorage.googleapis.com/v0/b/bidit-9f1fd.appspot.com/o/NpYDWad2fDTrAah41O6JC2rgsMs1%2Fuser%2Faccount.png?alt=media&token=e70f57e1-f103-4744-bc0e-30d9bffeb9bd";
     private EditText mEditTextName, mEditTextSurname, mEditTextEmail,
@@ -39,6 +39,12 @@ public class RegistrationActivity extends AppCompatActivity {
                 createAccount();
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet(mParentLayout);
     }
 
     private void getTextFromFilledField() {
@@ -99,5 +105,11 @@ public class RegistrationActivity extends AppCompatActivity {
         FireBaseAuthenticationManager.getInstance().createAccount(mUser, mPassword);
         UserMessages.showSnackBarShort(mParentLayout, getString(R.string.registration_complated_message));
         finish();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
     }
 }

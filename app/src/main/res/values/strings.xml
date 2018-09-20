@@ -72,5 +72,7 @@
 
     <string name="my_keyboard">MyKeyboard</string>
     <string name="subtype_en_US">English (US)</string>
+    <string name="verification_message">Verify YOur Account</string>
+    <string name="my_items">My Items</string>
 
 </resources>

@@ -2,28 +2,26 @@ package com.example.user.bidit.activities;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-
+import android.widget.LinearLayout;
 import com.example.user.bidit.R;
 import com.example.user.bidit.adapters.FavoriteItemsAdapter;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
-
 import java.util.ArrayList;
 
-public class FavoriteActivity extends AppCompatActivity {
+public class FavoriteActivity extends BaseActivity {
     private FavoriteItemsAdapter mFavoriteItemsAdapter;
     private Toolbar mToolbar;
+    private LinearLayout mParentLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,15 +43,23 @@ public class FavoriteActivity extends AppCompatActivity {
         w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet(mParentLayout);
+    }
+
 
     private void init() {
         RecyclerView recyclerView = findViewById(R.id.recycler_view_favorites);
         mFavoriteItemsAdapter = new FavoriteItemsAdapter(FavoriteActivity.this);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setAdapter(mFavoriteItemsAdapter);
+        mParentLayout = findViewById(R.id.favorites_layout);
 
         mToolbar = findViewById(R.id.tool_bar_activity_favorite);
         mToolbar.setTitle(R.string.activity_name_favorites);
+        mToolbar.setTitleMarginStart(180);
         mToolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
     }
 
@@ -68,5 +74,11 @@ public class FavoriteActivity extends AppCompatActivity {
          }
      });
      itemsSpecificListVViewModel.setMyFavoriteItems(FireBaseAuthenticationManager.getInstance().mAuth.getUid());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
     }
 }

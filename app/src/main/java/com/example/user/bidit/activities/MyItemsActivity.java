@@ -47,6 +47,9 @@ public class MyItemsActivity extends BaseActivity {
         setSupportActionBar(mToolbar);
 
         mToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp));
+        mToolbar.setTitle(R.string.my_items);
+        mToolbar.setTitleMarginStart(180);
+        mToolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
         mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

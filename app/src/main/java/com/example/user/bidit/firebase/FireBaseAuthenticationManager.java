@@ -2,12 +2,14 @@ package com.example.user.bidit.firebase;
 
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.user.bidit.models.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -18,7 +20,7 @@ import static com.example.user.bidit.firebase.FirebaseHelper.mUsersRef;
 
 public class FireBaseAuthenticationManager {
     private static FireBaseAuthenticationManager fireBaseAuthenticationManagerInstance;
-    public FirebaseAuth mAuth = FirebaseAuth.getInstance();
+    public final FirebaseAuth mAuth = FirebaseAuth.getInstance();
     private static User mCurrentUser;
 
     private FireBaseAuthenticationManager() {
@@ -31,6 +33,22 @@ public class FireBaseAuthenticationManager {
         return fireBaseAuthenticationManagerInstance;
     }
 
+
+    private void sendEmailVerification(final FirebaseUser firebaseUser) {
+        firebaseUser.sendEmailVerification()
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d("asd", "onComplete: " + "Verification email sent to " + firebaseUser.getEmail());
+                        } else {
+                            Log.d("asd", "onComplete: Failed to send verification email.");
+                            Log.e("asd", "sendEmailVerification", task.getException());
+                        }
+                    }
+                });
+    }
+
     public void signIn(String pEmail, String pPassword, final LoginListener pLoginListener) {
         mAuth.signInWithEmailAndPassword(pEmail, pPassword)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -40,6 +58,7 @@ public class FireBaseAuthenticationManager {
                             mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
+
                                     mCurrentUser = User.fromDataSnapshot(dataSnapshot, mAuth.getCurrentUser().getUid());
                                     pLoginListener.onResponse(true, mCurrentUser);
                                 }
@@ -63,6 +82,8 @@ public class FireBaseAuthenticationManager {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             updateUserInServer(pUser);
+                            sendEmailVerification(mAuth.getCurrentUser());
+                            Log.d("asd", "onComplete: " + mAuth.getCurrentUser());
                         }
                     }
                 });
@@ -104,6 +125,7 @@ public class FireBaseAuthenticationManager {
                 mCurrentUser = User.fromDataSnapshot(pDataSnapshot, mAuth.getCurrentUser().getUid());
                 pLoginListener.onResponse(true, mCurrentUser);
             }
+
             @Override
             public void onCancelled(DatabaseError pDatabaseError) {
                 pLoginListener.onResponse(false, null);
@@ -121,7 +143,6 @@ public class FireBaseAuthenticationManager {
 
             @Override
             public void onCancelled(@NonNull DatabaseError pDatabaseError) {
-
             }
         });
     }

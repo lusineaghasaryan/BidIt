@@ -420,14 +420,14 @@ public class HomeListFragment extends Fragment {
 
                                 addNotification(currentItem, currentItem.getItemId());
 
-                                mDatabase.itemDao().insert(currentItem);
+//                                mDatabase.itemDao().insert(currentItem);
                             } else {
                                 FollowAndUnfollow.removeFromFavorite(currentItem);
                                 pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
 
                                 removeNotification();
 
-                                mDatabase.itemDao().delete(currentItem);
+//                                mDatabase.itemDao().delete(currentItem);
                             }
                         }
                     }

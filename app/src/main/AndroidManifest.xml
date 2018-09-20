@@ -24,14 +24,13 @@
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="adjustResize">
-        </activity>
+            android:windowSoftInputMode="adjustResize"></activity>
         <activity
             android:name=".activities.ShowItemActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
-            android:windowSoftInputMode="stateHidden" >
+            android:windowSoftInputMode="stateHidden">
             <intent-filter>
-                <action android:name="com.example.user.bidit.activities.SHOW_BID_ITEM"/>
+                <action android:name="com.example.user.bidit.activities.SHOW_BID_ITEM" />
             </intent-filter>
         </activity>
         <activity android:name=".activities.HomeActivity">
@@ -40,7 +39,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
 
         <meta-data
@@ -64,14 +62,13 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.AddItemActivity" />
-        <activity
-            android:name=".activities.LoginActivity" />
+        <activity android:name=".activities.LoginActivity" />
         <activity android:name=".activities.RegistrationActivity" />
         <activity android:name=".activities.MyAccountActivity" />
         <activity android:name=".activities.MyItemsActivity" />
         <activity android:name=".activities.FavoriteActivity" />
         <activity android:name=".activities.BaseActivity" />
-
+        <activity android:name=".activities.Balance"></activity>
     </application>
 
 </manifest>

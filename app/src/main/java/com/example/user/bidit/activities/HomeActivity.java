@@ -38,7 +38,7 @@ import com.example.user.bidit.viewModels.CategoryListViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class HomeActivity extends BaseActivity implements NavigationView.OnNavigationItemSelectedListener {
     public static final String TAG = "asd";
 
     private User mUser;
@@ -101,6 +101,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onResume() {
         super.onResume();
+        checkInternet(mDrawer);
         if (mHomeListFragment != null) {
             mHomeListFragment.notifyRecyclerAndViewPager();
         }
@@ -368,5 +369,11 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         public void setClickListener(OnCategoryItemClickListener pClickListener) {
             mClickListener = pClickListener;
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
     }
 }

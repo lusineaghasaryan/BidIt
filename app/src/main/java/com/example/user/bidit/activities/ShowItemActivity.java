@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -60,7 +61,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ShowItemActivity extends AppCompatActivity {
+public class ShowItemActivity extends BaseActivity {
     public static final String TAG = "asd";
 
     public static final String PUT_EXTRA_KEY_MODE_MY_ITEM = "my item";
@@ -75,6 +76,8 @@ public class ShowItemActivity extends AppCompatActivity {
 
     //    field to set scroll
     private AppBarLayout mAppBarLayout;
+
+    private CoordinatorLayout mParentLayout;
 
     //    bidButtonDelegetion
     private CustomKeyboard.OnBidButtonListener mOnBidButtonListener;
@@ -149,6 +152,12 @@ public class ShowItemActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet(mParentLayout);
+    }
+
+    @Override
     public void onBackPressed() {
         if (mCustomKeyboard.getVisibility() == View.VISIBLE) {
             mCustomKeyboard.setVisibility(View.GONE);
@@ -165,6 +174,8 @@ public class ShowItemActivity extends AppCompatActivity {
         mBidStep = (int) mItem.getStartPrice() * 10 / 100;
 //        find parent layout/
         mAppBarLayout = findViewById(R.id.app_bar_show_item_activity);
+
+        mParentLayout = findViewById(R.id.coordinator_show_item_activity);
 
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
@@ -669,4 +680,9 @@ public class ShowItemActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
+    }
 }

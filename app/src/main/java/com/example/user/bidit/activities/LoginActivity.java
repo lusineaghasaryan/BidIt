@@ -1,17 +1,13 @@
 package com.example.user.bidit.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputConnection;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,7 +19,7 @@ import com.example.user.bidit.utils.UserMessages;
 import com.example.user.bidit.utils.ValidateForm;
 import com.example.user.bidit.widgets.ProgressDialog;
 
-public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     public static final String TAG = "asd";
 
     private EditText mEditTextEmail, mEditTextPassword;
@@ -41,6 +37,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 //        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         init();
         setListeners();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet(mParentLayout);
     }
 
     private void init() {
@@ -67,10 +69,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                     @Override
                     public void onResponse(boolean pSuccess, User user) {
                         if (user == null) {
-                            UserMessages.showToastShort(LoginActivity.this, getString(R.string.wrong_email_or_password_message));
-                        } else {
+                            UserMessages.showSnackBarShort(mParentLayout, getString(R.string.wrong_email_or_password_message));
+                        } else if(!FireBaseAuthenticationManager.getInstance().mAuth.getCurrentUser().isEmailVerified()) {
+                            FireBaseAuthenticationManager.getInstance().signOut();
+                            UserMessages.showSnackBarShort(mParentLayout, getString(R.string.verification_message));
+                        }else
                             finish();
-                        }
                         mProgressDialog.dismiss();
                     }
                 });
@@ -104,5 +108,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             }
         });
     }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
+    }
+
 }
 

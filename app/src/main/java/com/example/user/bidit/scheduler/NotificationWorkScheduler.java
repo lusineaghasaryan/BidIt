@@ -38,11 +38,12 @@ public class NotificationWorkScheduler extends Worker{
         mPendingIntent = PendingIntent.getActivity(getApplicationContext(),
                 0, mIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        sendNotification1(item);
+//        sendNotification1(item);
+        sendNotification1();
         return Result.SUCCESS;
     }
 
-    private void sendNotification1(Item pItem) {
+    private void sendNotification1() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
             NotificationChannel channel = new NotificationChannel(CHANNEL_ID, CHANNEL_NAME, importance);
@@ -54,7 +55,7 @@ public class NotificationWorkScheduler extends Worker{
         NotificationCompat.Builder builder = new NotificationCompat
                 .Builder(getApplicationContext(), CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_nav_favorite)
-                .setContentTitle(pItem.getItemTitle())
+                .setContentTitle("title")
                 .setContentText("started")
                 .setContentIntent(mPendingIntent);
         NotificationManager manager = (NotificationManager) getApplicationContext()

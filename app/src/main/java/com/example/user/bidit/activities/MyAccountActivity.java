@@ -4,9 +4,11 @@ import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -16,8 +18,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.ekalips.fancybuttonproj.FancyButton;
@@ -38,7 +42,7 @@ import java.util.Calendar;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MyAccountActivity extends AppCompatActivity {
+public class MyAccountActivity extends BaseActivity {
     private CircleImageView mAccountImage;
     private EditText mEditTextName, mEditTextSurname, mEditTextPhone, mEditTextPassportSeries;
     private FancyButton changeButton;
@@ -47,6 +51,7 @@ public class MyAccountActivity extends AppCompatActivity {
     private Bitmap mBitmap = null;
     private String avatarUrl;
     private ChoosePhotoDialog mChoosePhotoDialog;
+    private LinearLayout mParentLayout;
     public static final int CAMERA_REQUEST_CODE = 88;
     public static final int GALLERY_REQUEST_CODE = 77;
 
@@ -77,8 +82,14 @@ public class MyAccountActivity extends AppCompatActivity {
                 mChoosePhotoDialog.show();
             }
         });
-
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkInternet(mParentLayout);
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -103,7 +114,6 @@ public class MyAccountActivity extends AppCompatActivity {
         avatarUrl = PhotoUtil.saveImage(MyAccountActivity.this, mBitmap);
         FirebaseHelper.sendAvatarToStorage(avatarUrl);
 //        mUser.setPhotoUrl(avatarUrl);
-//        Log.d("asd", "onActivityResult: " + avatarUrl);
         mChoosePhotoDialog.dismiss();
         mAccountImage.setImageBitmap(mBitmap);
     }
@@ -143,6 +153,7 @@ public class MyAccountActivity extends AppCompatActivity {
         mEditTextPassportSeries = findViewById(R.id.edit_text_account_passport_series);
         changeButton = findViewById(R.id.btn_change_info_account_activity);
         mAccountImage = findViewById(R.id.account_image_my_account_activity);
+        mParentLayout = findViewById(R.id.my_account_layout);
     }
 
     private String firstLetterToUpCase(String pName) {
@@ -151,6 +162,12 @@ public class MyAccountActivity extends AppCompatActivity {
 
     private EditText[] createEditTextsArray() {
         return new EditText[]{mEditTextName, mEditTextSurname, mEditTextPhone, mEditTextPassportSeries};
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(mBroadcastReceiver);
     }
 
     class ButtonAsyncTask extends AsyncTask<Void, Void, View> {

@@ -24,9 +24,5 @@
         <item name="android:layout_marginTop">@dimen/margin_normal</item>
     </style>
 
-    <!--<style name="ProgressDialog" parent="Base.ThemeOverlay.AppCompat.Dialog">
-        <item name="windowBackground">#00000000</item>
-        &lt;!&ndash;<item name="android:windowBackground">@null</item>&ndash;&gt;
-    </style>-->
 
 </resources>
