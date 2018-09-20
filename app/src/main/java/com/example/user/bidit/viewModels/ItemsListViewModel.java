@@ -11,25 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemsListViewModel extends ViewModel {
-   /* private MutableLiveData<List<Item>> mItemsList = new MutableLiveData<>();
-
-    public MutableLiveData<List<Item>> getItemsList() {
-        if (mItemsList == null) {
-            mItemsList = new MutableLiveData<>();
-            setItems();
-        }
-        return mItemsList;
-    }
-
-    public void setItemsList(MutableLiveData<List<Item>> pItemsList) {
-        mItemsList = pItemsList;
-    }
-
-    public void setItems(){
-       // mItemsList.setValue(pItem);
-    }
-*/
-
     private MutableLiveData<ArrayList<Item>> mItemsList = new MutableLiveData<>();
 
     public MutableLiveData<ArrayList<Item>> getItemsList() {
@@ -51,14 +32,7 @@ public class ItemsListViewModel extends ViewModel {
                 mItemsList.setValue(pValue);
             }
         });
-
     }
-
-
-
-
-
-
 
 
 
@@ -74,16 +48,4 @@ public class ItemsListViewModel extends ViewModel {
     public void setItem(Item pItem){
         mItem.setValue(pItem);
     }
-
-/*
-    public void updateData() {
-        FirebaseHelper.getItemsListFromDatabase(new FirebaseHelper.Callback<Item>() {
-            @Override
-            public void callback(boolean pIsSuccess, Item pValue) {
-                if (pIsSuccess) {
-                    mItem.setValue(pValue);
-                }
-            }
-        });
-    }*/
 }

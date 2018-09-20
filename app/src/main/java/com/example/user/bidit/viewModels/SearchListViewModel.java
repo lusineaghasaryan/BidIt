@@ -23,7 +23,7 @@ public class SearchListViewModel extends ViewModel {
     }
 
     public void updateData(final String pTypeValue, int pPageNumber, final String pSearchCategoryId) {
-        FirebaseHelper.getItemListBySearch(SEARCH_BY_TYPE, pTypeValue, pPageNumber, new FirebaseHelper.Callback<Item>() {
+        FirebaseHelper.getItemListBySearch(SEARCH_BY_TYPE, pTypeValue, new FirebaseHelper.Callback<Item>() {
             @Override
             public void callback(boolean pIsSuccess, Item pValue) {
                 if (pSearchCategoryId != null) {

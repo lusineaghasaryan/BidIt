@@ -33,6 +33,7 @@ import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.fragments.HomeListFragment;
 import com.example.user.bidit.models.Category;
 import com.example.user.bidit.models.User;
+import com.example.user.bidit.viewHolders.CategoryViewHolder;
 import com.example.user.bidit.viewModels.CategoryListViewModel;
 
 import java.util.ArrayList;
@@ -76,10 +77,11 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         setContentView(R.layout.activity_home);
         init();
         setNavigationDrawer();
-        loadCategoryListFromFirebase();
+        loadCategoryList();
         setListeners();
         Window w = getWindow();
-        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
     @Override
@@ -127,10 +129,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mCurrentCategoryId = null;
         mRecyclerViewCategories = findViewById(R.id.recycler_view_home_activity_categories);
         mCategoryAdapter = new CategoryAdapter(mCategoryData);
-
         setCategoryRecyclerSittings();
-
-        mSearchView = findViewById(R.id.search_view_home_activity);
 
         mToolbar = findViewById(R.id.toolbar);
         mDrawer = findViewById(R.id.drawer_layout);
@@ -139,6 +138,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mHeaderUserName = mHeaderView.findViewById(R.id.text_view_name_nav_header);
         mHeaderAvatar = mHeaderView.findViewById(R.id.circle_image_avatar_nav_header);
 
+        mSearchView = findViewById(R.id.search_view_home_activity);
         mSearchView.attachNavigationDrawerToMenuButton(mDrawer);
 
         mHomeListFragment = new HomeListFragment();
@@ -153,8 +153,6 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mSearchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String oldQuery, String newQuery) {
-                //TODO search
-
                 mHomeListFragment.loadSearchList(newQuery, mCurrentCategoryId);
                 isInHome = false;
             }
@@ -185,8 +183,9 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         mRecyclerViewCategories.setAdapter(mCategoryAdapter);
     }
 
-    private void loadCategoryListFromFirebase() {
-        final CategoryListViewModel categoryListViewModel = ViewModelProviders.of(this).get(CategoryListViewModel.class);
+    private void loadCategoryList() {
+        final CategoryListViewModel categoryListViewModel =
+                ViewModelProviders.of(this).get(CategoryListViewModel.class);
         categoryListViewModel.getCategoryList().removeObservers(this);
         categoryListViewModel.getCategoryList().observe(this, new Observer<ArrayList<Category>>() {
             @Override
@@ -209,7 +208,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                 break;
             }
             case R.id.nav_item_add: {
-                Intent addItemIntent = new Intent(HomeActivity.this, AddItemActivity.class);
+                Intent addItemIntent =
+                        new Intent(HomeActivity.this, AddItemActivity.class);
                 startActivity(addItemIntent);
                 break;
             }
@@ -281,11 +281,10 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         Glide.with(HomeActivity.this)
                 .load(photoUrl)
                 .into(mHeaderAvatar);
-
     }
 
 
-    //    category list recyclerView adapter and ViewHolder
+    //    category list recyclerView adapter
     private class CategoryAdapter extends RecyclerView.Adapter<CategoryViewHolder> {
 
         private List<Category> mCategories;
@@ -296,7 +295,7 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
                     @Override
                     public void OnCategoryClick(int pAdapterPosition) {
                         // hide hot items when click on category
-                        mHomeListFragment.loadNext10ItemsByCategoryFromFirebase(
+                        mHomeListFragment.loadItemsByCategory(
                                 mCategories.get(pAdapterPosition).getCategoryId());
                         mCurrentCategoryId = mCategories.get(pAdapterPosition).getCategoryId();
                         isInHome = false;
@@ -312,7 +311,8 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         @NonNull
         @Override
         public CategoryViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            CategoryViewHolder categoryViewHolder = new CategoryViewHolder(LayoutInflater.from(parent.getContext())
+            CategoryViewHolder categoryViewHolder =
+                    new CategoryViewHolder(LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.view_category_item, parent, false));
 
             setListener(categoryViewHolder);
@@ -333,47 +333,5 @@ public class HomeActivity extends BaseActivity implements NavigationView.OnNavig
         private void setListener(CategoryViewHolder pCategoryViewHolder) {
             pCategoryViewHolder.setClickListener(mClickListener);
         }
-    }
-
-    private static class CategoryViewHolder extends RecyclerView.ViewHolder {
-
-        private TextView mTxtCategory;
-        private OnCategoryItemClickListener mClickListener;
-
-        public CategoryViewHolder(View itemView) {
-            super(itemView);
-
-            mTxtCategory = itemView.findViewById(R.id.txt_category_view_name);
-
-            setListeners(itemView);
-        }
-
-        public TextView getTxtCategory() {
-            return mTxtCategory;
-        }
-
-        private void setListeners(View pV) {
-            pV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View pView) {
-                    mClickListener.OnCategoryClick(getAdapterPosition());
-                }
-            });
-        }
-
-        // delegation
-        public interface OnCategoryItemClickListener {
-            void OnCategoryClick(int pAdapterPosition);
-        }
-
-        public void setClickListener(OnCategoryItemClickListener pClickListener) {
-            mClickListener = pClickListener;
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        unregisterReceiver(mBroadcastReceiver);
     }
 }

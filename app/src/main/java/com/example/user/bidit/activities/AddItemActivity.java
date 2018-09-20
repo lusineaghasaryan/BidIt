@@ -26,6 +26,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -106,6 +107,8 @@ public class AddItemActivity extends AppCompatActivity {
     public Item mItemEdit;
 
     private StorageReference mStorageRef;
+
+    private Toolbar mToolbar;
 
 
     MultiSelectImageFragment.IOnImagesSelectedListener mOnImagesSelectedListener = new MultiSelectImageFragment.IOnImagesSelectedListener() {
@@ -194,7 +197,16 @@ public class AddItemActivity extends AppCompatActivity {
         loadExtra();
 
         Window w = getWindow();
-        w.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        w.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+
+        setSupportActionBar(mToolbar);
+        mToolbar.setNavigationIcon(getResources().getDrawable(R.drawable.ic_arrow_back_black_24dp));
+        mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     public void init() {
@@ -220,6 +232,11 @@ public class AddItemActivity extends AppCompatActivity {
         mAdapter.setIOnAddPhotoListener(mIOnAddPhotoListener);
         mPhotosRV.smoothScrollToPosition(mAdapter.getItemCount());
         mPhotosRV.setAdapter(mAdapter);
+
+
+        mToolbar = findViewById(R.id.toolbar_add_item_activity);
+        mToolbar.setTitle(R.string.activity_name_add_item);
+        mToolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
 
 
 //        updateDateLabel();

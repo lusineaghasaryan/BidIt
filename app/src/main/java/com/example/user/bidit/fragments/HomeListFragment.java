@@ -1,5 +1,6 @@
 package com.example.user.bidit.fragments;
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
@@ -10,7 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,11 +25,14 @@ import com.bumptech.glide.Glide;
 import com.example.user.bidit.R;
 import com.example.user.bidit.activities.LoginActivity;
 import com.example.user.bidit.activities.ShowItemActivity;
+import com.example.user.bidit.db.ItemRepository;
 import com.example.user.bidit.db.ItemRoomDatabase;
 import com.example.user.bidit.firebase.FireBaseAuthenticationManager;
 import com.example.user.bidit.models.Item;
 import com.example.user.bidit.scheduler.NotificationWorkScheduler;
 import com.example.user.bidit.utils.FollowAndUnfollow;
+import com.example.user.bidit.utils.ZoomViewPager;
+import com.example.user.bidit.viewHolders.AllListViewHolder;
 import com.example.user.bidit.viewModels.HotItemsViewModel;
 import com.example.user.bidit.viewModels.ItemsListViewModel;
 import com.example.user.bidit.viewModels.ItemsSpecificListVViewModel;
@@ -38,6 +41,7 @@ import com.example.user.bidit.viewModels.SearchListViewModel;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import androidx.work.Data;
@@ -60,7 +64,7 @@ public class HomeListFragment extends Fragment {
     private List<Item> mAllItemData;
 
     private WorkManager mWorkManager;
-    private ItemRoomDatabase mDatabase;
+    private ItemRepository mDatabase;
 
     public HomeListFragment() {
         // Required empty public constructor
@@ -76,7 +80,6 @@ public class HomeListFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         init(view);
-        setListeners();
         loadHomePage();
     }
 
@@ -95,7 +98,7 @@ public class HomeListFragment extends Fragment {
         setRecyclerAndVPSittings();
 
         mWorkManager = WorkManager.getInstance();
-        mDatabase = ItemRoomDatabase.getDatabase(getContext());
+        mDatabase = new ItemRepository(Objects.requireNonNull(getActivity()).getApplication());
     }
 
     private void setRecyclerAndVPSittings() {
@@ -105,23 +108,10 @@ public class HomeListFragment extends Fragment {
 
         mViewPagerHotList.setAdapter(mHotListAdapter);
         mViewPagerHotList.setPageMargin(100);
-        mViewPagerHotList.setPageTransformer(true, new ZoomViewPager(getActivity()));
+        mViewPagerHotList.setPageTransformer(true,
+                new ZoomViewPager(getActivity(), mViewPagerHotList));
         mViewPagerHotList.setClipToPadding(false);
         mViewPagerHotList.setPadding(220, 0, 220, 0);
-    }
-
-    private void setListeners() {
-//        pagination
-        mRecyclerViewAllList.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-//                int lastVisibleItemPosition = mLayoutManager.findLastVisibleItemPosition();
-//                if (lastVisibleItemPosition == mAllListAdapter.getItemCount() - 1) {
-//                    // TODO load next 10 mHotItems from fb
-//                }
-            }
-        });
     }
 
     private void setHotListVisible() {
@@ -129,12 +119,20 @@ public class HomeListFragment extends Fragment {
         mViewPagerHotList.setVisibility(View.VISIBLE);
     }
 
-    private void clearAndSetGoneHotList() {
+    private void setHotListGone() {
         mViewPagerHotList.animate().alpha(0.0f).setDuration(700);
         mViewPagerHotList.setVisibility(View.GONE);
+    }
 
+    private void clearHotList() {
         mHotItemData.clear();
         mHotListAdapter.notifyDataSetChanged();
+    }
+
+    private void clearAllList() {
+        mAllListAdapter.clearTimers();
+        mAllItemData.clear();
+        mAllListAdapter.notifyDataSetChanged();
     }
 
     public void notifyRecyclerAndViewPager() {
@@ -143,17 +141,18 @@ public class HomeListFragment extends Fragment {
         mHotListAdapter.notifyDataSetChanged();
     }
 
+    public void loadHomePage() {
+        loadAllList();
+        loadHotList();
+    }
+
     private void loadAllList() {
+        // clear last version list
+        clearAllList();
+
         final ItemsListViewModel itemsListViewModel = ViewModelProviders
                 .of(this).get(ItemsListViewModel.class);
-
-        // clear last version of list, and load new list, by category
         itemsListViewModel.setItemsList(null);
-        mAllListAdapter.clearTimers();
-        mAllItemData.clear();
-        mAllListAdapter.notifyDataSetChanged();
-
-        // observe on ViewModel
         itemsListViewModel.getItemsList().observe(this,
                 new Observer<ArrayList<Item>>() {
                     @Override
@@ -169,8 +168,9 @@ public class HomeListFragment extends Fragment {
 
     private void loadHotList() {
         setHotListVisible();
-        mHotItemData.clear();
-        mHotListAdapter.notifyDataSetChanged();
+        // clear last version list
+        clearHotList();
+
         final HotItemsViewModel hotItemsViewModel = ViewModelProviders
                 .of(this)
                 .get(HotItemsViewModel.class);
@@ -185,24 +185,17 @@ public class HomeListFragment extends Fragment {
                                 .removeObservers(HomeListFragment.this);
                     }
                 });
-
         hotItemsViewModel.updateData();
     }
 
-    public void loadHomePage() {
-        loadAllList();
-        loadHotList();
-    }
-
     public void loadSearchList(String pQuery, final String pCategoryId) {
-        clearAndSetGoneHotList();
+        setHotListGone();
+        // clear last version list
+        clearAllList();
+
         final SearchListViewModel searchListViewModel = ViewModelProviders
                 .of(getActivity())
                 .get(SearchListViewModel.class);
-
-        mAllItemData.clear();
-        mAllListAdapter.clearTimers();
-
         searchListViewModel.getItem().removeObservers(this);
         searchListViewModel.setItem(null);
         searchListViewModel.getItem()
@@ -215,24 +208,19 @@ public class HomeListFragment extends Fragment {
                     }
                 });
         searchListViewModel.updateData(pQuery, 1, pCategoryId);
-        mAllListAdapter.notifyDataSetChanged();
     }
 
-    public void loadNext10ItemsByCategoryFromFirebase(String pCategoryId) {
-        clearAndSetGoneHotList();
+    public void loadItemsByCategory(String pCategoryId) {
+        setHotListGone();
+        // clear last version list
+        clearAllList();
+
         final ItemsSpecificListVViewModel itemsSpecificListVViewModel = ViewModelProviders
                 .of(this).get(ItemsSpecificListVViewModel.class);
-
-        // clear last version of list, and load new list, by category
         itemsSpecificListVViewModel.setItemsList(null);
         itemsSpecificListVViewModel.getItemsList().removeObservers(this);
-        mAllListAdapter.clearTimers();
-        mAllItemData.clear();
-
         itemsSpecificListVViewModel.setItems("categoryId",
                 pCategoryId, mAllItemData.size() + 1);
-
-        // observe on ViewModel
         itemsSpecificListVViewModel.getItemsList().observe(this,
                 new Observer<ArrayList<Item>>() {
                     @Override
@@ -245,16 +233,15 @@ public class HomeListFragment extends Fragment {
                 });
     }
 
-    private void addNotification(Item pItem, String pUid) {
+    private void addNotification(Item pItem, String pId) {
         Data data = new Data.Builder()
-                .putString(NotificationWorkScheduler.DATA_KEY, pUid)
+                .putString(NotificationWorkScheduler.DATA_KEY, pId)
                 .build();
 
+        int delay = (int) (pItem.getStartDate() - System.currentTimeMillis()) / 60000;
         OneTimeWorkRequest request = new OneTimeWorkRequest
                 .Builder(NotificationWorkScheduler.class)
-                .setInitialDelay((pItem.getStartDate() -
-                                System.currentTimeMillis()) / 60000,
-                        TimeUnit.MINUTES)
+                .setInitialDelay(delay, TimeUnit.MINUTES)
                 .setInputData(data)
                 .build();
 
@@ -341,7 +328,7 @@ public class HomeListFragment extends Fragment {
                         startActivity(intent);
                     } else {
                         if (!FollowAndUnfollow.isFollowed(mHotItemData.get(position))) {
-                                FollowAndUnfollow.addToFavorite(mHotItemData.get(position));
+                            FollowAndUnfollow.addToFavorite(mHotItemData.get(position));
                             imageFavorite.setImageResource(R.drawable.star_filled);
                             //mRoomDb.daoAccess().insertItem(mHotItemData.get(position));
                         } else {
@@ -357,43 +344,9 @@ public class HomeListFragment extends Fragment {
         }
     }
 
-    private class ZoomViewPager implements ViewPager.PageTransformer {
-        private int maxTranslateOffsetX;
 
-        ZoomViewPager(Context context) {
-            this.maxTranslateOffsetX = dp2px(context);
-        }
-
-        @Override
-        public void transformPage(@NonNull View page, float position) {
-            if (mViewPagerHotList == null) {
-                mViewPagerHotList = (ViewPager) page.getParent();
-            }
-
-            int leftInScreen = page.getLeft() - mViewPagerHotList.getScrollX();
-            int centerXInViewPager = leftInScreen + page.getMeasuredWidth() / 2;
-            int offsetX = centerXInViewPager - mViewPagerHotList.getMeasuredWidth() / 2;
-            float offsetRate = (float) offsetX * 0.38f / mViewPagerHotList.getMeasuredWidth();
-            float scaleFactor = 1 - Math.abs(offsetRate);
-
-            if (scaleFactor > 0) {
-                page.setScaleX(scaleFactor);
-                page.setScaleY(scaleFactor);
-                page.setTranslationX(-maxTranslateOffsetX * offsetRate);
-            }
-            ViewCompat.setElevation(page, scaleFactor);
-        }
-
-        private int dp2px(Context context) {
-            float m = context.getResources().getDisplayMetrics().density;
-            return (int) ((float) 180 * m + 0.5f);
-        }
-    }
-
-
-    //    all mHotItems list recyclerView adapter and ViewHolder
+    //    all mHotItems list recyclerView adapter
     private class AllListAdapter extends RecyclerView.Adapter<AllListViewHolder> {
-
         private List<Handler> mTimers = new ArrayList<>();
 
         //        on recycler item click listeners
@@ -420,14 +373,14 @@ public class HomeListFragment extends Fragment {
 
                                 addNotification(currentItem, currentItem.getItemId());
 
-//                                mDatabase.itemDao().insert(currentItem);
+                                mDatabase.insert(currentItem);
                             } else {
                                 FollowAndUnfollow.removeFromFavorite(currentItem);
                                 pFavoriteView.setImageResource(R.drawable.ic_nav_favorite);
 
                                 removeNotification();
 
-//                                mDatabase.itemDao().delete(currentItem);
+                                mDatabase.delete(currentItem);
                             }
                         }
                     }
@@ -455,22 +408,21 @@ public class HomeListFragment extends Fragment {
                     if (isItemInProgress(item)) {
                         holder.getTxtAuctionStartDate()
                                 .setText(new SimpleDateFormat("HH:mm:ss")
-                                .format(time));
+                                        .format(time));
                     } else if (isItemHaveBeenFinished(item)) {
                         holder.getTxtAuctionStartDate().setText("finished");
                         handler.removeCallbacksAndMessages(null);
                         // TODO auction finished (item status)
                     } else {
                         holder.getTxtAuctionStartDate()
-                                .setText(new SimpleDateFormat("MM/dd - HH:mm")
-                                .format(item.getStartDate()));
+                                .setText(new SimpleDateFormat("dd/MMM \n HH:mm")
+                                        .format(item.getStartDate()));
                     }
                     handler.postDelayed(this, 1000);
                 }
             };
 
             mTimers.add(handler);
-
             runnable.run();
 
 //            set item fields, and listeners
@@ -487,14 +439,14 @@ public class HomeListFragment extends Fragment {
             for (int i = 0; i < mTimers.size(); i++) {
                 mTimers.get(i).removeCallbacksAndMessages(null);
             }
-
             mTimers.clear();
         }
 
+        @SuppressLint("SetTextI18n")
         private void setFields(AllListViewHolder pHolder, Item pItem) {
             pHolder.getTxtAuctionTitle().setText(pItem.getItemTitle());
             pHolder.getTxtAuctionStartPrice()
-                    .setText(String.valueOf((int) pItem.getStartPrice()) + "$");
+                    .setText(String.valueOf(pItem.getStartPrice()));
             pHolder.getImgAuctionImage().setImageResource(R.drawable.recycler_view_item_def_img);
             Glide.with(getActivity())
                     .load(pItem.getPhotoUrls().get(0))
@@ -512,74 +464,6 @@ public class HomeListFragment extends Fragment {
 
         private void setListener(AllListViewHolder pAllListViewHolder) {
             pAllListViewHolder.setClickListener(mClickListener);
-        }
-    }
-
-    private static class AllListViewHolder extends RecyclerView.ViewHolder {
-        //        view holder item fields
-        private TextView mTxtAuctionTitle, mTxtAuctionStartDate, mTxtAuctionStartPrice;
-        private ImageView mImgAuctionImage;
-        private ImageView mImgFavorite;
-
-        private AllListViewHolder.OnAllItemClickListener mClickListener;
-
-        AllListViewHolder(View itemView) {
-            super(itemView);
-
-            //        initialize fields
-            mTxtAuctionTitle = itemView.findViewById(R.id.text_view_title_item_view);
-            mTxtAuctionStartPrice = itemView.findViewById(R.id.text_view_start_price_item_view);
-            mTxtAuctionStartDate = itemView.findViewById(R.id.text_view_start_date_item_view);
-            mImgAuctionImage = itemView.findViewById(R.id.image_item_image_item_view);
-            mImgFavorite = itemView.findViewById(R.id.image_view_follow_item_view);
-
-            setListeners(itemView);
-        }
-
-        public TextView getTxtAuctionTitle() {
-            return mTxtAuctionTitle;
-        }
-
-        public TextView getTxtAuctionStartDate() {
-            return mTxtAuctionStartDate;
-        }
-
-        public TextView getTxtAuctionStartPrice() {
-            return mTxtAuctionStartPrice;
-        }
-
-        public ImageView getImgAuctionImage() {
-            return mImgAuctionImage;
-        }
-
-        public ImageView getImgFavorite() {
-            return mImgFavorite;
-        }
-
-        private void setListeners(View pV) {
-            pV.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View pView) {
-                    mClickListener.onAllItemClick(getAdapterPosition());
-                }
-            });
-
-            mImgFavorite.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View pView) {
-                    mClickListener.onAllFavoriteClick(getAdapterPosition(), mImgFavorite);
-                }
-            });
-        }
-
-        private interface OnAllItemClickListener {
-            void onAllItemClick(int pAdapterPosition);
-
-            void onAllFavoriteClick(int pAdapterPosition, ImageView pFavoriteView);
-        }
-
-        public void setClickListener(AllListViewHolder.OnAllItemClickListener pClickListener) {
-            mClickListener = pClickListener;
         }
     }
 }

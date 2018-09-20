@@ -23,6 +23,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Random;
 
@@ -63,7 +64,7 @@ public class FirebaseHelper {
 
         mCategoryRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Category> tempList = new ArrayList<>();
                 for (DataSnapshot messageSnapshot : dataSnapshot.getChildren()) {
                     Category category = messageSnapshot.getValue(Category.class);
@@ -73,7 +74,7 @@ public class FirebaseHelper {
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 pCallback.callback(false, null);
             }
         });
@@ -99,18 +100,22 @@ public class FirebaseHelper {
 
         mItemsRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 ArrayList<Item> temp = new ArrayList<>();
+                long currentTime = Calendar.getInstance().getTimeInMillis();
                 for (DataSnapshot single : dataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
-                    temp.add(item);
+                    if (item != null) {
+                        if (item.getEndDate() > currentTime) {
+                            temp.add(item);
+                        }
+                    }
                 }
                 pCallback.callback(true, temp);
             }
 
             @Override
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.v("OOOO", "PPPPP = ");
             }
         });
@@ -136,13 +141,12 @@ public class FirebaseHelper {
         });
     }
 
-    public static void getItemsSpecificList(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback) {
+    public static void getItemsSpecificList(String pType, String pTypeValue, final Callback<Item> pCallback) {
         Query query = mItemsRef.orderByChild(pType).equalTo(pTypeValue);
-//        Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot pDataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot pDataSnapshot) {
 
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
@@ -151,7 +155,7 @@ public class FirebaseHelper {
             }
 
             @Override
-            public void onCancelled(DatabaseError pDatabaseError) {
+            public void onCancelled(@NonNull DatabaseError pDatabaseError) {
             }
         });
     }
@@ -161,17 +165,22 @@ public class FirebaseHelper {
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot pDataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot pDataSnapshot) {
+                long currentTime = Calendar.getInstance().getTimeInMillis();
                 ArrayList<Item> temp = new ArrayList<>();
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
-                    temp.add(item);
+                    if (item != null) {
+                        if (item.getEndDate() > currentTime) {
+                            temp.add(item);
+                        }
+                    }
                 }
                 pCallback.callback(true, temp);
             }
 
             @Override
-            public void onCancelled(DatabaseError pDatabaseError) {
+            public void onCancelled(@NonNull DatabaseError pDatabaseError) {
             }
         });
     }
@@ -182,36 +191,47 @@ public class FirebaseHelper {
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot pDataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot pDataSnapshot) {
                 ArrayList<Item> temp = new ArrayList<>();
+                long currentTime = Calendar.getInstance().getTimeInMillis();
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
                     Item item = single.getValue(Item.class);
-                    temp.add(item);
+                    if (item != null) {
+                        if (item.getFollowersCount() > 0) {
+                            if (item.getEndDate() > currentTime) {
+                                temp.add(item);
+                            }
+                        }
+                    }
                 }
                 pCallback.callback(true, temp);
             }
 
             @Override
-            public void onCancelled(DatabaseError pDatabaseError) {
+            public void onCancelled(@NonNull DatabaseError pDatabaseError) {
             }
         });
     }
 
-    public static void getItemListBySearch(String pType, String pTypeValue, int pPageNumber, final Callback<Item> pCallback) {
+    public static void getItemListBySearch(String pType, String pTypeValue, final Callback<Item> pCallback) {
         Query query = mItemsRef.orderByChild(pType).startAt(pTypeValue);
 
         query.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot pDataSnapshot) {
-
+            public void onDataChange(@NonNull DataSnapshot pDataSnapshot) {
                 for (DataSnapshot single : pDataSnapshot.getChildren()) {
+                    long currentTime = Calendar.getInstance().getTimeInMillis();
                     Item item = single.getValue(Item.class);
-                    pCallback.callback(true, item);
+                    if (item != null) {
+                        if (item.getEndDate() > currentTime) {
+                            pCallback.callback(true, item);
+                        }
+                    }
                 }
             }
 
             @Override
-            public void onCancelled(DatabaseError pDatabaseError) {
+            public void onCancelled(@NonNull DatabaseError pDatabaseError) {
             }
         });
     }
@@ -234,7 +254,6 @@ public class FirebaseHelper {
             }
         });
     }
-
 
     public static void addBid(Item pItem, Bid pBid) {
         mItemsRef.child(pItem.getItemId()).child("Bids").child(pBid.getBidId()).setValue(pBid);

@@ -148,7 +148,6 @@ public class User {
 
     public static User fromDataSnapshot(DataSnapshot pDataSnapshot, String pCurrentUId) {
         Log.d("MYTAG", "fromDataSnapshot: ");
-        //TODO use builder
         User user = new User();
         user.setName((String) pDataSnapshot.child(pCurrentUId).child("name").getValue());
         user.setSurname((String) pDataSnapshot.child(pCurrentUId).child("surname").getValue());

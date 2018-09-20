@@ -76,6 +76,8 @@ public class MyItemsActivity extends BaseActivity {
         recyclerView.setAdapter(mMyItemsAdapter);
 
         mToolbar = findViewById(R.id.tool_bar_activity_my_items);
+        mToolbar.setTitle(R.string.activity_name_my_items);
+        mToolbar.setTitleTextColor(getResources().getColor(R.color.colorAccent));
     }
 
     private void initListeners() {

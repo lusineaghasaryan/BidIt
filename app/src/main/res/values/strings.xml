@@ -69,6 +69,7 @@
     <string name="text_cancel">Cancel</string>
     <string name="activity_name_favorites">Favorites</string>
     <string name="activity_name_my_items">My Items</string>
+    <string name="activity_name_add_item">Add Item</string>
 
     <string name="my_keyboard">MyKeyboard</string>
     <string name="subtype_en_US">English (US)</string>
