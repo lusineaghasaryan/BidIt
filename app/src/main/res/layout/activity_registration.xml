@@ -35,7 +35,7 @@
             <View
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/line_size"
                 android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
@@ -58,7 +58,7 @@
             <View
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/line_size"
                 android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
@@ -81,7 +81,7 @@
             <View
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/line_size"
                 android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
@@ -104,7 +104,7 @@
             <View
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/line_size"
                 android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
@@ -127,7 +127,7 @@
             <View
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/line_size"
                 android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
@@ -150,7 +150,7 @@
             <View
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/line_size"
                 android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 
@@ -172,7 +172,7 @@
             <View
                 android:layout_marginBottom="@dimen/margin_normal"
                 android:layout_width="match_parent"
-                android:layout_height="1dp"
+                android:layout_height="@dimen/line_size"
                 android:background="@color/color_text_login_light_grey" />
         </android.support.design.widget.TextInputLayout>
 

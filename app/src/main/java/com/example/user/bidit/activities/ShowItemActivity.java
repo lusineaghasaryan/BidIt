@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.NotificationCompat;
 import android.support.design.widget.CoordinatorLayout;
@@ -76,7 +77,7 @@ public class ShowItemActivity extends BaseActivity {
     private AppBarLayout mAppBarLayout;
 
     //    bidButtonDelegation
-    private CoordinatorLayout mParentLayout;
+    private ConstraintLayout mParentLayout;
 
     //    bidButtonDelegetion
     private CustomKeyboard.OnBidButtonListener mOnBidButtonListener;
@@ -174,7 +175,7 @@ public class ShowItemActivity extends BaseActivity {
 //        find parent layout/
         mAppBarLayout = findViewById(R.id.app_bar_show_item_activity);
 
-        mParentLayout = findViewById(R.id.coordinator_show_item_activity);
+        mParentLayout = findViewById(R.id.constraint_show_item_activity);
 
 //        find and set viewPager
         mViewPager = findViewById(R.id.view_pager_show_item_activity);
@@ -419,8 +420,10 @@ public class ShowItemActivity extends BaseActivity {
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     mCustomKeyboard.setVisibility(View.VISIBLE);
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 } else {
                     mCustomKeyboard.setVisibility(View.GONE);
+                    getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
                 }
             }
         });

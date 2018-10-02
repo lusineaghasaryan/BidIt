@@ -30,7 +30,7 @@
             android:clickable="true"
             android:src="@drawable/account_pic"
             fnBtn:border_color="@color/color_hint_login_dark_grey"
-            fnBtn:border_width="1dp"
+            fnBtn:border_width="@dimen/line_size"
             fnBtn:layout_constraintBottom_toBottomOf="parent"
             fnBtn:layout_constraintEnd_toEndOf="parent"
             fnBtn:layout_constraintStart_toEndOf="@id/image_guide_vertical"

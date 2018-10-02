@@ -10,6 +10,8 @@
     <string name="edit_text_hint_title">Title</string>
     <string name="edit_text_hint_description">Description</string>
     <string name="edit_text_hint_start_price">Start Price</string>
+    <string name="edit_text_hint_end_date">End Date</string>
+    <string name="edit_text_hint_start_date">Start Date</string>
     <string name="edit_text_hint_buy_now_price">Buy Now Price</string>
     <string name="text_view_hint_choose_date">Choose Date</string>
     <string name="text_view_hint_choose_time">Choose Time</string>
@@ -75,5 +77,22 @@
     <string name="subtype_en_US">English (US)</string>
     <string name="verification_message">Verify YOur Account</string>
     <string name="my_items">My Items</string>
+    <string name="code_text">code</string>
+    <string name="card_number_text">card number</string>
+    <string name="amount_text">amount</string>
+    <string name="add_money_text">Add Money</string>
+    <string name="camera_text">Camera</string>
+    <string name="gallery_text">Gallery</string>
+    <string name="custom_keyboard_1">1</string>
+    <string name="custom_keyboard_2">2</string>
+    <string name="custom_keyboard_3">3</string>
+    <string name="custom_keyboard_4">4</string>
+    <string name="custom_keyboard_5">5</string>
+    <string name="custom_keyboard_6">6</string>
+    <string name="custom_keyboard_7">7</string>
+    <string name="custom_keyboard_8">8</string>
+    <string name="custom_keyboard_9">9</string>
+    <string name="custom_keyboard_0">0</string>
+    <string name="custom_keyboard_bid">Bid</string>
 
 </resources>

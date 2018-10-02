@@ -7,14 +7,14 @@
 
     <ImageView
         android:id="@+id/image_view_item_add_photo_rv"
-        android:layout_width="120dp"
-        android:layout_height="150dp"
+        android:layout_width="@dimen/default_picture_width"
+        android:layout_height="@dimen/default_picture_heght"
         android:src="@drawable/pic_trans"/>
 
     <Button
         android:id="@+id/btn_remove_item_add_photo_rv"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
+        android:layout_width="@dimen/delete_button_size"
+        android:layout_height="@dimen/delete_button_size"
         android:background="@android:drawable/ic_menu_close_clear_cancel"
         app:layout_constraintTop_toTopOf="@id/image_view_item_add_photo_rv"
         app:layout_constraintRight_toRightOf="@id/image_view_item_add_photo_rv"/>

@@ -58,7 +58,6 @@ public class FireBaseAuthenticationManager {
                             mUsersRef.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-
                                     mCurrentUser = User.fromDataSnapshot(dataSnapshot, mAuth.getCurrentUser().getUid());
                                     pLoginListener.onResponse(true, mCurrentUser);
                                 }
@@ -83,7 +82,6 @@ public class FireBaseAuthenticationManager {
                         if (task.isSuccessful()) {
                             updateUserInServer(pUser);
                             sendEmailVerification(mAuth.getCurrentUser());
-                            Log.d("asd", "onComplete: " + mAuth.getCurrentUser());
                         }
                     }
                 });

@@ -36,7 +36,7 @@
         android:layout_marginBottom="@dimen/margin_extra_large"
         android:background="@drawable/shape_blue_gradient_90_degree"
         android:padding="@dimen/padding_normal"
-        android:text="Add Money"
+        android:text="@string/add_money_text"
         android:textSize="@dimen/text_size_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

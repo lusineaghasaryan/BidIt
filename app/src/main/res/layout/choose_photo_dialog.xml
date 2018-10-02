@@ -18,7 +18,7 @@
             android:layout_height="match_parent"
             android:layout_weight="5"
             android:orientation="vertical"
-            android:padding="15dp"
+            android:padding="@dimen/padding_normal"
             android:weightSum="10">
 
             <ImageView
@@ -34,7 +34,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:text="Camera"
+                android:text="@string/camera_text"
                 android:textColor="@color/color_text_login_light_grey_transparent"
                 android:textSize="@dimen/text_size_normal" />
 
@@ -46,7 +46,7 @@
             android:layout_height="match_parent"
             android:layout_weight="5"
             android:orientation="vertical"
-            android:padding="15dp"
+            android:padding="@dimen/padding_normal"
             android:weightSum="10">
 
             <ImageView
@@ -62,7 +62,7 @@
                 android:layout_height="0dp"
                 android:layout_weight="3"
                 android:gravity="center"
-                android:text="Gallery"
+                android:text="@string/gallery_text"
                 android:textColor="@color/color_text_login_light_grey_transparent"
                 android:textSize="@dimen/text_size_normal" />
 
@@ -81,7 +81,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/margin_small"
-            android:background="@drawable/shape_yelloy_stroke"
+            android:background="@drawable/shape_grey_transparent_stroke"
             android:text="@string/text_cancel"
             android:textColor="@color/color_text_login_light_grey" />
     </LinearLayout>

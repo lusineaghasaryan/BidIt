@@ -6,4 +6,4 @@
     android:layout_height="wrap_content"
     android:textColor="@color/color_text_login_light_grey_transparent"
     android:textSize="@dimen/text_size_normal"
-    android:padding="10dp" />
+    android:padding="@dimen/padding_small" />
